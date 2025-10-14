@@ -10,5 +10,19 @@ window.Alpine = Alpine;
 Alpine.start();
 
 document.addEventListener("DOMContentLoaded", function () {
-    const dataTable = new DataTable("#categoriesTb", {});
+    // Inisialisasi DataTable untuk tabel kategori jika ada
+    const categoriesTable = document.querySelector("#categoriesTb");
+    if (categoriesTable) {
+        new DataTable(categoriesTable, {
+            // Opsi tambahan bisa diletakkan di sini
+        });
+    }
+
+    // Inisialisasi DataTable untuk tabel produk jika ada
+    const productsTable = document.querySelector("#productsTb");
+    if (productsTable) {
+        new DataTable(productsTable, {
+            // Opsi tambahan bisa diletakkan di sini
+        });
+    }
 });

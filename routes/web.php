@@ -3,7 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\CategoryCtrl;
+use App\Http\Controllers\Admin\ProductCtrl;
 use App\Http\Controllers\Admin\DashboardCtrl;
+
 
 Route::get('/', function () {
     return view('welcome');

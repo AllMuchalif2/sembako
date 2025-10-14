@@ -25,7 +25,6 @@
 </head>
 
 <body class="font-sans antialiased bg-gray-100 text-gray-900">
-    
     {{-- Logika utama: Cek apakah ini halaman admin. --}}
     @if (request()->routeIs('admin.*'))
         {{-- Layout Admin dengan Sidebar Kustom --}}
