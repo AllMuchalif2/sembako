@@ -17,52 +17,55 @@
 
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.tailwindcss.css">
     @stack('head')
-    
+
     <style>
-        [x-cloak] { display: none !important; }
+        [x-cloak] {
+            display: none !important;
+        }
     </style>
 </head>
 
-<body class="font-sans antialiased bg-gray-100">
+<body x-data="{ theme: localStorage.getItem('theme') || 'light' }" x-init="$watch('theme', val => localStorage.setItem('theme', val))" x-bind:class="{ 'dark': theme === 'dark' }"
+    class="font-sans antialiased bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+
     {{-- Logika utama: Cek apakah ini halaman admin. --}}
     @if (request()->routeIs('admin.*'))
         {{-- Layout Admin dengan Sidebar Kustom --}}
-        <div x-data="{ 
-                sidebarOpen: window.innerWidth >= 1024,
-                init() {
-                    this.$watch('sidebarOpen', value => {
-                        if (value && window.innerWidth < 1024) {
-                            document.body.style.overflow = 'hidden';
-                        } else {
-                            document.body.style.overflow = '';
-                        }
-                    });
-                }
-             }" 
-             @resize.window="if (window.innerWidth >= 1024) { sidebarOpen = true; document.body.style.overflow = ''; }"
-             class="flex min-h-screen">
-            
+        <div x-data="{
+            sidebarOpen: window.innerWidth >= 1024,
+            init() {
+                this.$watch('sidebarOpen', value => {
+                    if (value && window.innerWidth < 1024) {
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
+        }"
+            @resize.window="if (window.innerWidth >= 1024) { sidebarOpen = true; document.body.style.overflow = ''; }"
+            class="flex min-h-screen">
+
             @include('layouts.admin')
 
             <div class="flex-1 flex flex-col">
-                
+
                 @if (isset($header))
-                    <header class="bg-white shadow-sm">
+                    <header class="bg-white dark:bg-gray-800 shadow-sm">
                         <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex items-center gap-4">
-                            <button @click="sidebarOpen = !sidebarOpen" 
-                                    type="button"
-                                    class="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 transition-colors lg:hidden">
+                            <button @click="sidebarOpen = !sidebarOpen" type="button"
+                                class="p-2 rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 transition-colors lg:hidden">
                                 <i class="fa-solid fa-bars text-xl"></i>
                             </button>
-                            
-                            <div class="flex-1">
+
+                            <div class="flex-1 text-gray-800 dark:text-gray-100">
                                 {{ $header }}
                             </div>
                         </div>
                     </header>
                 @endif
-                
-                <main class="flex-1 p-6 lg:p-8">
+
+                <main class="flex-1 p-6 lg:p-8 bg-gray-100 dark:bg-gray-900">
                     {{ $slot }}
                 </main>
             </div>
@@ -73,14 +76,14 @@
             @include('layouts.navigation')
 
             @if (isset($header))
-                <header class="bg-white shadow">
+                <header class="bg-white dark:bg-gray-800 shadow">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
                 </header>
             @endif
 
-            <main>
+            <main class="dark:bg-gray-800">
                 {{ $slot }}
             </main>
         </div>

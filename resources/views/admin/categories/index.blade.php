@@ -1,10 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Manajemen Kategori') }}
         </h2>
     </x-slot>
-    <div class="p-6 lg:p-8 bg-gray-100 flex-1">
+    <div class="p-6 lg:p-8 bg-gray-100 dark:bg-gray-900 flex-1">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header Halaman -->
             <div class="flex justify-between items-center mb-6">
@@ -12,25 +12,24 @@
                 <nav class="flex " aria-label="Breadcrumb">
                     <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
                         <li class="inline-flex items-center">
-                            <a href="{{ route('admin.dashboard') }}"
-                                class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600">
+                            <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
                                 Admin
                             </a>
                         </li>
                         <li>
                             <div class="flex items-center">
-                                <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true"
+                                <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 dark:text-gray-500 mx-1" aria-hidden="true"
                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                         stroke-width="2" d="m1 9 4-4-4-4" />
                                 </svg>
-                                <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2">Kategori</span>
+                                <span class="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400 md:ms-2">Kategori</span>
                             </div>
                         </li>
                     </ol>
                 </nav>
                 <a href="{{ route('admin.categories.create') }}"
-                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">
+                    class="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">
                     <svg class="w-4 h-4 md:me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -41,31 +40,31 @@
             </div>
 
             @if (session('success'))
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
+                <div class="bg-green-100 dark:bg-green-900/50 border-l-4 border-green-500 dark:border-green-600 text-green-700 dark:text-green-200 p-4 mb-6" role="alert">
                     <p>{{ session('success') }}</p>
                 </div>
             @endif
 
             <!-- Kontainer Tabel -->
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="p-6">
                     <div class="overflow-x-auto">
-                        <table id="categoriesTable" class="min-w-full w-full">
-                            <thead class="bg-gray-50">
+                        <table id="categoriesTable" class="min-w-full w-full text-sm">
+                            <thead class="bg-gray-50 dark:bg-gray-700/50">
                                 <tr>
-                                    <th class="py-3 px-4 uppercase font-semibold text-sm text-gray-600 text-left w-1">
+                                    <th class="py-3 px-4 uppercase font-semibold text-gray-600 dark:text-gray-300 text-left w-1">
                                         No.</th>
                                     <th
-                                        class="py-3 px-4 uppercase font-semibold text-sm text-gray-600 text-left w-auto">
+                                        class="py-3 px-4 uppercase font-semibold text-gray-600 dark:text-gray-300 text-left w-auto">
                                         Nama</th>
-                                    <th class="py-3 px-4 uppercase font-semibold text-sm text-gray-600 text-left w-2">
+                                    <th class="py-3 px-4 uppercase font-semibold text-gray-600 dark:text-gray-300 text-left w-2">
                                         Aksi
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody class="text-gray-700">
+                            <tbody class="text-gray-700 dark:text-gray-300">
                                 @foreach ($categories as $category)
-                                    <tr class="border-b hover:bg-gray-50">
+                                    <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                                         <td class="py-3 px-4 text-center">{{ $loop->iteration }}</td>
                                         <td class="py-3 px-4 whitespace-nowrap">{{ $category->name }}</td>
                                         <td class="py-3 px-4 whitespace-nowrap">
@@ -99,8 +98,7 @@
 
     @push('scripts')
         {{-- CDN untuk ekstensi Responsive --}}
-        <script src="https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.js"></script>
-        <script src="https://cdn.datatables.net/responsive/3.0.2/js/responsive.tailwindcss.js"></script>
+
 
         <script>
             $(document).ready(function() {
