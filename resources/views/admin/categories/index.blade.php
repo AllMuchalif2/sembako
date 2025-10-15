@@ -12,7 +12,8 @@
                 <nav class="flex " aria-label="Breadcrumb">
                     <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
                         <li class="inline-flex items-center">
-                            <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+                            <a href="{{ route('admin.dashboard') }}"
+                                class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
                                 Admin
                             </a>
                         </li>
@@ -68,11 +69,17 @@
                                         <td class="py-3 px-4 whitespace-nowrap">{{ $category->name }}</td>
                                         <td class="py-3 px-4 whitespace-nowrap">
                                             <div class="flex items-center space-x-2">
+                                                <button title="Lihat Kategori"
+                                                    class="inline-flex items-center justify-center w-8 h-8 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-600"
+                                                    @click="showCategory({{ $category->id }})">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </button>
                                                 <a href="{{ route('admin.categories.edit', $category) }}"
                                                     title="Edit Kategori"
                                                     class="inline-flex items-center justify-center w-8 h-8 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </a>
+
                                                 <form action="{{ route('admin.categories.destroy', $category) }}"
                                                     method="POST"
                                                     onsubmit="return confirm('Anda yakin ingin menghapus kategori ini?');">
@@ -95,4 +102,28 @@
         </div>
     </div>
 
+    <!-- Show Category Modal -->
+    <x-modal name="show-category-modal" :show="false" focusable>
+        <div class="p-6">
+            <h2 class="text-lg font-medium text-gray-900" x-text="`Detail Kategori: ${category.name}`">
+            </h2>
+
+            <div class="mt-6 space-y-4">
+                <div>
+                    <x-input-label for="name" value="Nama" />
+                    <p class="mt-1 text-sm text-gray-700" x-text="category.name"></p>
+                </div>
+                <div>
+                    <x-input-label for="description" value="Deskripsi" />
+                    <p class="mt-1 text-sm text-gray-700" x-text="category.description || '-'"></p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <x-secondary-button x-on:click="$dispatch('close')">
+                    {{ __('Tutup') }}
+                </x-secondary-button>
+            </div>
+        </div>
+    </x-modal>
 </x-app-layout>

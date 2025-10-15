@@ -31,6 +31,15 @@
         <div x-data="{
             sidebarOpen: window.innerWidth >= 1024,
             init() {
+                this.category = { name: '', description: '' };
+                this.showCategory = (categoryId) => {
+                    fetch(`/admin/categories/${categoryId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.category = data;
+                            this.$dispatch('open-modal', 'show-category-modal');
+                        });
+                };
                 this.$watch('sidebarOpen', value => {
                     if (value && window.innerWidth < 1024) {
                         document.body.style.overflow = 'hidden';
@@ -45,13 +54,13 @@
 
             @include('layouts.admin')
 
-            <div class="flex-1 flex flex-col">
+            <div class="flex-1 flex flex-col" x-data>
 
                 @if (isset($header))
                     <header class="bg-white shadow-sm">
                         <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex items-center gap-4">
                             <button @click="sidebarOpen = !sidebarOpen" type="button"
-                                class="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 transition-colors lg:hidden">
+                                class="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors lg:hidden">
                                 <i class="fa-solid fa-bars text-xl"></i>
                             </button>
 
@@ -62,7 +71,7 @@
                     </header>
                 @endif
 
-                <main class="flex-1 p-6 lg:p-8 bg-gray-100">
+                <main class="flex-1">
                     {{ $slot }}
                 </main>
             </div>

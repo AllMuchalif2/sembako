@@ -54,11 +54,10 @@ class CategoryCtrl extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Category $category)
     {
-        //
+        return response()->json($category);
     }
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -79,8 +78,8 @@ class CategoryCtrl extends Controller
             'description' => 'nullable|string',
         ], [
             'name.required' => 'Nama kategori wajib diisi.',
-            'name.max'      => 'Nama kategori tidak boleh lebih dari 50 karakter.',
-            'name.unique'   => 'Nama kategori sudah ada, silakan gunakan nama lain.',
+            'name.max' => 'Nama kategori tidak boleh lebih dari 50 karakter.',
+            'name.unique' => 'Nama kategori sudah ada, silakan gunakan nama lain.',
             'description.string' => 'Deskripsi harus berupa teks.',
         ]);
 
