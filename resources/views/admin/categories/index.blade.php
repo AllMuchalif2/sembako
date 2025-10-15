@@ -69,9 +69,9 @@
                                         <td class="py-3 px-4 whitespace-nowrap">{{ $category->name }}</td>
                                         <td class="py-3 px-4 whitespace-nowrap">
                                             <div class="flex items-center space-x-2">
-                                                <button title="Lihat Kategori"
-                                                    class="inline-flex items-center justify-center w-8 h-8 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-600"
-                                                    @click="showCategory({{ $category->id }})">
+                                                <button type="button" title="Lihat Kategori"
+                                                    class="inline-flex items-center justify-center w-8 h-8 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-600 show-category-button"
+                                                    data-id="{{ $category->id }}">
                                                     <i class="fa-solid fa-eye"></i>
                                                 </button>
                                                 <a href="{{ route('admin.categories.edit', $category) }}"
@@ -80,9 +80,7 @@
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </a>
 
-                                                <form action="{{ route('admin.categories.destroy', $category) }}"
-                                                    method="POST"
-                                                    onsubmit="return confirm('Anda yakin ingin menghapus kategori ini?');">
+<form action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="inline delete-form">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" title="Hapus Kategori"

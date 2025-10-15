@@ -28,28 +28,41 @@
     {{-- Logika utama: Cek apakah ini halaman admin. --}}
     @if (request()->routeIs('admin.*'))
         {{-- Layout Admin dengan Sidebar Kustom --}}
+        {{-- GANTI SELURUH BLOK x-data LAMA DENGAN INI --}}
         <div x-data="{
             sidebarOpen: window.innerWidth >= 1024,
+            product: { name: '', description: '', price: 0, stock: 0, image: '', category: { name: '' } },
+            category: { name: '', description: '' },
+        
             init() {
-                this.product = { name: '', description: '', price: 0, stock: 0, image: '', category: { name: '' } };
-                this.showProduct = (productSlug) => {
-                    fetch(`/admin/products/${productSlug}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            this.product = data;
-                            this.$dispatch('open-modal', 'show-product-modal');
-                        });
-                };
-
-                this.category = { name: '', description: '' };
-                this.showCategory = (categoryId) => {
-                    fetch(`/admin/categories/${categoryId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            this.category = data;
-                            this.$dispatch('open-modal', 'show-category-modal');
-                        });
-                };
+                // Event listener untuk tombol 'show product'
+                document.addEventListener('click', (event) => {
+                    const button = event.target.closest('.show-product-button');
+                    if (button) {
+                        const productSlug = button.dataset.slug;
+                        fetch(`/admin/products/${productSlug}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                this.product = data;
+                                this.$dispatch('open-modal', 'show-product-modal');
+                            });
+                    }
+                });
+        
+                // Event listener untuk tombol 'show category'
+                document.addEventListener('click', (event) => {
+                    const button = event.target.closest('.show-category-button');
+                    if (button) {
+                        const categoryId = button.dataset.id;
+                        fetch(`/admin/categories/${categoryId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                this.category = data;
+                                this.$dispatch('open-modal', 'show-category-modal');
+                            });
+                    }
+                });
+        
                 this.$watch('sidebarOpen', value => {
                     if (value && window.innerWidth < 1024) {
                         document.body.style.overflow = 'hidden';

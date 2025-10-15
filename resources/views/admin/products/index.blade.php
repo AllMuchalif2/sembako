@@ -12,7 +12,8 @@
                 <nav class="flex " aria-label="Breadcrumb">
                     <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
                         <li class="inline-flex items-center">
-                            <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 ">
+                            <a href="{{ route('admin.dashboard') }}"
+                                class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 ">
                                 Admin
                             </a>
                         </li>
@@ -94,20 +95,18 @@
                                         <td class="py-3 px-4 whitespace-nowrap">{{ $product->stock }}</td>
                                         <td class="py-3 px-4 whitespace-nowrap">
                                             <div class="flex items-center space-x-2">
-                                                <a href="{{ route('admin.products.edit', $product) }}"
-                                                    title="Lihat Product"
-                                                    @click.prevent="showProduct('{{ $product->slug }}')"
-                                                    class="inline-flex items-center justify-center w-8 h-8 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-600">
+                                                <button type="button" title="Lihat Product"
+                                                    class="inline-flex items-center justify-center w-8 h-8 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-600 show-product-button"
+                                                    data-slug="{{ $product->slug }}">
                                                     <i class="fa-solid fa-eye"></i>
-                                                </a>
+                                                </button>
                                                 <a href="{{ route('admin.products.edit', $product) }}"
                                                     title="Edit Product"
                                                     class="inline-flex items-center justify-center w-8 h-8 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </a>
                                                 <form action="{{ route('admin.products.destroy', $product) }}"
-                                                    method="POST"
-                                                    onsubmit="return confirm('Anda yakin ingin menghapus produk ini?');">
+                                                    method="POST" class="inline delete-form">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" title="Hapus Product"
@@ -154,7 +153,8 @@
                 </div>
                 <div>
                     <x-input-label value="Harga" />
-                    <p class="mt-1 text-sm text-gray-700" x-text="`Rp${new Intl.NumberFormat('id-ID').format(product.price)}`"></p>
+                    <p class="mt-1 text-sm text-gray-700"
+                        x-text="`Rp${new Intl.NumberFormat('id-ID').format(product.price)}`"></p>
                 </div>
                 <div>
                     <x-input-label value="Stok" />
