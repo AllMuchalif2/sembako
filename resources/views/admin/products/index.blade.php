@@ -95,6 +95,12 @@
                                         <td class="py-3 px-4 whitespace-nowrap">
                                             <div class="flex items-center space-x-2">
                                                 <a href="{{ route('admin.products.edit', $product) }}"
+                                                    title="Lihat Product"
+                                                    @click.prevent="showProduct('{{ $product->slug }}')"
+                                                    class="inline-flex items-center justify-center w-8 h-8 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-600">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </a>
+                                                <a href="{{ route('admin.products.edit', $product) }}"
                                                     title="Edit Product"
                                                     class="inline-flex items-center justify-center w-8 h-8 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600">
                                                     <i class="fa-solid fa-pen-to-square"></i>
@@ -121,4 +127,50 @@
         </div>
     </div>
 
+    <!-- Show Product Modal -->
+    <x-modal name="show-product-modal" :show="false" focusable>
+        <div class="p-6">
+            <h2 class="text-lg font-medium text-gray-900" x-text="`Detail Produk: ${product.name}`">
+            </h2>
+
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="md:col-span-2">
+                    <p class="text-sm font-medium text-gray-600 mb-2">Gambar Produk:</p>
+                    <template x-if="product.image">
+                        <img :src="`/storage/${product.image}`" :alt="product.name"
+                            class="rounded-md object-cover h-48 w-auto">
+                    </template>
+                    <template x-if="!product.image">
+                        <span class="text-gray-500 text-sm">Tidak ada gambar</span>
+                    </template>
+                </div>
+                <div>
+                    <x-input-label value="Nama Produk" />
+                    <p class="mt-1 text-sm text-gray-700" x-text="product.name"></p>
+                </div>
+                <div>
+                    <x-input-label value="Kategori" />
+                    <p class="mt-1 text-sm text-gray-700" x-text="product.category.name"></p>
+                </div>
+                <div>
+                    <x-input-label value="Harga" />
+                    <p class="mt-1 text-sm text-gray-700" x-text="`Rp${new Intl.NumberFormat('id-ID').format(product.price)}`"></p>
+                </div>
+                <div>
+                    <x-input-label value="Stok" />
+                    <p class="mt-1 text-sm text-gray-700" x-text="product.stock"></p>
+                </div>
+                <div class="md:col-span-2">
+                    <x-input-label value="Deskripsi" />
+                    <p class="mt-1 text-sm text-gray-700" x-text="product.description || '-'"></p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <x-secondary-button x-on:click="$dispatch('close')">
+                    {{ __('Tutup') }}
+                </x-secondary-button>
+            </div>
+        </div>
+    </x-modal>
 </x-app-layout>

@@ -31,6 +31,16 @@
         <div x-data="{
             sidebarOpen: window.innerWidth >= 1024,
             init() {
+                this.product = { name: '', description: '', price: 0, stock: 0, image: '', category: { name: '' } };
+                this.showProduct = (productSlug) => {
+                    fetch(`/admin/products/${productSlug}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.product = data;
+                            this.$dispatch('open-modal', 'show-product-modal');
+                        });
+                };
+
                 this.category = { name: '', description: '' };
                 this.showCategory = (categoryId) => {
                     fetch(`/admin/categories/${categoryId}`)
