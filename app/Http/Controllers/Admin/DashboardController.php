@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 
-class DashboardCtrl extends Controller
+class DashboardController extends Controller
 {
     //
     public function index()

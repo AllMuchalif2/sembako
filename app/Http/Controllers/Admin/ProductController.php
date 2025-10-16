@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 
-class ProductCtrl extends Controller
+class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.

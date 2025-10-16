@@ -1,15 +1,18 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\CategoryCtrl;
-use App\Http\Controllers\Admin\ProductCtrl;
-use App\Http\Controllers\Admin\DashboardCtrl;
+
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\CategoryController;
 
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [LandingController::class, 'index'])->name('landing');
+Route::get('/products/{product}', [LandingController::class, 'show'])->name('product.show');
+
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -21,12 +24,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Admin Routes
-Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [DashboardCtrl::class, 'index'])->name('dashboard');
-    Route::resource('categories', CategoryCtrl::class);
-    
-    Route::resource('products', ProductCtrl::class);
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('categories', CategoryController::class);
+    Route::resource('products', ProductController::class);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
