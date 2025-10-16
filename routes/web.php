@@ -10,7 +10,8 @@ use App\Http\Controllers\Admin\CategoryController;
 
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
-Route::get('/products/{product}', [LandingController::class, 'show'])->name('product.show');
+Route::get('/products', [LandingController::class, 'products'])->name('products.index');
+Route::get('/products/{product:slug}', [LandingController::class, 'show'])->name('product.show');
 
 
 

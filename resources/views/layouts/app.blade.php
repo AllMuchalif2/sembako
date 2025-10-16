@@ -101,7 +101,24 @@
         </div>
     @else
         {{-- Layout Standar untuk Customer --}}
-        <div class="min-h-screen bg-gray-100">
+        <div class="min-h-screen bg-gray-100" x-data="{
+            product: { name: '', description: '', price: 0, stock: 0, image: '', category: { name: '' } },
+            init() {
+                document.addEventListener('click', (event) => {
+                    const button = event.target.closest('.show-product-modal-button');
+                    if (button) {
+                        event.preventDefault();
+                        const productSlug = button.dataset.slug;
+                        fetch(`/products/${productSlug}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                this.product = data;
+                                this.$dispatch('open-modal', 'show-product-detail-modal');
+                            });
+                    }
+                });
+            }
+        }">
             @include('layouts.navigation')
 
             @if (isset($header))
@@ -115,6 +132,48 @@
             <main>
                 {{ $slot }}
             </main>
+
+            <!-- Modal Detail Produk untuk Customer -->
+            <x-modal name="show-product-detail-modal" :show="false" maxWidth="2xl" focusable>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Kolom Gambar -->
+                        <div>
+                            <template x-if="product.image">
+                                <img :src="`/storage/${product.image}`" :alt="product.name"
+                                    class="rounded-lg object-cover w-full aspect-[4/3]">
+                            </template>
+                            <template x-if="!product.image">
+                                <div class="rounded-lg bg-gray-200 w-full aspect-[4/3] flex items-center justify-center">
+                                    <span class="text-gray-500">Tidak ada gambar</span>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- Kolom Info Produk -->
+                        <div class="flex flex-col">
+                            <h2 class="text-2xl font-bold text-gray-900" x-text="product.name"></h2>
+                            <p class="text-sm text-gray-500 mt-1" x-text="product.category.name"></p>
+
+                            <p class="text-3xl font-bold text-gray-900 mt-4" x-text="`Rp${new Intl.NumberFormat('id-ID').format(product.price)}`"></p>
+                            <p class="text-sm text-gray-600 mt-2" x-text="`Stok: ${product.stock}`"></p>
+
+                            <div class="mt-6 prose max-w-none text-gray-700">
+                                <p x-text="product.description || 'Tidak ada deskripsi untuk produk ini.'"></p>
+                            </div>
+
+                            <div class="mt-auto pt-6">
+                                <button type="button" class="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition">
+                                    Tambah ke Keranjang
+                                </button>
+                                <x-secondary-button class="w-full justify-center mt-2" x-on:click="$dispatch('close')">
+                                    Tutup
+                                </x-secondary-button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </x-modal>
         </div>
     @endif
 
