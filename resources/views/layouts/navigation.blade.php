@@ -15,6 +15,9 @@
                     <x-nav-link :href="route('landing')" :active="request()->routeIs('landing')">
                         {{ __('Home') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
+                        {{ __('Produk') }}
+                    </x-nav-link>
                     {{-- Tambahkan link lain di sini, misal: Produk, Tentang Kami --}}
                 </div>
             </div>
