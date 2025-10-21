@@ -7,6 +7,7 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log; // Tambahkan ini
 use Midtrans\Config;
 use Midtrans\Snap;
 
@@ -52,6 +53,7 @@ class CheckoutController extends Controller
 
         $cartItems = session()->get('cart', []);
         if (empty($cartItems)) {
+            Log::warning('Checkout process: Cart is empty on submission. Redirecting to cart index.', ['user_id' => Auth::id() ?? 'guest']);
             return redirect()->route('cart.index')->with('error', 'Keranjang Anda kosong!');
         }
 
@@ -60,7 +62,12 @@ class CheckoutController extends Controller
         $item_details = [];
         foreach ($cartItems as $id => $item) {
             $product = Product::find($id);
+            if (!$product) { // Tambahkan pengecekan jika produk tidak ditemukan
+                Log::error('Checkout process: Product not found in DB for cart item. Redirecting to cart index.', ['product_id' => $id, 'user_id' => Auth::id() ?? 'guest']);
+                return redirect()->route('cart.index')->with('error', 'Produk tidak ditemukan.');
+            }
             if ($product->stock < $item['quantity']) {
+                Log::warning('Checkout process: Insufficient stock for product. Redirecting to cart index.', ['product_id' => $id, 'requested_quantity' => $item['quantity'], 'available_stock' => $product->stock, 'user_id' => Auth::id() ?? 'guest']);
                 return redirect()->route('cart.index')->with('error', 'Stok produk ' . $item['name'] . ' tidak mencukupi.');
             }
             $totalPrice += $item['price'] * $item['quantity'];
@@ -109,16 +116,23 @@ class CheckoutController extends Controller
                 'first_name' => Auth::user()->name,
                 'email' => Auth::user()->email,
             ],
+            'callbacks' => [
+                'finish' => route('checkout.success', ['order_id' => $transaction->order_id]),
+                'error' => route('cart.index', ['status' => 'error', 'order_id' => $transaction->order_id]),
+                'pending' => route('cart.index', ['status' => 'pending', 'order_id' => $transaction->order_id]),
+            ],
             'item_details' => $item_details,
         ];
 
         try {
+            Log::info('Checkout process: Attempting to get Midtrans Snap token.', ['order_id' => $transaction->order_id, 'user_id' => Auth::id() ?? 'guest']);
             $snapToken = Snap::getSnapToken($params);
             $transaction->snap_token = $snapToken;
             $transaction->save();
 
             session()->forget('cart');
-
+            Log::info('Checkout process: Snap token generated, cart cleared, redirecting to payment view.', ['order_id' => $transaction->order_id, 'user_id' => Auth::id() ?? 'guest']);
+            
             return view('checkout.payment', ['snapToken' => $snapToken, 'order' => $transaction]);
         } catch (\Exception $e) {
             // Rollback: kembalikan stok dan hapus transaksi jika gagal
@@ -126,6 +140,7 @@ class CheckoutController extends Controller
                 Product::find($item->product_id)->increment('stock', $item->quantity);
             }
             $transaction->delete();
+            Log::error('Checkout process: Midtrans Snap token generation failed. Redirecting to cart index.', ['error' => $e->getMessage(), 'user_id' => Auth::id() ?? 'guest', 'order_id' => $transaction->order_id ?? 'N/A']);
             return redirect()->route('cart.index')->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
         }
     }

@@ -10,8 +10,8 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-center">
                     <h2 class="text-2xl font-bold text-gray-800 mb-4">Proses Pembayaran</h2>
-                    <p class="text-gray-600 mb-6">Selesaikan pembayaran Anda untuk pesanan <span
-                            class="font-semibold">{{ $order->number }}</span>. Klik tombol di bawah untuk membuka jendela
+                    <p class="text-gray-600 mb-6">Selesaikan pembayaran Anda untuk pesanan <span class="font-semibold">
+                            {{ $order->order_id }}</span>. Klik tombol di bawah untuk membuka jendela
                         pembayaran.</p>
 
                     <button id="pay-button"

@@ -6,6 +6,7 @@ use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProfileController;
 
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -28,6 +29,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
+
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+    Route::get('/transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
+
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
