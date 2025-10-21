@@ -163,9 +163,17 @@
                             </div>
 
                             <div class="mt-auto pt-6">
-                                <button type="button" class="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition">
-                                    Tambah ke Keranjang
-                                </button>
+                                <form action="{{ route('cart.add') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="product_id" :value="product.id">
+                                    <input type="hidden" name="quantity" value="1"> <!-- Default quantity 1, bisa dikembangkan -->
+                                    <button type="submit"
+                                        class="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition"
+                                        :disabled="product.stock <= 0"
+                                        :class="{ 'opacity-50 cursor-not-allowed': product.stock <= 0 }">
+                                        <span x-text="product.stock > 0 ? 'Tambah ke Keranjang' : 'Stok Habis'"></span>
+                                    </button>
+                                </form>
                                 <x-secondary-button class="w-full justify-center mt-2" x-on:click="$dispatch('close')">
                                     Tutup
                                 </x-secondary-button>
