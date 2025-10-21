@@ -7,9 +7,10 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log; // Tambahkan ini
+use Illuminate\Support\Facades\Log; 
 use Midtrans\Config;
 use Midtrans\Snap;
+use Midtrans\Notification; 
 
 class CheckoutController extends Controller
 {
@@ -147,20 +148,56 @@ class CheckoutController extends Controller
 
     public function callback(Request $request)
     {
-        $serverKey = config('midtrans.server_key');
-        $hashed = hash("sha512", $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
-        if ($hashed == $request->signature_key) {
-            if ($request->transaction_status == 'capture' || $request->transaction_status == 'settlement') {
-                $transaction = Transaction::where('order_id', $request->order_id)->first();
-                if ($transaction) {
-                    $transaction->update(['payment_status' => 'success', 'status' => 'success']);
-                }
+        Log::info('Midtrans notification received.', $request->all());
+
+        try {
+            // Gunakan helper dari library Midtrans untuk membuat objek notifikasi
+            $notification = new Notification();
+
+            $transactionStatus = $notification->transaction_status;
+            $paymentType = $notification->payment_type;
+            $orderId = $notification->order_id;
+            $fraudStatus = $notification->fraud_status;
+
+            $transaction = Transaction::where('order_id', $orderId)->first();
+
+            if (!$transaction) {
+                Log::warning('Midtrans callback: Transaction not found.', ['order_id' => $orderId]);
+                return; // Hentikan jika transaksi tidak ditemukan
             }
+
+            // Jangan proses notifikasi yang sama berulang kali
+            if ($transaction->payment_status === 'success') {
+                Log::info('Midtrans callback: Transaction already marked as success.', ['order_id' => $orderId]);
+                return;
+            }
+
+            if ($transactionStatus == 'capture' || $transactionStatus == 'settlement') {
+                // Cek status fraud jika ada
+                if ($fraudStatus == 'challenge') {
+                    // TODO: Set transaction status to 'challenge' and wait for manual approval
+                    $transaction->update(['payment_status' => 'challenge', 'status' => 'challenge']);
+                } else if ($fraudStatus == 'accept') {
+                    // TODO: Set transaction status to 'success'
+                    $transaction->update(['payment_status' => 'success', 'status' => 'processing', 'payment_type' => $paymentType]);
+                    Log::info('Midtrans callback: Transaction status updated to success.', ['order_id' => $orderId]);
+                }
+            } else if ($transactionStatus == 'pending') {
+                // TODO: Set transaction status to 'pending'
+                $transaction->update(['payment_status' => 'pending', 'payment_type' => $paymentType]);
+            } else if ($transactionStatus == 'deny' || $transactionStatus == 'expire' || $transactionStatus == 'cancel') {
+                // TODO: Set transaction status to 'failed'
+                $transaction->update(['payment_status' => 'failed', 'status' => 'failed']);
+            }
+        } catch (\Exception $e) {
+            Log::error('Midtrans callback error: ' . $e->getMessage(), ['order_id' => $request->order_id ?? 'N/A']);
         }
     }
 
-    public function success()
+    public function success(Request $request)
     {
-        return view('checkout.success');
+        $orderId = $request->query('order_id');
+        $transaction = Transaction::where('order_id', $orderId)->where('user_id', Auth::id())->firstOrFail();
+        return view('checkout.success', ['order' => $transaction]);
     }
 }
