@@ -7,10 +7,9 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log; 
+use Illuminate\Support\Facades\Log;
 use Midtrans\Config;
 use Midtrans\Snap;
-use Midtrans\Notification; 
 
 class CheckoutController extends Controller
 {
@@ -18,9 +17,10 @@ class CheckoutController extends Controller
     {
         // Set konfigurasi Midtrans
         Config::$serverKey = config('midtrans.server_key');
+        Config::$clientKey = config('midtrans.client_key');
         Config::$isProduction = config('midtrans.is_production');
-        Config::$isSanitized = true;
-        Config::$is3ds = true;
+        Config::$isSanitized = config('midtrans.is_sanitized');
+        Config::$is3ds = config('midtrans.is_3ds');
     }
 
     /**
@@ -133,8 +133,8 @@ class CheckoutController extends Controller
 
             session()->forget('cart');
             Log::info('Checkout process: Snap token generated, cart cleared, redirecting to payment view.', ['order_id' => $transaction->order_id, 'user_id' => Auth::id() ?? 'guest']);
-            
-            return view('checkout.payment', ['snapToken' => $snapToken, 'order' => $transaction]);
+
+            return view('checkout.payment', ['snapToken' => $snapToken, 'client_key' => config('midtrans.client_key'), 'order' => $transaction]);
         } catch (\Exception $e) {
             // Rollback: kembalikan stok dan hapus transaksi jika gagal
             foreach ($transaction->items as $item) {
@@ -151,46 +151,82 @@ class CheckoutController extends Controller
         Log::info('Midtrans notification received.', $request->all());
 
         try {
-            // Gunakan helper dari library Midtrans untuk membuat objek notifikasi
-            $notification = new Notification();
+             // 1. Verifikasi Signature Key
+            $signatureKey = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . config('midtrans.server_key'));
+            if ($signatureKey != $request->signature_key) {
+                Log::warning('Midtrans callback: Invalid signature.', ['order_id' => $request->order_id]);
+                return response()->json(['message' => 'Invalid signature'], 403);
+            }
 
-            $transactionStatus = $notification->transaction_status;
-            $paymentType = $notification->payment_type;
-            $orderId = $notification->order_id;
-            $fraudStatus = $notification->fraud_status;
+            // 2. Ambil data langsung dari request Laravel yang sudah terbukti benar dari log
+            $orderId = $request->order_id;
+            $transactionStatus = $request->transaction_status;
+            $paymentType = $request->payment_type ?? null;
+            $fraudStatus = $request->fraud_status;
 
+            // 3. Cari transaksi berdasarkan order_id yang benar
             $transaction = Transaction::where('order_id', $orderId)->first();
 
             if (!$transaction) {
-                Log::warning('Midtrans callback: Transaction not found.', ['order_id' => $orderId]);
-                return; // Hentikan jika transaksi tidak ditemukan
+                Log::warning('Midtrans callback: Transaction not found in DB.', ['order_id_from_request' => $orderId]);
+                return response()->json(['message' => 'Transaction not found.'], 404);
             }
 
-            // Jangan proses notifikasi yang sama berulang kali
-            if ($transaction->payment_status === 'success') {
+            // 3. Jangan proses notifikasi yang sama berulang kali (Idempotency)
+            if ($transaction->payment_status === 'settlement') {
                 Log::info('Midtrans callback: Transaction already marked as success.', ['order_id' => $orderId]);
-                return;
+                return response()->json(['message' => 'Transaction already processed.'], 200);
             }
 
-            if ($transactionStatus == 'capture' || $transactionStatus == 'settlement') {
-                // Cek status fraud jika ada
-                if ($fraudStatus == 'challenge') {
-                    // TODO: Set transaction status to 'challenge' and wait for manual approval
-                    $transaction->update(['payment_status' => 'challenge', 'status' => 'challenge']);
-                } else if ($fraudStatus == 'accept') {
-                    // TODO: Set transaction status to 'success'
-                    $transaction->update(['payment_status' => 'success', 'status' => 'processing', 'payment_type' => $paymentType]);
-                    Log::info('Midtrans callback: Transaction status updated to success.', ['order_id' => $orderId]);
-                }
+            // 5. Handle status berdasarkan notifikasi
+            if ($transactionStatus == 'settlement') {
+                // Transaksi berhasil dan dana sudah masuk.
+                $transaction->update([
+                    'payment_status' => 'settlement', // Simpan status asli dari Midtrans
+                    'status' => 'processing', // Atau 'completed' jika tidak ada proses pengiriman
+                    'payment_type' => $paymentType
+                ]);
+                Log::info('Midtrans callback: Transaction status updated to settlement.', ['order_id' => $orderId]);
+            } else if ($transactionStatus == 'capture' && $fraudStatus == 'accept') {
+                // Khusus untuk kartu kredit, setelah 'capture' dan fraud 'accept'
+                $transaction->update([
+                    'payment_status' => 'settlement', // Konsisten menggunakan 'settlement' untuk status berhasil
+                    'status' => 'processing',
+                    'payment_type' => $paymentType
+                ]);
+                Log::info('Midtrans callback: Transaction status updated to success after capture.', ['order_id' => $orderId]);
             } else if ($transactionStatus == 'pending') {
-                // TODO: Set transaction status to 'pending'
-                $transaction->update(['payment_status' => 'pending', 'payment_type' => $paymentType]);
+                // Transaksi menunggu pembayaran
+                $transaction->update([
+                    'payment_status' => 'pending',
+                    'payment_type' => $paymentType
+                ]);
             } else if ($transactionStatus == 'deny' || $transactionStatus == 'expire' || $transactionStatus == 'cancel') {
-                // TODO: Set transaction status to 'failed'
-                $transaction->update(['payment_status' => 'failed', 'status' => 'failed']);
+                // Transaksi gagal, dibatalkan, atau kadaluarsa
+                $transaction->update([
+                    'payment_status' => 'failed',
+                    'status' => 'failed'
+                ]);
+
+                // 3. Kembalikan stok produk karena pembayaran gagal
+                foreach ($transaction->items as $item) {
+                    Product::find($item->product_id)->increment('stock', $item->quantity);
+                }
+                Log::info('Midtrans callback: Transaction failed, stock returned.', ['order_id' => $orderId]);
+            } else if ($fraudStatus == 'challenge') {
+                // Transaksi ditahan karena dugaan fraud
+                $transaction->update([
+                    'payment_status' => 'challenge',
+                    'status' => 'challenge',
+                    'payment_type' => $paymentType
+                ]);
+                Log::warning('Midtrans callback: Transaction is challenged by FDS.', ['order_id' => $orderId]);
             }
+
+            return response()->json(['message' => 'Notification handled successfully.'], 200);
         } catch (\Exception $e) {
-            Log::error('Midtrans callback error: ' . $e->getMessage(), ['order_id' => $request->order_id ?? 'N/A']);
+            Log::error('Midtrans callback error: ' . $e->getMessage(), ['request_payload' => $request->all(), 'exception' => $e]);
+            return response()->json(['message' => 'Error handling notification.'], 500);
         }
     }
 

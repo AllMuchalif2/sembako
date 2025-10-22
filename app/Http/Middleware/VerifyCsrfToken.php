@@ -12,6 +12,6 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        'midtrans/callback',
+        // Pindahkan ke bootstrap/app.php untuk konsistensi
     ];
 }
