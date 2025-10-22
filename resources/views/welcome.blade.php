@@ -28,8 +28,10 @@
                 <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
                     @foreach ($products as $product) 
                         <div class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg">
-                            <div class="aspect-h-1 aspect-w-1 bg-gray-200 sm:h-auto">
-                                <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/300' }}" alt="{{ $product->name }}" class="h-full w-full object-cover object-center group-hover:opacity-75">
+                            <div class="aspect-square w-full bg-white flex items-center justify-center overflow-hidden">
+                                <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/300' }}" 
+                                     alt="{{ $product->name }}" 
+                                     class="h-full w-full object-contain object-center transition-opacity duration-300 group-hover:opacity-75">
                             </div>
                             <div class="flex flex-1 flex-col space-y-2 p-4">
                                 <div>

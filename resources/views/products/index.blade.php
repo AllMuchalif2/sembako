@@ -38,7 +38,8 @@
                     <!-- Kolom Produk -->
                     <div class="lg:col-span-3">
                         <!-- Search Bar & Sorting -->
-                        <form action="{{ route('products.index') }}" method="GET" class="mb-8" id="filter-form">
+                        <form action="{{ route('products.index') }}" method="GET" id="filter-form"
+                            class="lg:mb-8 sticky top-1 lg:top-auto lg:static z-20 bg-gray-100 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0 py-4 lg:py-0 shadow-sm lg:shadow-none">
                             <input type="hidden" name="category" value="{{ request('category') }}">
                             <input type="hidden" name="search" value="{{ request('search') }}">
                             <div class="relative">
@@ -65,10 +66,14 @@
                                     <div class="group relative">
                                         <div
                                             class="flex flex-col h-full bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 ease-in-out group-hover:shadow-xl group-hover:-translate-y-1">
-                                            <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden">
-                                                <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/300' }}"
-                                                    alt="{{ $product->name }}"
-                                                    class="h-full w-full object-cover object-center">
+                                            <div
+                                                class="aspect-square w-full bg-white flex items-center justify-center overflow-hidden">
+                                                <div
+                                                    class="aspect-square w-full bg-white flex items-center justify-center overflow-hidden">
+                                                    <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/300' }}"
+                                                        alt="{{ $product->name }}"
+                                                        class="h-full w-full object-contain object-center transition-opacity duration-300 group-hover:opacity-75">
+                                                </div>
                                             </div>
                                             <div class="p-4 flex flex-col flex-grow">
                                                 <h3 class="text-sm font-medium text-gray-800">
@@ -81,10 +86,27 @@
                                                 </h3>
                                                 <p class="mt-1 text-xs text-gray-500">{{ $product->category->name }}
                                                 </p>
+                                                <p class="mt-1 text-xs text-gray-500">Stock: {{ $product->stock }}
+                                                </p>
                                                 <div class="mt-auto pt-4">
-                                                    <p class="text-base font-bold text-red-600">
-                                                        Rp{{ number_format($product->price, 0, ',', '.') }}
-                                                    </p>
+                                                    <p class="text-base font-bold text-blue-500">
+                                                    <div class="flex justify-between items-center">
+                                                        <p class="text-base font-bold text-blue-500">
+                                                            Rp{{ number_format($product->price, 0, ',', '.') }}
+                                                        </p>
+                                                        <form action="{{ route('cart.add') }}" method="POST"
+                                                            class="relative z-10">
+                                                            @csrf
+                                                            <input type="hidden" name="product_id"
+                                                                value="{{ $product->id }}">
+                                                            <input type="hidden" name="quantity" value="1">
+                                                            <button type="submit"
+                                                                class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                                @if ($product->stock <= 0) disabled title="Stok habis" @else title="Tambah ke Keranjang" @endif>
+                                                                <i class="fa-solid fa-cart-plus text-sm"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

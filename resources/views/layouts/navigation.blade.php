@@ -13,7 +13,7 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('landing')" :active="request()->routeIs('landing')">
-                        {{ __('Beranda') }}
+                        {{ __('Home') }}
                     </x-nav-link>
                     <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
                         {{ __('Produk') }}
@@ -26,6 +26,9 @@
                                 {{ count(session('cart')) }}
                             </span>
                         @endif
+                    </x-nav-link>                    
+                    <x-nav-link :href="route('customer.dashboard')" :active="request()->routeIs('customer.dashboard')">
+                        {{ __('Akun Saya') }}
                     </x-nav-link>
 
                     {{-- Tambahkan link lain di sini, misal: Produk, Tentang Kami --}}
@@ -52,8 +55,8 @@
                         </x-slot>
 
                         <x-slot name="content">
-                            <x-dropdown-link :href="route('profile.edit')">
-                                {{ __('Profile') }}
+                            <x-dropdown-link :href="route('customer.dashboard')">
+                                {{ __('Akun Saya') }}
                             </x-dropdown-link>
                             <x-dropdown-link :href="route('transactions.index')">
                                 {{ __('Riwayat Transaksi') }}
@@ -66,6 +69,10 @@
                                     onclick="event.preventDefault();
                                                     this.closest('form').submit();">
                                     {{ __('Log Out') }}
+                                </x-dropdown-link>
+                            </form>
+                            <x-dropdown-link :href="route('profile.edit')">
+                                {{ __('Ubah Profil') }}
                                 </x-dropdown-link>
                             </form>
                         </x-slot>
@@ -103,7 +110,7 @@
         {{-- Tambahkan menu responsive di sini jika diperlukan --}}
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('landing')" :active="request()->routeIs('landing')">
-                {{ __('Home') }}
+                {{ __('Beranda') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
                 {{ __('Produk') }}
@@ -117,9 +124,7 @@
                     </span>
                 @endif
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('transactions.index')">
-                {{ __('Riwayat Transaksi') }}
-            </x-responsive-nav-link>
+            
 
         </div>
 
@@ -132,8 +137,8 @@
                 </div>
 
                 <div class="mt-3 space-y-1">
-                    <x-responsive-nav-link :href="route('profile.edit')">
-                        {{ __('Profile') }}
+                    <x-responsive-nav-link :href="route('customer.dashboard')">
+                        {{ __('Akun Saya') }}
                     </x-responsive-nav-link>
                     
                     <x-responsive-nav-link :href="route('transactions.index')">

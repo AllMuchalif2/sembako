@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+    <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @stack('head')
@@ -140,11 +142,13 @@
                         <!-- Kolom Gambar -->
                         <div>
                             <template x-if="product.image">
-                                <img :src="`/storage/${product.image}`" :alt="product.name"
-                                    class="rounded-lg object-cover w-full aspect-[4/3]">
+                                <div class="aspect-square w-full bg-white rounded-lg flex items-center justify-center overflow-hidden border">
+                                    <img :src="`/storage/${product.image}`" :alt="product.name"
+                                        class="max-w-full max-h-full object-contain">
+                                </div>
                             </template>
                             <template x-if="!product.image">
-                                <div class="rounded-lg bg-gray-200 w-full aspect-[4/3] flex items-center justify-center">
+                                <div class="rounded-lg bg-gray-200 w-full aspect-square flex items-center justify-center">
                                     <span class="text-gray-500">Tidak ada gambar</span>
                                 </div>
                             </template>
@@ -185,6 +189,26 @@
         </div>
     @endif
 
+    <!-- Global Notification -->
+    @if (session('success') || session('warning') || session('error'))
+        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show" x-transition:enter="transform ease-out duration-300 transition"
+            x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
+            x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
+            x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed top-5 right-5 z-50 max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
+            <div class="p-4">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        @if (session('success')) <i class="fa-solid fa-circle-check text-green-500 text-xl"></i> @endif
+                        @if (session('warning')) <i class="fa-solid fa-triangle-exclamation text-yellow-500 text-xl"></i> @endif
+                        @if (session('error')) <i class="fa-solid fa-circle-xmark text-red-500 text-xl"></i> @endif
+                    </div>
+                    <div class="ml-3 w-0 flex-1 pt-0.5"><p class="text-sm font-medium text-gray-900">{{ session('success') ?? session('warning') ?? session('error') }}</p></div>
+                </div>
+            </div>
+        </div>
+    @endif
 
 
     @stack('scripts')

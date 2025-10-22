@@ -62,4 +62,9 @@ class User extends Authenticatable
     {
         return strtolower($this->role->name) === strtolower($roleName);
     }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }
