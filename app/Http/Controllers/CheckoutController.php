@@ -182,16 +182,16 @@ class CheckoutController extends Controller
             if ($transactionStatus == 'settlement') {
                 // Transaksi berhasil dan dana sudah masuk.
                 $transaction->update([
-                    'payment_status' => 'settlement', // Simpan status asli dari Midtrans
-                    'status' => 'processing', // Atau 'completed' jika tidak ada proses pengiriman
+                    'payment_status' => 'settlement', 
+                    'status' => 'diproses', 
                     'payment_type' => $paymentType
                 ]);
                 Log::info('Midtrans callback: Transaction status updated to settlement.', ['order_id' => $orderId]);
             } else if ($transactionStatus == 'capture' && $fraudStatus == 'accept') {
                 // Khusus untuk kartu kredit, setelah 'capture' dan fraud 'accept'
                 $transaction->update([
-                    'payment_status' => 'settlement', // Konsisten menggunakan 'settlement' untuk status berhasil
-                    'status' => 'processing',
+                    'payment_status' => 'settlement',
+                    'status' => 'diproses',
                     'payment_type' => $paymentType
                 ]);
                 Log::info('Midtrans callback: Transaction status updated to success after capture.', ['order_id' => $orderId]);

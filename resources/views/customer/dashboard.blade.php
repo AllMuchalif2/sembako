@@ -19,16 +19,18 @@
                             <p><strong>Alamat Utama:</strong> {{ $primaryAddress }}</p>
                         </div>
                         <div class="mt-6 space-y-2">
-                            <a href="{{ route('profile.edit') }}" class="block w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <a href="{{ route('profile.edit') }}"
+                                class="block w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                 Ubah Profil
                             </a>
                             {{-- <a href="{{ route('password.edit') }}" class="block w-full text-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                 Ubah Password
                             </a> --}}
-                            <a href="{{ route('transactions.index') }}" class="block w-full text-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <a href="{{ route('transactions.index') }}"
+                                class="block w-full text-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                 Riwayat Transaksi Lengkap
                             </a>
-                            
+
                         </div>
                     </div>
 
@@ -40,20 +42,25 @@
                                 @foreach ($latestTransactions as $transaction)
                                     <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
                                         <div class="flex justify-between items-center mb-2">
-                                            <p class="text-sm font-medium text-gray-800">Order ID: <span class="font-semibold">{{ $transaction->order_id }}</span></p>
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full
-                                                @if($transaction->status == 'pending') bg-yellow-100 text-yellow-800
-                                                @elseif($transaction->status == 'processing') bg-blue-100 text-blue-800
-                                                @elseif($transaction->status == 'success') bg-green-100 text-green-800
+                                            <p class="text-sm font-medium text-gray-800">Order ID: <span
+                                                    class="font-semibold">{{ $transaction->order_id }}</span></p>
+                                            <span
+                                                class="px-2 py-1 text-xs font-semibold rounded-full
+                                                @if ($transaction->status == 'pending') bg-yellow-100 text-yellow-800 @elseif($transaction->status == 'diproses') bg-blue-100 text-blue-800 @elseif($transaction->status == 'dikirim') bg-purple-100 text-purple-800 @elseif($transaction->status == 'selesai') bg-green-100 text-green-800
                                                 @else bg-red-100 text-red-800 @endif">
                                                 {{ ucfirst($transaction->status) }}
                                             </span>
                                         </div>
-                                        <p class="text-sm text-gray-600">Tanggal: {{ $transaction->created_at->format('d M Y H:i') }}</p>
-                                        <p class="text-sm text-gray-600">Total: <span class="font-semibold">Rp{{ number_format($transaction->total_amount, 0, ',', '.') }}</span></p>
+                                        <p class="text-sm text-gray-600">Tanggal:
+                                            {{ $transaction->created_at->format('d M Y H:i') }}</p>
+                                        <p class="text-sm text-gray-600">Total: <span
+                                                class="font-semibold">Rp{{ number_format($transaction->total_amount, 0, ',', '.') }}</span>
+                                        </p>
                                         <div class="mt-3 text-right">
                                             {{-- Asumsi ada route untuk detail transaksi --}}
-                                            <a href="{{ route('transactions.show', $transaction->id) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Lihat Detail &rarr;</a>
+                                            <a href="{{ route('transactions.show', $transaction->id) }}"
+                                                class="text-blue-600 hover:text-blue-800 text-sm font-medium">Lihat
+                                                Detail &rarr;</a>
                                         </div>
                                     </div>
                                 @endforeach
@@ -61,7 +68,8 @@
                         @else
                             <p class="text-gray-600">Anda belum memiliki riwayat pesanan.</p>
                             <div class="mt-4">
-                                <a href="{{ route('products.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <a href="{{ route('products.index') }}"
+                                    class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                     Mulai Belanja
                                 </a>
                             </div>

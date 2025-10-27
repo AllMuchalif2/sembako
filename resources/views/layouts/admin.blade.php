@@ -81,6 +81,15 @@
             <i class="fa-solid fa-box mr-3"></i>
             {{ __('Product') }}
         </a>
+
+        <a href="{{ route('admin.transactions.index') }}"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
+            {{ request()->routeIs('admin.transactions.*') 
+                ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+            <i class="fa-solid fa-receipt mr-3"></i>
+            {{ __('Transaksi') }}
+        </a>
     </nav>
 
     {{-- Theme Toggle (Dark/Light) --}}
