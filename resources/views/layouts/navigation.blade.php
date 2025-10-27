@@ -26,10 +26,8 @@
                                 {{ count(session('cart')) }}
                             </span>
                         @endif
-                    </x-nav-link>                    
-                    <x-nav-link :href="route('customer.dashboard')" :active="request()->routeIs('customer.dashboard')">
-                        {{ __('Akun Saya') }}
                     </x-nav-link>
+
 
                     {{-- Tambahkan link lain di sini, misal: Produk, Tentang Kami --}}
                 </div>
@@ -58,6 +56,7 @@
                             <x-dropdown-link :href="route('customer.dashboard')">
                                 {{ __('Akun Saya') }}
                             </x-dropdown-link>
+                            
                             <x-dropdown-link :href="route('transactions.index')">
                                 {{ __('Riwayat Transaksi') }}
                             </x-dropdown-link>
@@ -71,9 +70,7 @@
                                     {{ __('Log Out') }}
                                 </x-dropdown-link>
                             </form>
-                            <x-dropdown-link :href="route('profile.edit')">
-                                {{ __('Ubah Profil') }}
-                                </x-dropdown-link>
+
                             </form>
                         </x-slot>
                     </x-dropdown>
@@ -124,7 +121,7 @@
                     </span>
                 @endif
             </x-responsive-nav-link>
-            
+
 
         </div>
 
@@ -140,7 +137,7 @@
                     <x-responsive-nav-link :href="route('customer.dashboard')">
                         {{ __('Akun Saya') }}
                     </x-responsive-nav-link>
-                    
+
                     <x-responsive-nav-link :href="route('transactions.index')">
                         {{ __('Riwayat Transaksi') }}
                     </x-responsive-nav-link>

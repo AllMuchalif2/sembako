@@ -1,18 +1,18 @@
 <x-app-layout>
+
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Daftar Produk') }}
+        </h2>
+    </x-slot>
+
     <div class="bg-gray-100">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="py-12 sm:py-16 lg:py-20">
-
-                <!-- Header dan Search Bar -->
-                <div class="mb-8 text-center">
-                    <h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Semua Produk</h1>
-                    <p class="mt-2 text-lg text-gray-600">Temukan semua kebutuhan sembako Anda di sini.</p>
-                </div>
-
+            <div class="py-12">
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                    <!-- Kolom Filter Kategori -->
+                    <!-- Kolom Filter Kategori - Sticky Sidebar -->
                     <aside class="lg:col-span-1">
-                        <div class="sticky top-24">
+                        <div class="lg:sticky lg:top-24">
                             <h2 class="text-lg font-semibold text-gray-900 mb-4">Kategori</h2>
                             <ul class="space-y-2">
                                 <li>
@@ -39,7 +39,7 @@
                     <div class="lg:col-span-3">
                         <!-- Search Bar & Sorting -->
                         <form action="{{ route('products.index') }}" method="GET" id="filter-form"
-                            class="lg:mb-8 sticky top-1 lg:top-auto lg:static z-20 bg-gray-100 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0 py-4 lg:py-0 shadow-sm lg:shadow-none">
+                            class="lg:mb-8 sticky top-1 lg:top-20 lg:static z-20 bg-gray-100 -mx-4 sm:-mx-6 lg:mx-0 px-4 sm:px-6 lg:px-0 py-4 lg:py-0 shadow-sm lg:shadow-none">
                             <input type="hidden" name="category" value="{{ request('category') }}">
                             <input type="hidden" name="search" value="{{ request('search') }}">
                             <div class="relative">

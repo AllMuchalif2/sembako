@@ -1,15 +1,14 @@
 <x-app-layout>
+
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Keranjang Anda') }}
+        </h2>
+    </x-slot>
+
     <div class="bg-gray-100">
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <div class="py-12 sm:py-16 lg:py-20">
-
-                <div class="mb-8 text-center">
-                    <h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Keranjang Belanja Anda</h1>
-                    <p class="mt-2 text-lg text-gray-600">Periksa item Anda dan lanjutkan ke pembayaran.</p>
-                </div>
-
-                
-
+            <div class="py-12">
                 <div class="bg-white shadow-sm sm:rounded-lg">
                     @if (count($cartItems) > 0)
                         <div class="overflow-x-auto">
@@ -216,7 +215,8 @@
                             <p class="mt-0.5 text-sm text-gray-500">Biaya pengiriman akan dihitung saat checkout.</p>
                             <div class="mt-6">
                                 <a href="{{ route('checkout.index') }}"
-                                    class="flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 {{ count($cartItems) == 0 ? 'opacity-50 cursor-not-allowed' : '' }}" {{ count($cartItems) == 0 ? 'aria-disabled="true"' : '' }}>
+                                    class="flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 {{ count($cartItems) == 0 ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                    {{ count($cartItems) == 0 ? 'aria-disabled="true"' : '' }}>
                                     Lanjutkan ke Pembayaran
                                 </a>
                             </div>
