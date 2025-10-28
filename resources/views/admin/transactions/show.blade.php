@@ -1,4 +1,15 @@
 <x-app-layout>
+    @push('head')
+        {{-- Leaflet CSS --}}
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+            integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+        <style>
+            #map {
+                height: 250px;
+                z-index: 0; /* Pastikan peta tidak menutupi elemen lain seperti modal */
+            }
+        </style>
+    @endpush
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -13,12 +24,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if (session('success'))
-                <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
-                    role="alert">
-                    <span class="block sm:inline">{{ session('success') }}</span>
-                </div>
-            @endif
+            
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Kolom Kiri: Detail & Item -->
@@ -58,6 +64,22 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Informasi Pengiriman -->
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informasi Pengiriman
+                        </h3>
+                        <div class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                            <p><strong>Alamat Kirim:</strong> {{ $transaction->shipping_address }}</p>
+                            @if ($transaction->notes)
+                                <p><strong>Catatan:</strong> {{ $transaction->notes }}</p>
+                            @endif
+                            {{-- Kontainer Peta --}}
+                            <div class="pt-2">
+                                <div id="map" class="rounded-lg border dark:border-gray-700"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Kolom Kanan: Info & Aksi -->
@@ -73,10 +95,6 @@
                             <p><strong>Metode Pembayaran:</strong>
                                 {{ $transaction->payment_type ? ucfirst(str_replace('_', ' ', $transaction->payment_type)) : 'N/A' }}
                             </p>
-                            <p><strong>Alamat Kirim:</strong> {{ $transaction->shipping_address }}</p>
-                            @if ($transaction->notes)
-                                <p><strong>Catatan:</strong> {{ $transaction->notes }}</p>
-                            @endif
                         </div>
                     </div>
 
@@ -125,4 +143,23 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        {{-- Leaflet JS --}}
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        <script>
+            var lat = {{ $transaction->latitude ?? 0 }};
+            var lng = {{ $transaction->longitude ?? 0 }};
+
+            var map = L.map('map').setView([lat, lng], 15);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            var marker = L.marker([lat, lng]).addTo(map).bindPopup("<b>Lokasi Pengiriman</b>").openPopup();
+        </script>
+    @endpush
 </x-app-layout>

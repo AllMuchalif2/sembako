@@ -14,6 +14,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
+    <link rel="icon" href="{{ secure_asset('images/logo.png') }}" type="image/png">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -30,7 +31,6 @@
     {{-- Logika utama: Cek apakah ini halaman admin. --}}
     @if (request()->routeIs('admin.*'))
         {{-- Layout Admin dengan Sidebar Kustom --}}
-        {{-- GANTI SELURUH BLOK x-data LAMA DENGAN INI --}}
         <div x-data="{
             sidebarOpen: window.innerWidth >= 1024,
             product: { name: '', description: '', price: 0, stock: 0, image: '', category: { name: '' } },

@@ -53,13 +53,21 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <span
-                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $transaction->status == 'success' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                    @if ($transaction->status == 'pending') bg-yellow-100 text-yellow-800
+                                                    @elseif($transaction->status == 'diproses') bg-blue-100 text-blue-800
+                                                    @elseif($transaction->status == 'dikirim') bg-purple-100 text-purple-800
+                                                    @elseif($transaction->status == 'selesai') bg-green-100 text-green-800
+                                                    @else bg-red-100 text-red-800 @endif">
                                                     {{ ucfirst($transaction->status) }}
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <span
-                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $transaction->payment_status == 'success' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full  
+                                                    @if ($transaction->payment_status == 'settlement') bg-green-100 text-green-800
+                                                    @elseif($transaction->payment_status == 'pending') bg-yellow-100 text-yellow-800
+                                                    @else bg-red-100 text-red-800 @endif">
                                                     {{ ucfirst($transaction->payment_status) }}
                                                 </span>
                                             </td>
@@ -85,4 +93,3 @@
         </div>
     </div>
 </x-app-layout>
-
