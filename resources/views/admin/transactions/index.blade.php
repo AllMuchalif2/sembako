@@ -44,7 +44,7 @@
                             <option value="diproses" @selected(request('status') == 'diproses')>Diproses</option>
                             <option value="dikirim" @selected(request('status') == 'dikirim')>Dikirim</option>
                             <option value="selesai" @selected(request('status') == 'selesai')>Selesai</option>
-                            <option value="failed" @selected(request('status') == 'failed')>Gagal</option>
+                            <option value="dibatalkan" @selected(request('status') == 'dibatalkan')>Gagal</option>
                         </select>
                     </form>
                 </div>
