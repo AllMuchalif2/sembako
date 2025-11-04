@@ -33,6 +33,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
+    Route::patch('/transactions/{transaction}/complete', [TransactionController::class, 'markAsCompleted'])->name('transactions.complete');
+    Route::patch('/transactions/{transaction}/cancel', [TransactionController::class, 'cancel'])->name('transactions.cancel');
 
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -48,6 +50,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('transactions', [AdminTransactionController::class, 'index'])->name('transactions.index');
     Route::get('transactions/{transaction}', [AdminTransactionController::class, 'show'])->name('transactions.show');
     Route::patch('transactions/{transaction}/status', [AdminTransactionController::class, 'updateStatus'])->name('transactions.updateStatus');
+    Route::patch('transactions/{transaction}/cancel', [AdminTransactionController::class, 'cancel'])->name('transactions.cancel');
 });
 
 require __DIR__ . '/auth.php';

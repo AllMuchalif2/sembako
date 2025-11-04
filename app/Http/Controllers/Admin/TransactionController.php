@@ -39,7 +39,7 @@ class TransactionController extends Controller
      */
     public function updateStatus(Request $request, Transaction $transaction)
     {
-        $request->validate(['status' => 'required|string|in:dikirim,selesai']);
+        $request->validate(['status' => 'required|string|in:dikirim']);
 
         $transaction->update(['status' => $request->status]);
 

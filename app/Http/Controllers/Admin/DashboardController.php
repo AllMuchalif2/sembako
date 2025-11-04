@@ -14,12 +14,7 @@ class DashboardController extends Controller
     //
     public function index()
     {
-        // Asumsi:
-        // - Status 'SUCCESS' menandakan pesanan yang sudah selesai/dibayar.
-        // - Role ID 2 adalah untuk 'Customer'.
-        // - Stok menipis jika jumlahnya di bawah 10.
-
-        // Total Pesanan Baru Hari Ini
+        
 
         $newOrders = Transaction::whereDate('created_at', Carbon::today())->count();
 

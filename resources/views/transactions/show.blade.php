@@ -31,7 +31,8 @@
                         </div>
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Tanggal</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $transaction->created_at->format('d M Y, H:i') }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900">{{ $transaction->created_at->format('d M Y, H:i') }}
+                            </dd>
                         </div>
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Status Pembayaran</dt>
@@ -74,6 +75,7 @@
                                 <dd class="mt-1 text-sm text-gray-900">{{ $transaction->notes }}</dd>
                             </div>
                         @endif
+
                         <div class="mt-4">
                             <div id="map" class="rounded-lg"></div>
                         </div>
@@ -85,24 +87,61 @@
                         <ul role="list" class="divide-y divide-gray-200">
                             @foreach ($transaction->items as $item)
                                 <li class="flex py-4">
-                                    <div class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                    <div
+                                        class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                         <img src="{{ $item->product->image ? asset('storage/' . $item->product->image) : 'https://via.placeholder.com/150' }}"
-                                            alt="{{ $item->product_name }}" class="h-full w-full object-cover object-center">
+                                            alt="{{ $item->product_name }}"
+                                            class="h-full w-full object-cover object-center">
                                     </div>
                                     <div class="ml-4 flex flex-1 flex-col">
                                         <div>
                                             <div class="flex justify-between text-base font-medium text-gray-900">
                                                 <h3>{{ $item->product_name }}</h3>
-                                                <p class="ml-4">Rp{{ number_format($item->subtotal, 0, ',', '.') }}</p>
+                                                <p class="ml-4">Rp{{ number_format($item->subtotal, 0, ',', '.') }}
+                                                </p>
                                             </div>
                                             <p class="mt-1 text-sm text-gray-500">
-                                                {{ $item->quantity }} x Rp{{ number_format($item->price, 0, ',', '.') }}
+                                                {{ $item->quantity }} x
+                                                Rp{{ number_format($item->price, 0, ',', '.') }}
                                             </p>
                                         </div>
                                     </div>
                                 </li>
                             @endforeach
                         </ul>
+
+                        {{-- Aksi Pelanggan --}}
+                        @if ($transaction->status == 'dikirim')
+                            <div class="mt-6 border-t pt-4">
+                                <p class="text-sm text-gray-600 mb-2">Apakah pesanan Anda sudah sampai? Klik tombol di
+                                    bawah
+                                    ini untuk menyelesaikan transaksi.</p>
+                                <form action="{{ route('transactions.complete', $transaction) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit"
+                                        class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                        Pesanan Diterima
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
+
+                        {{-- Aksi Pembatalan oleh Pelanggan --}}
+                        @if ($transaction->status == 'pending')
+                            <div class="mt-6 border-t pt-4">
+                                <p class="text-sm text-gray-600 mb-2">Ingin membatalkan pesanan ini?</p>
+                                <form action="{{ route('transactions.cancel', $transaction) }}" method="POST"
+                                    onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini?');">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit"
+                                        class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                        Batalkan Pesanan
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

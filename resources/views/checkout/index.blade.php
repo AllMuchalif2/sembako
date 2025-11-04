@@ -10,12 +10,15 @@
         </style>
     @endpush
 
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Checkout') }}
+        </h2>
+    </x-slot>
+
     <div class="py-12 bg-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="mb-8 text-center">
-                <h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Checkout</h1>
-                <p class="mt-2 text-lg text-gray-600">Lengkapi detail pengiriman Anda.</p>
-            </div>
+            
 
             <form action="{{ route('checkout.process') }}" method="POST">
                 @csrf

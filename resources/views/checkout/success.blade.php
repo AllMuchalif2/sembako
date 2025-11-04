@@ -13,7 +13,7 @@
                             class="font-semibold text-gray-900">{{ $order->order_id }}</span> sedang kami proses.</p>
                     <div class="mt-4 text-sm text-gray-500">
                         <p>Total Pembayaran: <span class="font-medium text-gray-700">Rp{{ number_format($order->total_amount, 0, ',', '.') }}</span></p>
-                        <p>Status Pembayaran: <span class="font-medium text-green-600 capitalize">{{ $order->payment_status }}</span></p>
+                        {{-- <p>Status Pembayaran: <span class="font-medium text-green-600 capitalize">{{ $order->payment_status }}</span></p> --}}
                     </div>
                     <div class="mt-6">
                         <a href="{{ route('products.index') }}"

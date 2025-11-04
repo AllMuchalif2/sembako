@@ -123,16 +123,8 @@
                                     </button>
                                 </form>
                             @elseif($transaction->status == 'dikirim')
-                                <form action="{{ route('admin.transactions.updateStatus', $transaction) }}"
-                                    method="POST">
-                                    @csrf
-                                    @method('PATCH')
-                                    <input type="hidden" name="status" value="selesai">
-                                    <button type="submit"
-                                        class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                        Ubah ke "Selesai"
-                                    </button>
-                                </form>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Menunggu konfirmasi penerimaan dari
+                                    pelanggan.</p>
                             @else
                                 <p class="text-sm text-gray-500 dark:text-gray-400">Tidak ada aksi yang bisa dilakukan
                                     untuk status ini.</p>
