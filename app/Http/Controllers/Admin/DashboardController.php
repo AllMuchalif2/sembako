@@ -14,22 +14,26 @@ class DashboardController extends Controller
     //
     public function index()
     {
-        
+        // 5 transaksi terbaru dengan relasi user
+        $recentTransactions = Transaction::with('user')->latest()->take(5)->get();
 
-        $newOrders = Transaction::whereDate('created_at', Carbon::today())->count();
+        // Pesanan baru yang sudah dibayar dan siap diproses
+        $newOrders = Transaction::where('status', 'diproses')->count();
 
-        // Pendapatan Hari Ini dari transaksi yang sukses
-
+        // Pendapatan hari ini dari transaksi yang pembayarannya berhasil (settlement)
         $todaysRevenue = Transaction::whereDate('created_at', Carbon::today())
-            ->where('status', 'success')
+            ->where('payment_status', 'settlement')
             ->sum('total_amount');
 
-        // Total Pelanggan Terdaftar
+        // Total pelanggan (dengan role_id 2)
         $totalCustomers = User::where('role_id', 2)->count();
 
-        // Jumlah Produk dengan Stok Menipis
+        // Jumlah produk dengan stok di bawah 10
         $lowStockProducts = Product::where('stock', '<', 10)->count();
 
-        return view('admin.dashboard', compact('newOrders', 'todaysRevenue', 'totalCustomers', 'lowStockProducts'));
+        // Daftar produk dengan stok di bawah 10
+        $lowStockProductsList = Product::where('stock', '<', 10)->orderBy('stock', 'asc')->get();
+
+        return view('admin.dashboard', compact('recentTransactions', 'newOrders', 'todaysRevenue', 'totalCustomers', 'lowStockProducts', 'lowStockProductsList'));
     }
 }
