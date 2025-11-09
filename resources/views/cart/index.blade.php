@@ -41,7 +41,7 @@
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
                                         @foreach ($cartItems as $id => $item)
-                                            <tr>
+                                            <tr data-product-id="{{ $id }}">
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <div class="flex items-center">
                                                         <div class="flex-shrink-0 h-16 w-16">
@@ -64,42 +64,41 @@
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     <div class="flex items-center space-x-2">
                                                         <form action="{{ route('cart.update', $id) }}" method="POST"
-                                                            class="inline">
+                                                            class="inline update-cart-form">
                                                             @csrf
                                                             @method('PATCH')
                                                             <input type="hidden" name="quantity"
                                                                 value="{{ max(1, $item['quantity'] - 1) }}">
                                                             <button type="submit"
-                                                                class="w-8 h-8 rounded-md bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                                                                class="w-8 h-8 rounded-md bg-gray-200 hover:bg-gray-300 flex items-center justify-center btn-minus"
                                                                 {{ $item['quantity'] <= 1 ? 'disabled' : '' }}>
                                                                 <i class="fas fa-minus text-xs"></i>
                                                             </button>
                                                         </form>
-                                                        <span
-                                                            class="w-12 text-center font-medium">{{ $item['quantity'] }}</span>
+                                                        <span class="w-12 text-center font-medium item-quantity">{{ $item['quantity'] }}</span>
                                                         <form action="{{ route('cart.update', $id) }}" method="POST"
-                                                            class="inline">
+                                                            class="inline update-cart-form">
                                                             @csrf
                                                             @method('PATCH')
                                                             <input type="hidden" name="quantity"
                                                                 value="{{ $item['quantity'] + 1 }}">
                                                             <button type="submit"
-                                                                class="w-8 h-8 rounded-md bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                                                                class="w-8 h-8 rounded-md bg-gray-200 hover:bg-gray-300 flex items-center justify-center btn-plus"
                                                                 {{ $item['quantity'] >= ($item['stock'] ?? 1) ? 'disabled' : '' }}>
                                                                 <i class="fas fa-plus text-xs"></i>
                                                             </button>
                                                         </form>
                                                     </div>
-                                                    <p class="text-xs text-gray-400 mt-1">Stok:
+                                                    <p class="text-xs text-gray-400 mt-1 item-stock">Stok:
                                                         {{ $item['stock'] ?? 'N/A' }}
                                                     </p>
                                                 </td>
                                                 <td
-                                                    class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                    class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 item-subtotal">
                                                     Rp{{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                    <form action="{{ route('cart.remove', $id) }}" method="POST">
+                                                    <form action="{{ route('cart.remove', $id) }}" method="POST" class="remove-from-cart-form">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="text-red-600 hover:text-red-900">
@@ -116,7 +115,7 @@
                             <!-- Mobile View: Cards -->
                             <div class="md:hidden space-y-4">
                                 @foreach ($cartItems as $id => $item)
-                                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4" data-product-id="{{ $id }}">
                                         <!-- Product Info -->
                                         <div class="flex items-start space-x-4 mb-4">
                                             <div class="flex-shrink-0">
@@ -132,7 +131,7 @@
                                                 <p class="text-sm text-gray-500 mt-1">
                                                     Rp{{ number_format($item['price'], 0, ',', '.') }}
                                                 </p>
-                                                <p class="text-xs text-gray-400 mt-1">Stok tersedia:
+                                                <p class="text-xs text-gray-400 mt-1 item-stock">Stok tersedia:
                                                     {{ $item['stock'] ?? 'N/A' }}
                                                 </p>
                                             </div>
@@ -143,29 +142,29 @@
                                             <!-- Quantity Controls -->
                                             <div class="flex items-center space-x-3">
                                                 <form action="{{ route('cart.update', $id) }}" method="POST"
-                                                    class="inline">
+                                                    class="inline update-cart-form">
                                                     @csrf
                                                     @method('PATCH')
                                                     <input type="hidden" name="quantity"
                                                         value="{{ max(1, $item['quantity'] - 1) }}">
                                                     <button type="submit"
-                                                        class="w-9 h-9 rounded-md bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                                                        class="w-9 h-9 rounded-md bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors btn-minus"
                                                         {{ $item['quantity'] <= 1 ? 'disabled' : '' }}>
                                                         <i class="fas fa-minus text-sm text-gray-600"></i>
                                                     </button>
                                                 </form>
 
                                                 <span
-                                                    class="w-10 text-center font-medium text-gray-900">{{ $item['quantity'] }}</span>
+                                                    class="w-10 text-center font-medium text-gray-900 item-quantity">{{ $item['quantity'] }}</span>
 
                                                 <form action="{{ route('cart.update', $id) }}" method="POST"
-                                                    class="inline">
+                                                    class="inline update-cart-form">
                                                     @csrf
                                                     @method('PATCH')
                                                     <input type="hidden" name="quantity"
                                                         value="{{ $item['quantity'] + 1 }}">
                                                     <button type="submit"
-                                                        class="w-9 h-9 rounded-md bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors {{ $item['quantity'] >= ($item['stock'] ?? 1) ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                        class="w-9 h-9 rounded-md bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors btn-plus {{ $item['quantity'] >= ($item['stock'] ?? 1) ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                         {{ $item['quantity'] >= ($item['stock'] ?? 1) ? 'disabled' : '' }}>
                                                         <i class="fas fa-plus text-sm text-gray-600"></i>
                                                     </button>
@@ -173,14 +172,14 @@
                                             </div>
 
                                             <!-- Subtotal and Delete -->
-                                            <div class="flex items-center space-x-3">
+                                            <div class="flex items-center space-x-3 ">
                                                 <div class="text-right">
                                                     <p class="text-xs text-gray-500">Subtotal</p>
-                                                    <p class="text-sm font-bold text-gray-900">
+                                                    <p class="text-sm font-bold text-gray-900 item-subtotal">
                                                         Rp{{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}
                                                     </p>
                                                 </div>
-                                                <form action="{{ route('cart.remove', $id) }}" method="POST">
+                                                <form action="{{ route('cart.remove', $id) }}" method="POST" class="remove-from-cart-form">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
@@ -210,7 +209,7 @@
                         <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
                             <div class="flex justify-between text-base font-medium text-gray-900">
                                 <p>Subtotal</p>
-                                <p>Rp{{ number_format($total, 0, ',', '.') }}</p>
+                                <p class="cart-total">Rp{{ number_format($total, 0, ',', '.') }}</p>
                             </div>
                             <p class="mt-0.5 text-sm text-gray-500">Biaya pengiriman akan dihitung saat checkout.</p>
                             <div class="mt-6">

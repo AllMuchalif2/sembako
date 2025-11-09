@@ -128,15 +128,38 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
+        // Set untuk melacak produk yang sedang dalam proses update
+        const updatingProducts = new Set();
+
         async function handleUpdateCart(event) {
             event.preventDefault();
             const form = event.target.closest('form');
+            const productRow = form.closest('[data-product-id]');
+            if (!productRow) return;
+
+            // Simpan tombol yang diklik dan konten aslinya
+            const clickedButton = event.submitter;
+            let originalButtonContent = '';
+
+            if (clickedButton) {
+                originalButtonContent = clickedButton.innerHTML;
+                clickedButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-xs"></i>';
+            }
+
             const formData = new FormData(form);
-            const productId = form.closest('[data-product-id]').dataset.productId;
+            const productId = productRow.dataset.productId;
+
+            // Disable both buttons immediately to prevent rapid clicks
+            const minusButton = productRow.querySelector('.btn-minus');
+            const plusButton = productRow.querySelector('.btn-plus');
+
+            if (minusButton) minusButton.disabled = true;
+            if (plusButton) plusButton.disabled = true;
 
             try {
                 const response = await fetch(form.action, {
                     method: 'POST', // HTML forms don't support PATCH, so we use POST with _method
+
                     headers: {
                         'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json',
@@ -150,21 +173,28 @@ document.addEventListener("DOMContentLoaded", function () {
                 updateCartSummary();
 
                 // Update UI on cart page
-                const productRows = document.querySelectorAll(`[data-product-id="${productId}"]`);
-                if (productRows.length > 0) {
-                    productRows.forEach(productRow => {
-                        productRow.querySelector('.item-quantity').textContent = data.item_quantity;
-                        productRow.querySelector('.item-subtotal').textContent = data.item_subtotal_formatted;
+                const allProductRows = document.querySelectorAll(`[data-product-id="${productId}"]`);
+                if (allProductRows.length > 0) {
+                    allProductRows.forEach(row => {
+                        row.querySelector('.item-quantity').textContent = data.item_quantity;
+                        row.querySelector('.item-subtotal').textContent = data.item_subtotal_formatted;
 
                         // Re-evaluate button disabled states
-                        const quantity = data.item_quantity;
-                        const stockText = productRow.querySelector('.item-stock')?.textContent || '';
-                        const stock = parseInt(stockText.replace(/\D/g, ''), 10);
+                        // Pastikan quantity dari server adalah angka untuk kalkulasi berikutnya
+                        const currentQuantity = parseInt(data.item_quantity, 10);
+                        const stockText = row.querySelector('.item-stock')?.textContent || '';
+                        const stock = parseInt(stockText.replace(/\D/g, ''), 10) || 0;
 
-                        productRow.querySelector('.btn-minus').disabled = quantity <= 1;
-                        productRow.querySelector('.btn-plus').disabled = quantity >= stock;
+                        row.querySelector('.btn-minus').disabled = currentQuantity <= 1;
+                        row.querySelector('.btn-plus').disabled = currentQuantity >= stock;
+
+                        // Update the hidden input values in the forms for the next click
+                        const minusForm = row.querySelector('.btn-minus').closest('form');
+                        const plusForm = row.querySelector('.btn-plus').closest('form');
+                        if (minusForm) minusForm.querySelector('input[name="quantity"]').value = currentQuantity - 1;
+                        if (plusForm) plusForm.querySelector('input[name="quantity"]').value = currentQuantity + 1;
                     });
-                    document.querySelector('.cart-total').textContent = data.cart.data.total_formatted;
+                    document.querySelector('.cart-total').textContent = data.cart.total_formatted;
                 }
 
                 if (data.warning) {
@@ -176,6 +206,23 @@ document.addEventListener("DOMContentLoaded", function () {
             } catch (error) {
                 console.error('Error updating cart:', error);
                 showGlobalNotification('Gagal memperbarui kuantitas.', 'error');
+            } finally {
+                // Kembalikan konten tombol asli setelah selesai
+                if (clickedButton && originalButtonContent) {
+                    clickedButton.innerHTML = originalButtonContent;
+                }
+
+                // Re-enable buttons if they exist, respecting the final state
+                const finalQuantity = parseInt(productRow.querySelector('.item-quantity').textContent, 10);
+                const stockText = productRow.querySelector('.item-stock')?.textContent || '';
+                const stock = parseInt(stockText.replace(/\D/g, ''), 10);
+
+                if (minusButton) {
+                    minusButton.disabled = finalQuantity <= 1;
+                }
+                if (plusButton) {
+                    plusButton.disabled = finalQuantity >= stock;
+                }
             }
         }
 
@@ -213,7 +260,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             if (document.querySelectorAll('[data-product-id]').length === 0) {
                                 location.reload(); // Easiest way to show the "empty cart" view
                             } else {
-                                document.querySelector('.cart-total').textContent = data.data.total_formatted;
+                                document.querySelector('.cart-total').textContent = data.total_formatted;
                             }
                         }, 300);
                     });
@@ -237,10 +284,17 @@ document.addEventListener("DOMContentLoaded", function () {
             const form = event.target;
 
             if (form.matches(".add-to-cart-form")) {
+                // Untuk add-to-cart, race condition kurang berisiko, bisa langsung panggil
                 handleAddToCart(event);
             }
             if (form.matches(".update-cart-form")) {
-                handleUpdateCart(event);
+                const productId = form.closest('[data-product-id]')?.dataset.productId;
+                if (productId && !updatingProducts.has(productId)) {
+                    updatingProducts.add(productId); // Kunci produk SEBELUM memanggil async function
+                    handleUpdateCart(event).finally(() => {
+                        updatingProducts.delete(productId); // Buka kunci setelah selesai
+                    });
+                }
             }
             if (form.matches(".remove-from-cart-form")) {
                 handleRemoveFromCart(event);
