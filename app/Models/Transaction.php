@@ -11,7 +11,25 @@ class Transaction extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id'];
+    protected $fillable = [
+        'user_id',
+        'order_id',
+        'total_amount',
+        'payment_status',
+        'status',
+        'shipping_address',
+        'latitude',
+        'longitude',
+        'notes',
+        'snap_token',
+        'payment_type'
+    ];
+
+    public function getRouteKeyName()
+    {
+        return 'order_id';
+    }
+
 
     public function user()
     {

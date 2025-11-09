@@ -5,8 +5,6 @@
         </h2>
     </x-slot>
 
-
-
     <div class="p-6 lg:p-8 bg-gray-100 flex-1">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -34,29 +32,30 @@
                     </ol>
                 </nav>
                 <!-- Filter Status -->
-                <div class="mb-4">
-                    <form action="{{ route('admin.transactions.index') }}" method="GET">
-                        <label for="status" class="sr-only">Filter by status</label>
-                        <select name="status" id="status" onchange="this.form.submit()"
-                            class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                            <option value="">Semua Status</option>
-                            <option value="pending" @selected(request('status') == 'pending')>Pending</option>
-                            <option value="diproses" @selected(request('status') == 'diproses')>Diproses</option>
-                            <option value="dikirim" @selected(request('status') == 'dikirim')>Dikirim</option>
-                            <option value="selesai" @selected(request('status') == 'selesai')>Selesai</option>
-                            <option value="dibatalkan" @selected(request('status') == 'dibatalkan')>Gagal</option>
-                        </select>
-                    </form>
-                </div>
-            </div>
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
 
-                    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                            <thead
-                                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <form action="{{ route('admin.transactions.index') }}" method="GET">
+                    <label for="status" class="sr-only">Filter by status</label>
+                    <select name="status" id="status" onchange="this.form.submit()"
+                        class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <option value="">Semua Status</option>
+                        <option value="pending" @selected(request('status') == 'pending')>Pending</option>
+                        <option value="diproses" @selected(request('status') == 'diproses')>Diproses</option>
+                        <option value="dikirim" @selected(request('status') == 'dikirim')>Dikirim</option>
+                        <option value="selesai" @selected(request('status') == 'selesai')>Selesai</option>
+                        <option value="dibatalkan" @selected(request('status') == 'dibatalkan')>Gagal</option>
+                    </select>
+                </form>
+
+            </div>
+            <!-- Kontainer Tabel -->
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="p-6">
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full w-full">
+                            <thead class="bg-gray-50">
                                 <tr>
+                                    <th scope="col" class="px-6 py-3">#</th>
                                     <th scope="col" class="px-6 py-3">Order ID</th>
                                     <th scope="col" class="px-6 py-3">Pelanggan</th>
                                     <th scope="col" class="px-6 py-3">Tanggal</th>
@@ -67,17 +66,18 @@
                             </thead>
                             <tbody>
                                 @forelse ($transactions as $transaction)
-                                    <tr
-                                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
+                                    <tr class="bg-white border-b  dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
                                         title="Klik untuk melihat detail transaksi"
                                         data-href="{{ route('admin.transactions.show', $transaction) }}">
+                                        <td class="px-6 py-4">{{ $loop->iteration }}</td>
                                         <th scope="row"
                                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                             {{ $transaction->order_id }}
                                         </th>
                                         <td class="px-6 py-4">{{ $transaction->user->name }}</td>
                                         <td class="px-6 py-4">{{ $transaction->created_at->format('d M Y H:i') }}</td>
-                                        <td class="px-6 py-4">Rp{{ number_format($transaction->total_amount, 0, ',', '.') }}
+                                        <td class="px-6 py-4">
+                                            Rp{{ number_format($transaction->total_amount, 0, ',', '.') }}
                                         </td>
                                         <td class="px-6 py-4">
                                             <span

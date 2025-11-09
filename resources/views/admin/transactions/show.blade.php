@@ -6,25 +6,67 @@
         <style>
             #map {
                 height: 250px;
-                z-index: 0; /* Pastikan peta tidak menutupi elemen lain seperti modal */
+                z-index: 0;
+                /* Pastikan peta tidak menutupi elemen lain seperti modal */
             }
         </style>
     @endpush
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Detail Transaksi: {{ $transaction->order_id }}
-            </h2>
-            <a href="{{ route('admin.transactions.index') }}"
-                class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-                &larr; Kembali ke Daftar Transaksi
-            </a>
-        </div>
+        <h2 class="font-semibold text-xl text-gray-800  leading-tight">
+            Detail Transaksi: {{ $transaction->order_id }}
+        </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
+
+    <div class="p-6 lg:p-8 bg-gray-100 flex-1">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header Halaman -->
+            <div class="flex justify-between items-center mb-6">
+
+                <!-- Breadcrumb -->
+                <nav class="flex mb-6" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+                        <li class="inline-flex items-center">
+                            <a href="{{ route('admin.dashboard') }}"
+                                class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 ">
+                                Admin
+                            </a>
+                        </li>
+                        <li>
+                            <div class="flex items-center">
+                                <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="m1 9 4-4-4-4" />
+                                </svg>
+                                <a href="{{ route('admin.transactions.index') }}"
+                                    class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600  md:ms-2">Transaksi</a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="flex items-center">
+                                <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="m1 9 4-4-4-4" />
+                                </svg>
+                                <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2">Detail Transaksi</span>
+                            </div>
+                        </li>
+                    </ol>
+                </nav>
+                <a href="{{ route('admin.transactions.index') }}"
+                    class="inline-flex items-center px-4 py-2 bg-blue-500  border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700">
+                    <svg class="w-4 h-4 md:me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+
+                    <span class="hidden md:inline"> Kembali ke Daftar Transaksi</span>
+                </a>
+
+            </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Kolom Kiri: Detail & Item -->
@@ -128,7 +170,13 @@
                             @else
                                 <p class="text-sm text-gray-500 dark:text-gray-400">Tidak ada aksi yang bisa dilakukan
                                     untuk status ini.</p>
+                            @endif                            @if (in_array($transaction->status, ['diproses', 'dikirim', 'selesai']))
+                                <a href="{{ route('admin.transactions.invoice', $transaction) }}" target="_blank"
+                                    class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-2">
+                                    Cetak Invoice
+                                </a>
                             @endif
+
                         </div>
                     </div>
                 </div>

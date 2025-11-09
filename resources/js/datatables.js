@@ -5,6 +5,7 @@ export function initDataTables() {
     const tablesToInit = [
         { selector: "#categoriesTb" },
         { selector: "#productsTb" },
+
     ];
 
     tablesToInit.forEach(tableInfo => {
