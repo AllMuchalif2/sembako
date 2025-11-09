@@ -8,7 +8,6 @@
                     <p class="mt-6 text-lg leading-8 text-gray-600">Belanja kebutuhan pokok harian Anda dengan mudah, cepat, dan aman. Kualitas terjamin, harga bersahabat.</p>
                     <div class="mt-10 flex items-center justify-center gap-x-6" x-data>
                         <a href="#produk" x-on:click.prevent="document.getElementById('produk').scrollIntoView({ behavior: 'smooth' })" class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Mulai Belanja</a>
-                        <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Pelajari Lebih Lanjut <span aria-hidden="true">→</span></a>
                     </div>
                 </div>
             </div>

@@ -167,7 +167,7 @@
                             </div>
 
                             <div class="mt-auto pt-6">
-                                <form action="{{ route('cart.add') }}" method="POST">
+                                <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form">
                                     @csrf
                                     <input type="hidden" name="product_id" :value="product.id">
                                     <input type="hidden" name="quantity" value="1"> <!-- Default quantity 1, bisa dikembangkan -->
@@ -196,7 +196,7 @@
             x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
             x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            class="fixed top-5 right-5 z-50 max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
+            class="fixed bottom-5 right-5 z-50 max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
             <div class="p-4">
                 <div class="flex items-start">
                     <div class="flex-shrink-0">

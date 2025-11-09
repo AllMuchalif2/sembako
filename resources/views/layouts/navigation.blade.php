@@ -20,13 +20,15 @@
                     </x-nav-link>
                     <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')" class="relative inline-flex items-center gap-1">
                         {{ __('Keranjang') }}
-                        @if (session('cart') && count(session('cart')) > 0)
-                            <span
-                                class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-blue-600 rounded-full">
-                                {{ count(session('cart')) }}
-                            </span>
-                        @endif
+                        <span
+                            class="cart-count inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-blue-600 rounded-full @if (!session('cart') || count(session('cart')) == 0) hidden @endif">
+                            {{ session('cart') ? count(session('cart')) : 0 }}
+                        </span>
                     </x-nav-link>
+
+
+
+
 
 
                     {{-- Tambahkan link lain di sini, misal: Produk, Tentang Kami --}}
@@ -56,7 +58,7 @@
                             <x-dropdown-link :href="route('customer.dashboard')">
                                 {{ __('Akun Saya') }}
                             </x-dropdown-link>
-                            
+
                             <x-dropdown-link :href="route('transactions.index')">
                                 {{ __('Riwayat Transaksi') }}
                             </x-dropdown-link>
@@ -116,8 +118,13 @@
                 {{ __('Keranjang') }}
                 @if (session('cart') && count(session('cart')) > 0)
                     <span
-                        class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-blue-600 rounded-full">
+                        class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-blue-600 rounded-full cart-count">
                         {{ count(session('cart')) }}
+                    </span>
+                @else
+                    <span
+                        class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-blue-600 rounded-full cart-count hidden">
+                        0
                     </span>
                 @endif
             </x-responsive-nav-link>

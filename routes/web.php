@@ -19,6 +19,7 @@ Route::get('/products', [LandingController::class, 'products'])->name('products.
 Route::get('/products/{product:slug}', [LandingController::class, 'show'])->name('product.show');
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::get('/cart/summary', [CartController::class, 'summary'])->name('cart.summary');
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 Route::patch('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');

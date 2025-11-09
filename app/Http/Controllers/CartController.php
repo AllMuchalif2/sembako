@@ -20,6 +20,23 @@ class CartController extends Controller
         return view('cart.index', compact('cartItems', 'total'));
     }
 
+    public function summary()
+    {
+        $cart = session()->get('cart', []);
+        $count = 0;
+        $total = 0;
+
+        foreach ($cart as $item) {
+            $count += $item['quantity'];
+            $total += $item['price'] * $item['quantity'];
+        }
+
+        return response()->json([
+            'count' => $count,
+            'total' => $total,
+            'total_formatted' => 'Rp' . number_format($total, 0, ',', '.'),
+        ]);
+    }
 
     public function add(Request $request)
     {
@@ -57,6 +74,10 @@ class CartController extends Controller
 
         session()->put('cart', $cart);
 
+        if ($request->expectsJson()) {
+            return $this->summary();
+        }
+
         return redirect()->back()->with('success', 'Produk berhasil ditambahkan ke keranjang!');
     }
 
@@ -68,6 +89,10 @@ class CartController extends Controller
         if (isset($cart[$id])) {
             unset($cart[$id]);
             session()->put('cart', $cart);
+        }
+
+        if (request()->expectsJson()) {
+            return $this->summary();
         }
 
         return redirect()->back()->with('success', 'Produk berhasil dihapus dari keranjang.');
@@ -100,6 +125,17 @@ class CartController extends Controller
             session()->flash('error', 'Produk tidak ditemukan di keranjang.');
         }
 
+        if ($request->expectsJson()) {
+            $item = $cart[$id] ?? null;
+            $subtotal = $item ? $item['price'] * $item['quantity'] : 0;
+
+            return response()->json([
+                'cart' => $this->summary()->getData(),
+                'item_quantity' => $item['quantity'] ?? 0,
+                'item_subtotal_formatted' => 'Rp' . number_format($subtotal, 0, ',', '.'),
+                'warning' => session()->get('warning'),
+            ]);
+        }
         return redirect()->back();
     }
 }

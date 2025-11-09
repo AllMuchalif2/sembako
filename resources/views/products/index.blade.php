@@ -94,8 +94,8 @@
                                                         <p class="text-base font-bold text-blue-500">
                                                             Rp{{ number_format($product->price, 0, ',', '.') }}
                                                         </p>
-                                                        <form action="{{ route('cart.add') }}" method="POST"
-                                                            class="relative z-10">
+                                                        <form action="{{ route('cart.add') }}" method="POST" class="add-to-cart-form relative z-10"
+                                                            >
                                                             @csrf
                                                             <input type="hidden" name="product_id"
                                                                 value="{{ $product->id }}">
