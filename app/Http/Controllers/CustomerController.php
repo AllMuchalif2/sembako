@@ -19,10 +19,8 @@ class CustomerController extends Controller
         // Ambil 3 transaksi terbaru pelanggan
         $latestTransactions = $user->transactions()->latest()->take(3)->get();
 
-        // Coba ambil alamat dari transaksi terakhir sebagai "alamat utama"
-        // Ini bisa dikembangkan lebih lanjut dengan membuat fitur manajemen alamat
-        $primaryAddress = $user->transactions()->latest()->first()->shipping_address ?? 'Belum ada alamat tersimpan';
 
-        return view('customer.dashboard', compact('user', 'latestTransactions', 'primaryAddress'));
+
+        return view('customer.dashboard', compact('user', 'latestTransactions'));
     }
 }

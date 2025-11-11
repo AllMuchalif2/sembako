@@ -16,7 +16,8 @@
                         <div class="space-y-2 text-gray-700">
                             <p><strong>Nama:</strong> {{ $user->name }}</p>
                             <p><strong>Email:</strong> {{ $user->email }}</p>
-                            <p><strong>Alamat Utama:</strong> {{ $primaryAddress }}</p>
+                            <p><strong>Nomer Handphone:</strong> {{ $user->phone }}</p>
+                            <p><strong>Alamat Utama:</strong> {{ $user->address ?? '-' }}</p>
                         </div>
                         <div class="mt-6 space-y-2">
                             <a href="{{ route('profile.edit') }}"
