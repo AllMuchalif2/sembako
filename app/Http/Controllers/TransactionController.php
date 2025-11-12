@@ -66,16 +66,15 @@ class TransactionController extends Controller
         if ($transaction->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
-
-        // Pastikan status saat ini adalah 'pending'
-        if ($transaction->status !== 'pending') {
-            return redirect()->back()->with('error', 'Pesanan yang sudah diproses tidak dapat dibatalkan.');
+        
+        if ($transaction->status !== 'pending' && $transaction->payment_status !== 'pending') {
+            return redirect()->back()->with('error', 'Pesanan yang sudah dikirim tidak dapat dibatalkan.');
         }
 
         // Ubah status transaksi
         $transaction->update([
             'status' => 'dibatalkan',
-            'payment_status' => 'cancel'
+            // 'payment_status' => 'cancel'
         ]);
 
         // Kembalikan stok produk

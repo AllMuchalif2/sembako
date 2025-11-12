@@ -60,7 +60,7 @@
                                     <th scope="col" class="px-6 py-3">Pelanggan</th>
                                     <th scope="col" class="px-6 py-3">Tanggal</th>
                                     <th scope="col" class="px-6 py-3">Total</th>
-                                    <th scope="col" class="px-6 py-3">Status Pembayaran</th>
+                                    {{-- <th scope="col" class="px-6 py-3">Status Pembayaran</th> --}}
                                     <th scope="col" class="px-6 py-3">Status Transaksi</th>
                                 </tr>
                             </thead>
@@ -79,7 +79,7 @@
                                         <td class="px-6 py-4">
                                             Rp{{ number_format($transaction->total_amount, 0, ',', '.') }}
                                         </td>
-                                        <td class="px-6 py-4">
+                                        {{-- <td class="px-6 py-4">
                                             <span
                                                 class="px-2 py-1 text-xs font-semibold rounded-full
                                             @if ($transaction->payment_status == 'settlement') bg-green-100 text-green-800
@@ -87,7 +87,7 @@
                                             @else bg-red-100 text-red-800 @endif">
                                                 {{ ucfirst($transaction->payment_status) }}
                                             </span>
-                                        </td>
+                                        </td> --}}
                                         <td class="px-6 py-4">
                                             <span
                                                 class="px-2 py-1 text-xs font-semibold rounded-full

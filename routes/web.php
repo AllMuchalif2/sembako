@@ -27,7 +27,7 @@ Route::patch('/cart/update/{id}', [CartController::class, 'update'])->name('cart
 Route::middleware('auth')->group(function () {
     // Rute dashboard pelanggan
     Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
-    
+
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
@@ -41,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::post('/checkout/mark-processed/{order_id}', [CheckoutController::class, 'markAsProcessed'])
+        ->name('checkout.mark-processed');
 });
 Route::post('/midtrans/callback', [CheckoutController::class, 'callback'])->name('midtrans.callback');
 

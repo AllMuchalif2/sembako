@@ -85,7 +85,7 @@ class CheckoutController extends Controller
             'user_id' => Auth::id(),
             'order_id' => 'INV-' . time(),
             'total_amount' => $totalPrice,
-            'payment_status' => 'pending',
+            // 'payment_status' => 'pending',
             'status' => 'pending',
             'shipping_address' => $request->shipping_address,
             'latitude' => $request->latitude,
@@ -146,12 +146,33 @@ class CheckoutController extends Controller
         }
     }
 
+    public function markAsProcessed(Request $request, $order_id)
+    {
+        Log::info('FAKE SUCCESS: Memicu status "diproses" untuk order.', ['order_id' => $order_id]);
+
+        $transaction = Transaction::where('order_id', $order_id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if ($transaction && $transaction->status === 'pending') {
+            // INI INTINYA: Langsung ubah status
+            $transaction->update(['status' => 'diproses']);
+
+            return response()->json(['success' => true, 'message' => 'Status diubah ke diproses.']);
+        }
+
+        if ($transaction) {
+            return response()->json(['success' => false, 'message' => 'Status sudah diproses.'], 200);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Transaksi tidak ditemukan.'], 404);
+    }
     public function callback(Request $request)
     {
         Log::info('Midtrans notification received.', $request->all());
 
         try {
-             // 1. Verifikasi Signature Key
+            // 1. Verifikasi Signature Key
             $signatureKey = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . config('midtrans.server_key'));
             if ($signatureKey != $request->signature_key) {
                 Log::warning('Midtrans callback: Invalid signature.', ['order_id' => $request->order_id]);
@@ -161,7 +182,7 @@ class CheckoutController extends Controller
             // 2. Ambil data langsung dari request Laravel yang sudah terbukti benar dari log
             $orderId = $request->order_id;
             $transactionStatus = $request->transaction_status;
-            $paymentType = $request->payment_type ?? null;
+            // $paymentType = $request->payment_type ?? null;
             $fraudStatus = $request->fraud_status;
 
             // 3. Cari transaksi berdasarkan order_id yang benar
@@ -182,9 +203,9 @@ class CheckoutController extends Controller
             if ($transactionStatus == 'settlement') {
                 // Transaksi berhasil dan dana sudah masuk.
                 $transaction->update([
-                    'payment_status' => 'settlement', 
-                    'status' => 'diproses', 
-                    'payment_type' => $paymentType
+                    'payment_status' => 'settlement',
+                    'status' => 'diproses',
+                    // 'payment_type' => $paymentType
                 ]);
                 Log::info('Midtrans callback: Transaction status updated to settlement.', ['order_id' => $orderId]);
             } else if ($transactionStatus == 'capture' && $fraudStatus == 'accept') {
@@ -192,14 +213,14 @@ class CheckoutController extends Controller
                 $transaction->update([
                     'payment_status' => 'settlement',
                     'status' => 'diproses',
-                    'payment_type' => $paymentType
+                    // 'payment_type' => $paymentType
                 ]);
                 Log::info('Midtrans callback: Transaction status updated to success after capture.', ['order_id' => $orderId]);
             } else if ($transactionStatus == 'pending') {
                 // Transaksi menunggu pembayaran
                 $transaction->update([
                     'payment_status' => 'pending',
-                    'payment_type' => $paymentType
+                    // 'payment_type' => $paymentType
                 ]);
             } else if ($transactionStatus == 'deny' || $transactionStatus == 'expire' || $transactionStatus == 'cancel') {
                 // Transaksi gagal, dibatalkan, atau kadaluarsa
@@ -218,7 +239,7 @@ class CheckoutController extends Controller
                 $transaction->update([
                     'payment_status' => 'challenge',
                     'status' => 'challenge',
-                    'payment_type' => $paymentType
+                    // 'payment_type' => $paymentType
                 ]);
                 Log::warning('Midtrans callback: Transaction is challenged by FDS.', ['order_id' => $orderId]);
             }

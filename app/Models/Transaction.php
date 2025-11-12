@@ -15,14 +15,14 @@ class Transaction extends Model
         'user_id',
         'order_id',
         'total_amount',
-        'payment_status',
+        // 'payment_status',
         'status',
         'shipping_address',
         'latitude',
         'longitude',
         'notes',
         'snap_token',
-        'payment_type'
+        // 'payment_type'
     ];
 
     public function getRouteKeyName()

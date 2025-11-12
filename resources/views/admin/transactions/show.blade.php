@@ -131,12 +131,13 @@
                         <div class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
                             <p><strong>Pelanggan:</strong> {{ $transaction->user->name }}</p>
                             <p><strong>Email:</strong> {{ $transaction->user->email }}</p>
+                            <p><strong>Nomer HP:</strong> {{ $transaction->user->phone }}</p>
                             <p><strong>Tanggal Pesan:</strong> {{ $transaction->created_at->format('d M Y, H:i') }}</p>
-                            <p><strong>Status Pembayaran:</strong> <span
-                                    class="font-semibold">{{ ucfirst($transaction->payment_status) }}</span></p>
-                            <p><strong>Metode Pembayaran:</strong>
+                            {{-- <p><strong>Status Pembayaran:</strong> <span
+                                    class="font-semibold">{{ ucfirst($transaction->payment_status) }}</span></p> --}}
+                            {{-- <p><strong>Metode Pembayaran:</strong>
                                 {{ $transaction->payment_type ? ucfirst(str_replace('_', ' ', $transaction->payment_type)) : 'N/A' }}
-                            </p>
+                            </p> --}}
                         </div>
                     </div>
 

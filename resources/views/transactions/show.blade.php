@@ -34,7 +34,8 @@
                             <dd class="mt-1 text-sm text-gray-900">{{ $transaction->created_at->format('d M Y, H:i') }}
                             </dd>
                         </div>
-                        <div>
+                        
+                        {{-- <div>
                             <dt class="text-sm font-medium text-gray-500">Status Pembayaran</dt>
                             <dd class="mt-1 text-sm text-gray-900">
                                 <span
@@ -45,7 +46,7 @@
                                     {{ ucfirst($transaction->payment_status) }}
                                 </span>
                             </dd>
-                        </div>
+                        </div> --}}
                         <div>
                             <dt class="text-sm font-medium text-gray-500">Status Transaksi</dt>
                             <dd class="mt-1 text-sm text-gray-900">
@@ -128,7 +129,7 @@
                         @endif
 
                         {{-- Aksi Pembatalan oleh Pelanggan --}}
-                        @if ($transaction->status == 'pending')
+                        @if ($transaction->status == 'pending' || $transaction->status == 'diproses')
                             <div class="mt-6 border-t pt-4">
                                 <p class="text-sm text-gray-600 mb-2">Ingin membatalkan pesanan ini?</p>
                                 <form action="{{ route('transactions.cancel', $transaction) }}" method="POST"
