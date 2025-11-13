@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Promo;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -12,8 +13,12 @@ class LandingController extends Controller
     {
         // Ambil 8 produk terbaru untuk ditampilkan di landing page
         $products = Product::latest()->take(8)->get();
-        
-        return view('welcome', compact('products'));
+        $promos = Promo::where('status', 'active')->get();
+
+        return view('welcome', [
+            'products' => $products,
+            'promos' => $promos,
+        ]);
     }
 
     public function products(Request $request)

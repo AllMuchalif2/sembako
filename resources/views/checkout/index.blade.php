@@ -34,7 +34,7 @@
                                 Lengkap</label>
                             <textarea id="shipping_address" name="shipping_address" rows="3"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                placeholder="Contoh: Jl. Pahlawan No. 123, Kel. Suka Maju, Kec. Damai" required>{{ old('shipping_address') }}</textarea>
+                                placeholder="Contoh: Jl. Pahlawan No. 123, Kel. Suka Maju, Kec. Damai" required>{{ old('shipping_address',$user->address ?? "") }}</textarea>
                             @error('shipping_address')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror

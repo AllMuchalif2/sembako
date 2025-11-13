@@ -65,7 +65,7 @@ class ProductController extends Controller
 
         // Handle file upload
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
+            $imagePath = $request->file('gambar')->store('products', 'public');
             $validated['image'] = $imagePath;
         }
 

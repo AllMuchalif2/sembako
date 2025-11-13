@@ -30,6 +30,8 @@ class CheckoutController extends Controller
      */
     public function index()
     {
+        $user = Auth::user();
+
         $cartItems = session()->get('cart', []);
         if (empty($cartItems)) {
             return redirect()->route('cart.index')->with('error', 'Keranjang Anda kosong!');
@@ -49,6 +51,7 @@ class CheckoutController extends Controller
             'cartItems' => $cartItems,
             'subtotal' => $subtotal,
             'finalTotal' => $finalTotal,
+            'user' => $user,
         ]);
     }
 

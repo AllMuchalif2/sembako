@@ -13,14 +13,28 @@ class TransactionController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Transaction::with('user')->latest();
+        $query = Transaction::with('user');
 
-        // Filter berdasarkan status jika ada
+        // Filter berdasarkan Order ID
+        if ($request->filled('order_id')) {
+            $query->where('order_id', 'like', '%' . $request->order_id . '%');
+        }
+
+        // Filter berdasarkan status transaksi
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        $transactions = $query->paginate(15)->withQueryString();
+        // Filter berdasarkan rentang tanggal
+        if ($request->filled('start_date')) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $transactions = $query->latest()->paginate(10)->withQueryString();
 
         return view('admin.transactions.index', compact('transactions'));
     }

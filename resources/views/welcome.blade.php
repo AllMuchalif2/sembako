@@ -58,6 +58,56 @@
         </div>
     </div>
 
+    {{-- Promo Section --}}
+    <div class="bg-white">
+        <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Promo & Diskon Spesial</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-lg leading-8 text-gray-600">
+                    Gunakan kode di bawah ini saat checkout untuk mendapatkan potongan harga spesial!
+                </p>
+            </div>
+
+            @if(isset($promos) && $promos->isNotEmpty())
+                <div class="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    @foreach ($promos as $promo)
+                        <div x-data="{ code: '{{ $promo->code }}', tooltip: 'Salin Kode' }" class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                            <div class="p-6 flex-grow flex flex-col">
+                                <div class="mb-4">
+                                    @if($promo->type == 'percentage')
+                                        <span class="inline-block bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">Diskon {{ $promo->value }}%</span>
+                                    @else
+                                        <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">Potongan Rp{{ number_format($promo->value, 0, ',', '.') }}</span>
+                                    @endif
+                                </div>
+                                <h3 class="text-lg font-bold text-gray-900">{{ $promo->name }}</h3>
+                                <p class="mt-2 text-sm text-gray-600 flex-grow">{{ $promo->description }}</p>
+                                <div class="mt-4 space-y-2 text-xs text-gray-500">
+                                    @if($promo->min_purchase)
+                                        <p><i class="fa-solid fa-basket-shopping fa-fw mr-1"></i> Min. belanja Rp{{ number_format($promo->min_purchase, 0, ',', '.') }}</p>
+                                    @endif
+                                    @if($promo->end_date)
+                                        <p><i class="fa-solid fa-calendar-xmark fa-fw mr-1"></i> Berlaku hingga {{ \Carbon\Carbon::parse($promo->end_date)->isoFormat('D MMMM YYYY') }}</p>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 p-4 border-t border-gray-200">
+                                <div class="flex items-center justify-between rounded-md border-2 border-dashed border-gray-300 bg-white px-4 py-2">
+                                    <span class="text-lg font-bold text-gray-800 tracking-wider">{{ $promo->code }}</span>
+                                    <button x-on:click="navigator.clipboard.writeText(code); tooltip = 'Tersalin!'; setTimeout(() => tooltip = 'Salin Kode', 2000)" 
+                                            class="relative text-gray-500 hover:text-blue-600 transition-colors"
+                                            x-tooltip.top="tooltip">
+                                        <i class="fa-regular fa-copy text-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    </div>
+
     {{-- Footer --}}
     <footer class="bg-white border-t border-gray-200">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
