@@ -59,7 +59,7 @@
                                         </p>
                                         <div class="mt-3 text-right">
                                             {{-- Asumsi ada route untuk detail transaksi --}}
-                                            <a href="{{ route('transactions.show', $transaction->id) }}"
+                                            <a href="{{ route('transactions.show', $transaction->order_id) }}"
                                                 class="text-blue-600 hover:text-blue-800 text-sm font-medium">Lihat
                                                 Detail &rarr;</a>
                                         </div>
