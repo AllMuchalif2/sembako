@@ -94,14 +94,55 @@
                                     </li>
                                 @endforeach
                             </ul>
-                            <div class="border-t border-gray-200 pt-4 mt-4">
-                                <div class="flex justify-between text-base font-medium text-gray-900">
-                                    <p>Subtotal</p>
-                                    <p>Rp{{ number_format($total, 0, ',', '.') }}</p>
+
+                            <!-- Form Promo Code -->
+                            <div class="mt-6">
+                                <div id="promo-form-container" class="{{ Session::has('promo') ? 'hidden' : '' }}">
+                                    <label for="promo_code" class="block text-sm font-medium text-gray-700">Punya kode promo?</label>
+                                    <div class="mt-1 flex rounded-md shadow-sm">
+                                        <input type="text" name="promo_code" id="promo_code" class="block w-full flex-1 rounded-none rounded-l-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm uppercase">
+                                        <button type="button" id="apply-promo-btn" class="inline-flex items-center rounded-r-md border border-l-0 border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                            Terapkan
+                                        </button>
+                                    </div>
                                 </div>
-                                <p class="mt-0.5 text-sm text-gray-500">Pajak dan ongkir akan dihitung nanti.</p>
+                                <!-- Applied Promo Display -->
+                                <div id="applied-promo-container" class="{{ Session::has('promo') ? '' : 'hidden' }}">
+                                    <p class="text-sm font-medium text-gray-700">Promo diterapkan:</p>
+                                    <div class="mt-1 flex items-center justify-between rounded-md bg-green-50 border border-green-200 px-3 py-2">
+                                        <span id="promo-code-display" class="text-sm font-bold text-green-800 uppercase">{{ Session::get('promo.code') }}</span>
+                                        <button type="button" id="remove-promo-btn" class="text-gray-400 hover:text-red-600" title="Hapus Promo">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="promo-feedback" class="text-xs mt-2"></div>
+                            </div>
+
+                            <div class="border-t border-gray-200 pt-4 mt-4">
+                                <dl class="space-y-2 text-sm text-gray-700">
+                                    <div class="flex justify-between">
+                                        <dt>Subtotal</dt>
+                                        <dd class="font-medium" id="subtotal-amount">Rp{{ number_format($subtotal, 0, ',', '.') }}</dd>
+                                    </div>
+                                    <div id="discount-row" class="flex justify-between {{ Session::has('promo') ? '' : 'hidden' }}">
+                                        <dt class="flex items-center">
+                                            <span>Diskon</span>
+                                        </dt>
+                                        <dd id="discount-amount" class="font-medium text-green-600">-Rp{{ number_format(Session::get('promo.discount_amount', 0), 0, ',', '.') }}</dd>
+                                    </div>
+                                    <div class="flex justify-between border-t border-gray-200 pt-2 text-base font-bold text-gray-900">
+                                        <dt>Total</dt>
+                                        <dd id="final-total-amount">Rp{{ number_format($finalTotal, 0, ',', '.') }}</dd>
+                                    </div>
+                                </dl>
+
+                                <p class="mt-2 text-xs text-gray-500">Pajak dan ongkir akan dihitung nanti.</p>
+
                                 <div class="mt-6">
-                                    <button type="submit"
+                                    <button type="submit" id="checkout-button"
                                         class="w-full flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700">
                                         Lanjut ke Pembayaran
                                     </button>
@@ -119,6 +160,7 @@
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
         <script>
+            // --- LOGIKA PETA LEAFLET ---
             var map;
             var marker;
             var defaultLat = -6.873167464166432;
@@ -181,6 +223,129 @@
 
             // Pastikan peta di-render ulang dengan benar jika ada masalah tampilan
             map.invalidateSize();
+
+            // --- LOGIKA PROMO CODE ---
+            document.addEventListener('DOMContentLoaded', function() {
+                const applyBtn = document.getElementById('apply-promo-btn');
+                const removeBtn = document.getElementById('remove-promo-btn');
+                const promoInput = document.getElementById('promo_code');
+                const feedbackDiv = document.getElementById('promo-feedback');
+                const discountRow = document.getElementById('discount-row');
+                const discountAmountEl = document.getElementById('discount-amount');
+                const finalTotalAmountEl = document.getElementById('final-total-amount');
+                const promoCodeDisplay = document.getElementById('promo-code-display');
+                const promoFormContainer = document.getElementById('promo-form-container');
+                const appliedPromoContainer = document.getElementById('applied-promo-container');
+
+                applyBtn.addEventListener('click', function() {
+                    const promoCode = promoInput.value.trim();
+                    if (!promoCode) {
+                        showFeedback('Silakan masukkan kode promo.', 'red');
+                        return;
+                    }
+
+                    setLoading(applyBtn, true);
+
+                    fetch('{{ route('promo.apply') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({ promo_code: promoCode })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showFeedback(data.message, 'green');
+                            updateSummary(data.discount_formatted, data.new_total_formatted, promoCode);
+                        } else {
+                            showFeedback(data.message, 'red');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showFeedback('Terjadi kesalahan. Silakan coba lagi.', 'red');
+                    })
+                    .finally(() => {
+                        setLoading(applyBtn, false);
+                    });
+                });
+
+                removeBtn.addEventListener('click', function() {
+                    setLoading(removeBtn, true);
+                    showFeedback('', 'green'); // Clear feedback
+
+                    fetch('{{ route('promo.remove') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showFeedback(data.message, 'green');
+                            resetSummary(data.new_total_formatted);
+                        } else {
+                            showFeedback(data.message || 'Gagal menghapus promo.', 'red');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showFeedback('Terjadi kesalahan. Silakan coba lagi.', 'red');
+                    })
+                    .finally(() => {
+                        setLoading(removeBtn, false);
+                    });
+                });
+
+                function showFeedback(message, color) {
+                    feedbackDiv.textContent = message;
+                    feedbackDiv.className = `text-xs mt-2 text-${color}-600`;
+                }
+
+                function updateSummary(discount, total, code) {
+                    discountRow.classList.remove('hidden');
+                    discountAmountEl.textContent = discount;
+                    finalTotalAmountEl.textContent = total; 
+                    promoCodeDisplay.textContent = code.toUpperCase();
+                    promoFormContainer.classList.add('hidden');
+                    appliedPromoContainer.classList.remove('hidden');
+                }
+
+                function resetSummary(newTotal) {
+                    discountRow.classList.add('hidden');
+                    finalTotalAmountEl.textContent = newTotal;
+                    promoInput.value = ''; // Clear input field
+                    promoFormContainer.classList.remove('hidden');
+                    appliedPromoContainer.classList.add('hidden');
+                }
+
+                function setLoading(button, isLoading) {
+                    button.disabled = isLoading;
+
+                    if (isLoading) {
+                        if (button.id === 'apply-promo-btn') {
+                            // Simpan konten asli sebelum mengubahnya
+                            button.dataset.originalContent = button.innerHTML;
+                            button.innerHTML = '<svg class="animate-spin h-5 w-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+                        } else {
+                            // Spinner for remove button
+                            button.classList.add('animate-spin');
+                        }
+                    } else {
+                        if (button.id === 'apply-promo-btn' && button.dataset.originalContent) {
+                            // Kembalikan konten asli
+                            button.innerHTML = button.dataset.originalContent;
+                        }
+                        button.classList.remove('animate-spin'); // Ini akan bekerja untuk tombol hapus
+                    }
+                }
+            });
         </script>
     @endpush
 </x-app-layout>

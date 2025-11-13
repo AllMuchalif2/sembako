@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('order_id')->unique();
             $table->decimal('total_amount', 15, 2);
+            $table->string('promo_code')->nullable();
+            $table->decimal('discount_amount', 15, 2)->default(0);
             $table->string('snap_token')->nullable();
             // $table->string('payment_type')->nullable();
             // $table->string('payment_status')->default('pending'); // pending, success, failed

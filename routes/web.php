@@ -2,15 +2,17 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\PromoController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CustomerController;
 
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PromoController as AdminPromoController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionController;
 
 
@@ -44,13 +46,22 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/checkout/mark-processed/{order_id}', [CheckoutController::class, 'markAsProcessed'])
         ->name('checkout.mark-processed');
+
+        
+    Route::post('/promo/apply', [PromoController::class, 'apply'])->name('promo.apply');
+    Route::post('/promo/remove', [PromoController::class, 'remove'])->name('promo.remove');
 });
 Route::post('/midtrans/callback', [CheckoutController::class, 'callback'])->name('midtrans.callback');
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
     Route::resource('categories', CategoryController::class);
+    
     Route::resource('products', ProductController::class);
+    
+    Route::resource('promos', AdminPromoController::class);
+    
     Route::get('transactions', [AdminTransactionController::class, 'index'])->name('transactions.index');
     Route::get('transactions/{transaction}', [AdminTransactionController::class, 'show'])->name('transactions.show');
     Route::patch('transactions/{transaction}/status', [AdminTransactionController::class, 'updateStatus'])->name('transactions.updateStatus');

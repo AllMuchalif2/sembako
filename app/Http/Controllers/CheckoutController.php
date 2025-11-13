@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Promo;
 use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
@@ -33,12 +35,21 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', 'Keranjang Anda kosong!');
         }
 
-        $total = 0;
+        $subtotal = 0;
         foreach ($cartItems as $item) {
-            $total += $item['price'] * $item['quantity'];
+            $subtotal += $item['price'] * $item['quantity'];
         }
 
-        return view('checkout.index', compact('cartItems', 'total'));
+        // Cek jika ada promo di session
+        $promo = Session::get('promo');
+        $discountAmount = $promo['discount_amount'] ?? 0;
+        $finalTotal = $subtotal - $discountAmount;
+
+        return view('checkout.index', [
+            'cartItems' => $cartItems,
+            'subtotal' => $subtotal,
+            'finalTotal' => $finalTotal,
+        ]);
     }
 
     /**
@@ -59,7 +70,7 @@ class CheckoutController extends Controller
         }
 
         // Hitung total harga dan siapkan item detail
-        $totalPrice = 0;
+        $subtotal = 0;
         $item_details = [];
         foreach ($cartItems as $id => $item) {
             $product = Product::find($id);
@@ -71,7 +82,7 @@ class CheckoutController extends Controller
                 Log::warning('Checkout process: Insufficient stock for product. Redirecting to cart index.', ['product_id' => $id, 'requested_quantity' => $item['quantity'], 'available_stock' => $product->stock, 'user_id' => Auth::id() ?? 'guest']);
                 return redirect()->route('cart.index')->with('error', 'Stok produk ' . $item['name'] . ' tidak mencukupi.');
             }
-            $totalPrice += $item['price'] * $item['quantity'];
+            $subtotal += $item['price'] * $item['quantity'];
             $item_details[] = [
                 'id' => $id,
                 'price' => $item['price'],
@@ -80,11 +91,20 @@ class CheckoutController extends Controller
             ];
         }
 
+        // Hitung diskon dari session
+        $promo = Session::get('promo');
+        $discountAmount = $promo['discount_amount'] ?? 0;
+        $promoCode = $promo['code'] ?? null;
+        $finalTotal = $subtotal - $discountAmount;
+
+
         // Buat transaksi baru di database
         $transaction = Transaction::create([
             'user_id' => Auth::id(),
             'order_id' => 'INV-' . time(),
-            'total_amount' => $totalPrice,
+            'total_amount' => $finalTotal,
+            'promo_code' => $promoCode,
+            'discount_amount' => $discountAmount,
             // 'payment_status' => 'pending',
             'status' => 'pending',
             'shipping_address' => $request->shipping_address,
@@ -92,6 +112,12 @@ class CheckoutController extends Controller
             'longitude' => $request->longitude,
             'notes' => $request->notes,
         ]);
+
+        // Jika promo digunakan, catat penggunaannya
+        if ($promo) {
+            $transaction->promoUsages()->create(['user_id' => Auth::id(), 'promo_id' => $promo['id']]);
+            Promo::find($promo['id'])->increment('times_used');
+        }
 
         // Simpan item transaksi
         foreach ($cartItems as $id => $item) {
@@ -132,6 +158,7 @@ class CheckoutController extends Controller
             $transaction->save();
 
             session()->forget('cart');
+            session()->forget('promo'); // Hapus promo setelah berhasil checkout
             Log::info('Checkout process: Snap token generated, cart cleared, redirecting to payment view.', ['order_id' => $transaction->order_id, 'user_id' => Auth::id() ?? 'guest']);
 
             return view('checkout.payment', ['snapToken' => $snapToken, 'client_key' => config('midtrans.client_key'), 'order' => $transaction]);

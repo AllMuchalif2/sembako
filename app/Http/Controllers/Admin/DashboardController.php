@@ -20,9 +20,8 @@ class DashboardController extends Controller
         // Pesanan baru yang sudah dibayar dan siap diproses
         $newOrders = Transaction::where('status', 'diproses')->count();
 
-        // Pendapatan hari ini dari transaksi yang pembayarannya berhasil (settlement)
         $todaysRevenue = Transaction::whereDate('created_at', Carbon::today())
-            ->where('payment_status', 'settlement')
+            ->where('status', 'selesai')
             ->sum('total_amount');
 
         // Total pelanggan (dengan role_id 2)

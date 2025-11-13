@@ -116,19 +116,6 @@
             </tr>
 
             <tr class="heading">
-                <td>Metode Pembayaran</td>
-                <td>Status Pembayaran</td>
-            </tr>
-            <tr class="details">
-                <td>
-                    {{ $transaction->payment_type ? ucfirst(str_replace('_', ' ', $transaction->payment_type)) : 'N/A' }}
-                </td>
-                <td>
-                    {{ ucfirst($transaction->payment_status) }}
-                </td>
-            </tr>
-
-            <tr class="heading">
                 <td>Item</td>
                 <td>Harga</td>
             </tr>
@@ -143,6 +130,22 @@
                     </td>
                 </tr>
             @endforeach
+
+            <tr class="item">
+                <td></td>
+                <td>
+                   Subtotal: Rp{{ number_format($transaction->total_amount + $transaction->discount_amount, 0, ',', '.') }}
+                </td>
+            </tr>
+
+            @if($transaction->promo_code)
+            <tr class="item">
+                <td></td>
+                <td style="color: green;">
+                   Diskon ({{ $transaction->promo_code }}): -Rp{{ number_format($transaction->discount_amount, 0, ',', '.') }}
+                </td>
+            </tr>
+            @endif
 
             <tr class="total">
                 <td></td>

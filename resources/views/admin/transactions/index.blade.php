@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800  leading-tight">
             {{ __('Manajemen Transaksi') }}
         </h2>
     </x-slot>
@@ -66,12 +66,12 @@
                             </thead>
                             <tbody>
                                 @forelse ($transactions as $transaction)
-                                    <tr class="bg-white border-b  dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
+                                    <tr class="bg-white border-b  hover:bg-gray-50  cursor-pointer"
                                         title="Klik untuk melihat detail transaksi"
                                         data-href="{{ route('admin.transactions.show', $transaction) }}">
                                         <td class="px-6 py-4">{{ $loop->iteration }}</td>
                                         <th scope="row"
-                                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
                                             {{ $transaction->order_id }}
                                         </th>
                                         <td class="px-6 py-4">{{ $transaction->user->name }}</td>

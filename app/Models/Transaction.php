@@ -15,6 +15,8 @@ class Transaction extends Model
         'user_id',
         'order_id',
         'total_amount',
+        'promo_code',
+        'discount_amount',
         // 'payment_status',
         'status',
         'shipping_address',
@@ -39,5 +41,10 @@ class Transaction extends Model
     public function items()
     {
         return $this->hasMany(TransactionItem::class);
+    }
+
+    public function promoUsages()
+    {
+        return $this->hasMany(PromoUsage::class);
     }
 }

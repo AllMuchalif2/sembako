@@ -10,19 +10,19 @@
 
 <aside x-data="{ userMenuOpen: false }" 
     :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
-    class="fixed lg:static inset-y-0 left-0 z-50 bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 min-h-screen w-64 transform transition-transform duration-300 ease-in-out flex flex-col">
+    class="fixed lg:static inset-y-0 left-0 z-50 bg-white border-r border-gray-100 min-h-screen w-64 transform transition-transform duration-300 ease-in-out flex flex-col">
 
     {{-- Logo --}}
-    <div class="p-6 border-b border-gray-100 dark:border-gray-700">
+    <div class="p-6 border-b border-gray-100">
         <a href="{{ route('admin.dashboard') }}" class="flex justify-center">
-            <x-application-logo class="block h-12 w-auto fill-current text-gray-800 dark:text-gray-200" />
+            <x-application-logo class="block h-12 w-auto fill-current text-gray-800" />
         </a>
     </div>
 
     {{-- User Dropdown --}}
-    <div class="border-b border-gray-100 dark:border-gray-700 px-4 py-4">
+    <div class="border-b border-gray-100 px-4 py-4">
         <button @click="userMenuOpen = !userMenuOpen"
-            class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
+            class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
             <div class="flex items-center">
                 <i class="fa-solid fa-user-circle mr-3 text-lg"></i>
                 <span>{{ Auth::user()->name }}</span>
@@ -37,7 +37,7 @@
             x-transition:leave-end="opacity-0 -translate-y-2" class="mt-1 space-y-1">
 
             <a href="{{ route('profile.edit') }}"
-                class="flex items-center px-4 py-2 text-sm text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors">
+                class="flex items-center px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors">
                 <i class="fa-solid fa-user-edit mr-3"></i>
                 {{ __('Profile') }}
             </a>
@@ -45,7 +45,7 @@
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit"
-                    class="w-full flex items-center px-4 py-2 text-sm text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors text-left">
+                    class="w-full flex items-center px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors text-left">
                     <i class="fa-solid fa-sign-out-alt mr-3"></i>
                     {{ __('Log Out') }}
                 </button>
@@ -58,8 +58,8 @@
         <a href="{{ route('admin.dashboard') }}"
             class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors 
             {{ request()->routeIs('admin.dashboard') 
-                ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' 
-                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+                ? 'bg-gray-100 text-gray-900' 
+                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
             <i class="fa-solid fa-home mr-3"></i>
             {{ __('Dashboard') }}
         </a>
@@ -67,8 +67,8 @@
         <a href="{{ route('admin.categories.index') }}"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
             {{ request()->routeIs('admin.categories.*') 
-                ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' 
-                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+                ? 'bg-gray-100 text-gray-900' 
+                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
             <i class="fa-solid fa-tags mr-3"></i>
             {{ __('Kategori') }}
         </a>
@@ -76,25 +76,34 @@
         <a href="{{ route('admin.products.index') }}"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
             {{ request()->routeIs('admin.products.*') 
-                ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' 
-                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+                ? 'bg-gray-100 text-gray-900' 
+                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
             <i class="fa-solid fa-box mr-3"></i>
-            {{ __('Product') }}
+            {{ __('Produk') }}
+        </a>
+
+        <a href="{{ route('admin.promos.index') }}"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
+            {{ request()->routeIs('admin.promos.*') 
+                ? 'bg-gray-100 text-gray-900' 
+                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+            <i class="fa-solid fa-percent mr-3"></i>
+            {{ __('Promo') }}
         </a>
 
         <a href="{{ route('admin.transactions.index') }}"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
             {{ request()->routeIs('admin.transactions.*') 
-                ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' 
-                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+                ? 'bg-gray-100 text-gray-900' 
+                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
             <i class="fa-solid fa-receipt mr-3"></i>
             {{ __('Transaksi') }}
         </a>
     </nav>
 
     {{-- Theme Toggle (Dark/Light) --}}
-    <div class="p-4 border-t border-gray-100 dark:border-gray-700 flex justify-center">
+    {{-- <div class="p-4 border-t border-gray-100 flex justify-center">
         <x-theme-toggle />
-    </div>
+    </div> --}}
 
 </aside>
