@@ -12,11 +12,30 @@ class TransactionController extends Controller
     /**
      * Menampilkan daftar riwayat transaksi pengguna.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = Transaction::where('user_id', Auth::id())
-            ->latest()
-            ->paginate(10);
+        $query = Transaction::where('user_id', Auth::id());
+
+        // Filter berdasarkan Order ID (nama)
+        if ($request->filled('order_id')) {
+            $query->where('order_id', 'like', '%' . $request->order_id . '%');
+        }
+
+        // Filter berdasarkan status transaksi
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter berdasarkan rentang tanggal
+        if ($request->filled('start_date')) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $transactions = $query->latest()->paginate(10)->withQueryString();
 
         return view('transactions.index', compact('transactions'));
     }

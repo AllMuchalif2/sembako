@@ -9,9 +9,49 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
+                    <!-- Filter Form -->
+                    <form method="GET" action="{{ route('transactions.index') }}" class="mb-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                            <div>
+                                <label for="order_id" class="block text-sm font-medium text-gray-700">Nama (Order ID)</label>
+                                <input type="text" name="order_id" id="order_id" value="{{ request('order_id') }}"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                    placeholder="Cari berdasarkan Order ID">
+                            </div>
+                            <div>
+                                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                                <select name="status" id="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                    <option value="">Semua Status</option>
+                                    <option value="pending" @selected(request('status') == 'pending')>Pending</option>
+                                    <option value="diproses" @selected(request('status') == 'diproses')>Diproses</option>
+                                    <option value="dikirim" @selected(request('status') == 'dikirim')>Dikirim</option>
+                                    <option value="selesai" @selected(request('status') == 'selesai')>Selesai</option>
+                                    <option value="dibatalkan" @selected(request('status') == 'dibatalkan')>Dibatalkan</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="start_date" class="block text-sm font-medium text-gray-700">Tanggal Mulai</label>
+                                <input type="date" name="start_date" id="start_date" value="{{ request('start_date') }}"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label for="end_date" class="block text-sm font-medium text-gray-700">Tanggal Akhir</label>
+                                <input type="date" name="end_date" id="end_date" value="{{ request('end_date') }}"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Filter</button>
+
+                                <a href="{{ route('transactions.index') }}"
+                                    class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Reset</a>
+                            </div>
+                        </div>
+                    </form>
+
                     @if ($transactions->count())
                         <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
+                            <table class="min-w-full divide-y divide-gray-200" id="transactionsTb">
                                 <thead class="bg-gray-50">
                                     <tr>
                                         <th scope="col"
@@ -31,17 +71,15 @@
                                             Status Transaksi
                                         </th>
                                         {{-- <th scope="col"
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Status Pembayaran
-                                        </th> --}}
-                                        <th scope="col" class="relative px-6 py-3">
-                                            <span class="sr-only">Aksi</span>
-                                        </th>
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Status Pembayaran
+                                    </th> --}}
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach ($transactions as $transaction)
-                                        <tr>
+                                        <tr class="hover:bg-gray-100 cursor-pointer"
+                                            data-href="{{ route('transactions.show', $transaction) }}">
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                 {{ $transaction->order_id }}
                                             </td>
@@ -71,10 +109,6 @@
                                                     {{ ucfirst($transaction->payment_status) }}
                                                 </span>
                                             </td> --}}
-                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <a href="{{ route('transactions.show', $transaction) }}"
-                                                    class="text-blue-600 hover:text-blue-900">Lihat Detail</a>
-                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -85,11 +119,25 @@
                         </div>
                     @else
                         <div class="text-center py-12">
-                            <p class="text-gray-500">Anda belum memiliki riwayat transaksi.</p>
+                            <p class="text-gray-500">Tidak ada riwayat transaksi.</p>
                         </div>
                     @endif
                 </div>
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const rows = document.querySelectorAll('tr[data-href]');
+
+                rows.forEach(row => {
+                    row.addEventListener('click', () => {
+                        window.location.href = row.dataset.href;
+                    });
+                });
+            });
+        </script>
+    @endpush
 </x-app-layout>
