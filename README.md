@@ -1,61 +1,235 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Tech Stack — MyMart Sembako App
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+---
 
-## About Laravel
+### Backend
+- Laravel — Framework PHP berbasis MVC.
+- Laravel Breeze — Starter kit autentikasi menggunakan Blade dan route auth standar.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Database
+- MySQL — Sistem manajemen basis data untuk seluruh fitur.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+### Frontend & UI
+- Tailwind CSS — Framework CSS utility-first untuk styling.
+- Simple-DataTables — Plugin tabel interaktif (search, sort, pagination) di halaman admin.
+- Leaflet.js — Library peta untuk fitur lokasi checkout (latitude dan longitude).
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Build Tools
+- Vite — Bundler modern untuk compiling asset (JS & CSS).
+- npm — Package manager untuk dependency frontend.
+- Composer — Package manager untuk dependency PHP/Laravel.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+### Testing
+- PHPUnit — Framework pengujian yang digunakan oleh Laravel.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Dokumentasi Alur Fungsional Aplikasi
 
-### Premium Partners
+## 1. Alur Autentikasi (Auth)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Alur Login Pengguna
+- **Rute**  
+  - GET /login  
+  - POST /login
+- **Middleware**: guest  
+- **Controller**: `app/Http/Controllers/Auth/AuthenticatedSessionController.php`  
+  - Metode: `create()`, `store()`
+- **Request**: `app/Http/Requests/Auth/LoginRequest.php`
+- **Model**: `app/Models/User.php`
+- **View**: `resources/views/auth/login.blade.php`
+- **Database**: `users` (email, password)
 
-## Contributing
+### Alur "Ingat Saya" (Remember Me)
+- **Terkait**: Alur Login
+- **View**: `resources/views/auth/login.blade.php` (input `remember`)
+- **Database**: `users` (remember_token)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Alur Registrasi Pengguna
+- **Rute**  
+  - GET /register  
+  - POST /register
+- **Middleware**: guest
+- **Controller**: `app/Http/Controllers/Auth/RegisteredUserController.php`  
+  - Metode: `create()`, `store()`
+- **Model**: `app/Models/User.php` (booted: role_id = 2)
+- **View**: `resources/views/auth/register.blade.php`
+- **Database**: `users` (name, email, password, role_id)
 
-## Code of Conduct
+### Alur Logout Pengguna
+- **Rute**: POST /logout  
+- **Middleware**: auth  
+- **Controller**: `AuthenticatedSessionController@destroy`
+- **View**: dipicu dari `resources/views/layouts/navigation.blade.php`
+- **Database**: tidak ada (session)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 2. Alur Publik & Katalog
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Alur Menampilkan Halaman Utama (Homepage)
+- **Rute**: GET /
+- **Controller**: `LandingController@index`
+- **Model**: `Product`, `Promo`
+- **View**: `welcome.blade.php`
+- **Database**: products (read), promos (read where status = active)
 
-## License
+### Alur Menampilkan Katalog Produk
+- **Rute**: GET /products
+- **Controller**: `LandingController@products`
+- **Model**: `Product`, `Category`
+- **View**: `products/index.blade.php`
+- **Database**: products (read + filter/sort), categories (read)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Alur Menampilkan Modal Produk (Quick View)
+- **Rute**: GET /products/{product:slug}
+- **Controller**: `LandingController@show`
+- **Model**: `Product`
+- **JavaScript**: `resources/js/app.js`
+- **View Komponen**: `components/modal.blade.php`
+- **Database**: products (read), categories (via load)
+
+---
+
+## 3. Alur Keranjang & Transaksi (User)
+
+### Alur Manajemen Keranjang
+- **Rute**  
+  - POST /cart/add  
+  - PATCH /cart/update/{id}  
+  - DELETE /cart/remove/{id}  
+  - GET /cart/summary
+- **Controller**: `CartController`  
+  - Metode: `add`, `update`, `remove`, `summary`
+- **JavaScript**: `resources/js/cart.js`
+- **Model**: `Product`
+- **View**: `cart/index.blade.php`
+- **Database**: tidak ada (session)
+
+### Alur Checkout (Termasuk Peta & Promo)
+- **Rute**  
+  - POST /promo/apply  
+  - POST /promo/remove  
+  - GET /checkout  
+  - POST /checkout
+- **Middleware**: auth
+- **Controller**  
+  - `PromoController`: `apply`, `remove`  
+  - `CheckoutController`: `index`, `process`
+- **Model**  
+  - `Promo`, `Transaction`, `TransactionItem`, `Product`, `PromoUsage`
+- **View**: `checkout/index.blade.php`
+- **JavaScript**: integrasi Leaflet (lat, long)
+- **Database**  
+  - promos (read, update times_used)  
+  - promo_usages (write)  
+  - transactions (write)  
+  - transaction_items (write)  
+  - products (update stock)
+
+### Alur Pembayaran Midtrans
+- **Rute**  
+  - POST /checkout  
+  - POST /midtrans/callback  
+  - GET /checkout/success
+- **Controller**: `CheckoutController@process`, `callback`, `success`
+- **Config**: `config/midtrans.php`
+- **View**  
+  - `checkout/payment.blade.php`  
+  - `checkout/success.blade.php`
+- **Database**  
+  - transactions (update snap_token, status, payment_status)  
+  - products (restore stock jika gagal)
+
+---
+
+## 4. Alur Pengguna (Customer)
+
+### Alur Dasbor Pengguna
+- **Rute**: GET /dashboard
+- **Middleware**: auth
+- **Controller**: `CustomerController@dashboard`
+- **Model**: `Transaction`
+- **View**: `customer/dashboard.blade.php`
+- **Database**: transactions (read by user_id)
+
+### Alur Profil Pengguna
+- **Rute**  
+  - GET /profile  
+  - PATCH /profile  
+  - DELETE /profile  
+  - PUT /password
+- **Middleware**: auth
+- **Controller**  
+  - `ProfileController`: `edit`, `update`, `destroy`  
+  - `PasswordController@update`
+- **Request**: `ProfileUpdateRequest`
+- **View**: `profile/edit.blade.php`
+- **Database**: users (update & delete)
+
+### Alur Riwayat Transaksi Pengguna
+- **Rute**  
+  - GET /transactions  
+  - GET /transactions/{transaction}  
+  - PATCH /transactions/{transaction}/complete  
+  - PATCH /transactions/{transaction}/cancel
+- **Middleware**: auth
+- **Controller**: `TransactionController`
+- **Model**: `Transaction`
+- **View**: `transactions/index.blade.php`, `transactions/show.blade.php`
+- **Database**: transactions (read, update status)
+
+---
+
+## 5. Alur Admin
+
+### Alur Dasbor Admin
+- **Rute**: GET /admin/dashboard
+- **Middleware**: auth, role:admin
+- **Controller**: `Admin\DashboardController@index`
+- **Model**: `User`, `Transaction`, `Product`
+- **View**: `admin/dashboard.blade.php`
+- **Database**: users, transactions, products (read)
+
+### Admin: CRUD Kategori
+- **Rute**: RESOURCE /admin/categories
+- **Middleware**: auth, role:admin
+- **Controller**: `Admin\CategoryController`
+- **Model**: `Category`
+- **View**: index/create/edit
+- **Database**: categories (CRUD)
+
+### Admin: CRUD Produk
+- **Rute**: RESOURCE /admin/products
+- **Middleware**: auth, role:admin
+- **Controller**: `Admin\ProductController`
+- **Model**: `Product`
+- **View**: index/create/edit
+- **Database**: products (CRUD)
+
+### Admin: CRUD Promo
+- **Rute**: RESOURCE /admin/promos
+- **Middleware**: auth, role:admin
+- **Controller**: `Admin\PromoController`
+- **Model**: `Promo`
+- **View**: index/create/edit
+- **Database**: promos (CRUD)
+
+### Admin: Manajemen Transaksi
+- **Rute**  
+  - GET /admin/transactions  
+  - GET /admin/transactions/{transaction}  
+  - PATCH /admin/transactions/{transaction}/status  
+  - GET /admin/transactions/{transaction}/invoice
+- **Middleware**: auth, role:admin
+- **Controller**: `Admin\TransactionController`
+- **Model**: `Transaction`
+- **View**: index/show/invoice
+- **Database**: transactions (read & update)
+
