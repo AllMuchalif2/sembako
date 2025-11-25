@@ -44,7 +44,9 @@
                         <div class="mt-6">
                             <label class="block text-sm font-medium text-gray-700">Tandai Lokasi di Peta</label>
                             <div id="map" class="mt-2 rounded-lg border border-gray-300"></div>
-                            <p class="text-xs text-gray-500 mt-1">Klik pada peta untuk menentukan titik lokasi pengiriman.
+                            <p class="text-xs text-gray-500 mt-1">
+                                <strong>Cara pakai:</strong> Seret (drag) marker biru 📍 ke lokasi pengiriman Anda. 
+                                Zona hijau = Gratis Ongkir. Maksimal {{ number_format($settings->max_delivery_distance / 1000, 0) }} km dari toko.
                             </p>
                         </div>
 
@@ -133,13 +135,22 @@
                                         </dt>
                                         <dd id="discount-amount" class="font-medium text-green-600">-Rp{{ number_format(Session::get('promo.discount_amount', 0), 0, ',', '.') }}</dd>
                                     </div>
+                                    <div id="shipping-row" class="flex justify-between">
+                                        <dt class="flex items-center">
+                                            <span>Ongkir</span>
+                                            <span id="shipping-badge" class="ml-2 hidden inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                                                GRATIS
+                                            </span>
+                                        </dt>
+                                        <dd id="shipping-amount" class="font-medium">-</dd>
+                                    </div>
                                     <div class="flex justify-between border-t border-gray-200 pt-2 text-base font-bold text-gray-900">
                                         <dt>Total</dt>
                                         <dd id="final-total-amount">Rp{{ number_format($finalTotal, 0, ',', '.') }}</dd>
                                     </div>
                                 </dl>
 
-                                <p class="mt-2 text-xs text-gray-500">Pajak dan ongkir akan dihitung nanti.</p>
+                                <p id="shipping-info" class="mt-2 text-xs text-gray-500">Pilih lokasi di peta untuk menghitung ongkir.</p>
 
                                 <div class="mt-6">
                                     <button type="submit" id="checkout-button"
@@ -160,11 +171,21 @@
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
         <script>
-            // --- LOGIKA PETA LEAFLET ---
+            // --- LOGIKA PETA LEAFLET DENGAN ZONA RADIUS TOKO ---
             var map;
-            var marker;
-            var defaultLat = -6.873167464166432;
-            var defaultLng = 109.66582626527774;
+            var deliveryMarker; // Marker lokasi pengiriman
+            var storeMarker; // Marker lokasi toko
+            var radiusCircle; // Lingkaran zona radius
+            
+            // Koordinat toko dari database
+            const tokoLat = {{ $settings->store_latitude }};
+            const tokoLng = {{ $settings->store_longitude }};
+            const freeShippingRadius = {{ $settings->free_shipping_radius }}; // dalam meter
+            const maxDeliveryRadius = {{ $settings->max_delivery_distance }}; // dalam meter (BATAS MAKSIMAL)
+            const shippingCost = {{ $settings->shipping_cost }}; // Biaya ongkir jika di luar radius
+            
+            var defaultLat = tokoLat;
+            var defaultLng = tokoLng;
             var defaultZoom = 13;
 
             // Cek apakah ada nilai latitude/longitude dari old() (misal setelah validasi gagal)
@@ -179,19 +200,174 @@
                 attribution: '© OpenStreetMap'
             }).addTo(map);
 
-            // Fungsi untuk menambahkan atau memindahkan marker
-            function placeMarker(lat, lng) {
-                if (marker) {
-                    map.removeLayer(marker);
+            // Tambahkan marker toko dengan icon khusus
+            var storeIcon = L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
+            storeMarker = L.marker([tokoLat, tokoLng], {icon: storeIcon}).addTo(map);
+            storeMarker.bindPopup("<b>📍 {{ $settings->store_name }}</b><br>Lokasi Toko Kami");
+
+            // Tambahkan lingkaran zona radius gratis ongkir
+            radiusCircle = L.circle([tokoLat, tokoLng], {
+                color: '#10b981',        // Warna border (green-500)
+                fillColor: '#10b981',    // Warna fill (green-500)
+                fillOpacity: 0.1,
+                radius: freeShippingRadius,
+                weight: 2,
+                dashArray: '5, 5'
+            }).addTo(map);
+            
+            radiusCircle.bindPopup(`<b>Zona Gratis Ongkir</b><br>Radius: ${freeShippingRadius/1000} km`);
+
+            // Tambahkan lingkaran zona maksimal pengiriman (50 km)
+            var maxRadiusCircle = L.circle([tokoLat, tokoLng], {
+                color: '#ef4444',        // Warna border (red-500)
+                fillColor: '#ef4444',    // Warna fill (red-500)
+                fillOpacity: 0.05,
+                radius: maxDeliveryRadius,
+                weight: 2,
+                dashArray: '10, 5'
+            }).addTo(map);
+            
+            maxRadiusCircle.bindPopup(`<b>⚠️ Batas Maksimal Pengiriman</b><br>Radius: ${maxDeliveryRadius/1000} km`);
+
+            // Fungsi untuk menghitung jarak menggunakan Leaflet
+            function calculateDistance(lat1, lng1, lat2, lng2) {
+                var point1 = L.latLng(lat1, lng1);
+                var point2 = L.latLng(lat2, lng2);
+                return point1.distanceTo(point2); // Dalam meter
+            }
+
+            // Fungsi untuk format rupiah
+            function formatRupiah(amount) {
+                return 'Rp' + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+
+            // Fungsi untuk update ringkasan ongkir
+            function updateShippingCost(distance) {
+                const shippingAmountEl = document.getElementById('shipping-amount');
+                const shippingBadgeEl = document.getElementById('shipping-badge');
+                const shippingInfoEl = document.getElementById('shipping-info');
+                const finalTotalAmountEl = document.getElementById('final-total-amount');
+                const checkoutButton = document.getElementById('checkout-button');
+                
+                let currentShippingCost = 0;
+                let shippingText = '';
+                
+                // Validasi jarak maksimal 50 km
+                if (distance > maxDeliveryRadius) {
+                    shippingAmountEl.textContent = '-';
+                    shippingBadgeEl.classList.add('hidden');
+                    shippingInfoEl.innerHTML = `<span class="text-red-600 font-semibold">❌ Lokasi terlalu jauh! Maksimal ${maxDeliveryRadius/1000} km dari toko. Jarak Anda: ${(distance/1000).toFixed(2)} km</span>`;
+                    
+                    // Disable tombol checkout
+                    checkoutButton.disabled = true;
+                    checkoutButton.classList.add('opacity-50', 'cursor-not-allowed');
+                    checkoutButton.classList.remove('hover:bg-blue-700');
+                    
+                    finalTotalAmountEl.textContent = '-';
+                    return;
                 }
-                marker = L.marker([lat, lng]).addTo(map);
+                
+                // Enable tombol checkout jika dalam jangkauan
+                checkoutButton.disabled = false;
+                checkoutButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                checkoutButton.classList.add('hover:bg-blue-700');
+                
+                if (distance <= freeShippingRadius) {
+                    currentShippingCost = 0;
+                    shippingText = formatRupiah(0);
+                    shippingBadgeEl.classList.remove('hidden');
+                    shippingInfoEl.innerHTML = `<span class="text-green-600">✓ Lokasi Anda dalam zona gratis ongkir (${(distance/1000).toFixed(2)} km dari toko)</span>`;
+                } else {
+                    currentShippingCost = shippingCost;
+                    shippingText = formatRupiah(shippingCost);
+                    shippingBadgeEl.classList.add('hidden');
+                    shippingInfoEl.innerHTML = `<span class="text-orange-600">Lokasi Anda di luar zona gratis ongkir (${(distance/1000).toFixed(2)} km dari toko)</span>`;
+                }
+                
+                shippingAmountEl.textContent = shippingText;
+                
+                // Update total
+                const subtotal = {{ $subtotal }};
+                const discount = {{ Session::get('promo.discount_amount', 0) }};
+                const newTotal = subtotal - discount + currentShippingCost;
+                finalTotalAmountEl.textContent = formatRupiah(newTotal);
+            }
+
+            // Fungsi untuk update posisi marker dan validasi
+            function updateMarkerPosition(lat, lng) {
+                // Hitung jarak dari toko
+                const distance = calculateDistance(tokoLat, tokoLng, lat, lng);
+                const distanceKm = (distance / 1000).toFixed(2);
+                const isInZone = distance <= freeShippingRadius;
+                const isTooFar = distance > maxDeliveryRadius;
+                const ongkir = isInZone ? 0 : shippingCost;
+                
+                // Update popup marker
+                let popupContent = `<b>📦 Lokasi Pengiriman</b><br>Jarak: ${distanceKm} km<br>`;
+                
+                if (isTooFar) {
+                    popupContent += `<span style="color: red; font-weight: bold;">❌ TERLALU JAUH!<br>Maks: ${maxDeliveryRadius/1000} km</span>`;
+                } else {
+                    popupContent += `Ongkir: ${formatRupiah(ongkir)}`;
+                    if (isInZone) {
+                        popupContent += '<br><span style="color: green; font-weight: bold;">✓ Gratis Ongkir!</span>';
+                    }
+                }
+                
+                deliveryMarker.setPopupContent(popupContent);
+                deliveryMarker.openPopup();
+                
+                // Update hidden input
                 document.getElementById('latitude').value = lat;
                 document.getElementById('longitude').value = lng;
+                
+                // Update ringkasan ongkir
+                updateShippingCost(distance);
+            }
+
+            // Fungsi untuk menambahkan marker pengiriman yang bisa di-drag
+            function placeDeliveryMarker(lat, lng) {
+                if (deliveryMarker) {
+                    map.removeLayer(deliveryMarker);
+                }
+                
+                var deliveryIcon = L.icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                });
+                
+                // Marker bisa di-drag (seret)
+                deliveryMarker = L.marker([lat, lng], {
+                    icon: deliveryIcon,
+                    draggable: true  // ← PENTING: Marker bisa diseret!
+                }).addTo(map);
+                
+                // Event saat marker selesai di-drag
+                deliveryMarker.on('dragend', function(e) {
+                    const newLat = e.target.getLatLng().lat;
+                    const newLng = e.target.getLatLng().lng;
+                    updateMarkerPosition(newLat, newLng);
+                });
+                
+                // Update posisi awal
+                updateMarkerPosition(lat, lng);
             }
 
             // Jika ada nilai old() atau default, langsung tempatkan marker
             if (initialLat !== null && initialLng !== null) {
-                placeMarker(initialLat, initialLng);
+                placeDeliveryMarker(initialLat, initialLng);
             }
 
             // Coba dapatkan lokasi pengguna saat ini
@@ -200,26 +376,22 @@
                     var userLat = position.coords.latitude;
                     var userLng = position.coords.longitude;
                     map.setView([userLat, userLng], defaultZoom);
-                    placeMarker(userLat, userLng);
+                    placeDeliveryMarker(userLat, userLng);
                 }, function(error) {
                     console.warn('ERROR(' + error.code + '): ' + error.message);
                     // Jika gagal, gunakan default atau old() yang sudah diatur
                     map.setView([initialLat, initialLng], defaultZoom);
-                    if (!marker) { // Hanya tambahkan jika belum ada marker dari old()
-                        placeMarker(initialLat, initialLng);
+                    if (!deliveryMarker) { // Hanya tambahkan jika belum ada marker dari old()
+                        placeDeliveryMarker(initialLat, initialLng);
                     }
                 });
-            } else if (!marker) {
+            } else if (!deliveryMarker) {
                 // Jika geolocation tidak didukung atau sudah ada old() dan tidak ada marker, gunakan default
-                placeMarker(initialLat, initialLng);
+                placeDeliveryMarker(initialLat, initialLng);
             }
 
-            // Event listener untuk klik peta
-            function onMapClick(e) {
-                placeMarker(e.latlng.lat, e.latlng.lng);
-            }
-
-            map.on('click', onMapClick);
+            // HAPUS event listener klik peta (tidak dipakai lagi)
+            // Sekarang hanya pakai drag marker
 
             // Pastikan peta di-render ulang dengan benar jika ada masalah tampilan
             map.invalidateSize();

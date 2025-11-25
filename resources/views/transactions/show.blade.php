@@ -159,9 +159,9 @@
             var lat = {{ $transaction->latitude ?? 0 }};
             var lng = {{ $transaction->longitude ?? 0 }};
             var map = L.map('map', {
-                dragging: false,
-                zoomControl: false,
-                scrollWheelZoom: false
+                dragging: true,
+                zoomControl: true,
+                scrollWheelZoom: true
             }).setView([lat, lng], 15);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,

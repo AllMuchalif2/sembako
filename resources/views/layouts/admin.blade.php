@@ -99,6 +99,15 @@
             <i class="fa-solid fa-receipt mr-3"></i>
             {{ __('Transaksi') }}
         </a>
+
+        <a href="{{ route('admin.store-settings.edit') }}"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
+            {{ request()->routeIs('admin.store-settings.*') 
+                ? 'bg-gray-100 text-gray-900' 
+                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+            <i class="fa-solid fa-cog mr-3"></i>
+            {{ __('Pengaturan Toko') }}
+        </a>
     </nav>
 
     {{-- Theme Toggle (Dark/Light) --}}

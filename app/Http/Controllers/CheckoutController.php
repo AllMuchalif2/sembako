@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Promo;
 use App\Models\Product;
 use App\Models\Transaction;
+use App\Models\StoreSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
@@ -47,11 +48,15 @@ class CheckoutController extends Controller
         $discountAmount = $promo['discount_amount'] ?? 0;
         $finalTotal = $subtotal - $discountAmount;
 
+        // Ambil pengaturan toko
+        $settings = StoreSetting::getSettings();
+
         return view('checkout.index', [
             'cartItems' => $cartItems,
             'subtotal' => $subtotal,
             'finalTotal' => $finalTotal,
             'user' => $user,
+            'settings' => $settings,
         ]);
     }
 
@@ -98,7 +103,38 @@ class CheckoutController extends Controller
         $promo = Session::get('promo');
         $discountAmount = $promo['discount_amount'] ?? 0;
         $promoCode = $promo['code'] ?? null;
-        $finalTotal = $subtotal - $discountAmount;
+        
+        // Ambil pengaturan toko dari database
+        $settings = StoreSetting::getSettings();
+        
+        // Hitung jarak
+        $distance = \App\Helpers\LocationHelper::calculateDistance(
+            $settings->store_latitude,
+            $settings->store_longitude,
+            $request->latitude,
+            $request->longitude
+        );
+        
+        // Validasi jarak maksimal dari pengaturan
+        if ($distance > $settings->max_delivery_distance) {
+            Log::warning('Checkout process: Delivery location too far.', [
+                'distance' => $distance,
+                'max_allowed' => $settings->max_delivery_distance,
+                'user_id' => Auth::id()
+            ]);
+            return redirect()->route('checkout.index')->with('error', 
+                'Lokasi pengiriman terlalu jauh! Maksimal ' . ($settings->max_delivery_distance/1000) . ' km dari toko. Jarak Anda: ' . number_format($distance/1000, 2) . ' km'
+            );
+        }
+        
+        // Hitung ongkir berdasarkan pengaturan
+        $shippingCost = \App\Helpers\LocationHelper::calculateShippingCost(
+            $distance, 
+            $settings->free_shipping_radius, 
+            $settings->shipping_cost
+        );
+        
+        $finalTotal = $subtotal - $discountAmount + $shippingCost;
 
 
         // Buat transaksi baru di database
@@ -108,6 +144,8 @@ class CheckoutController extends Controller
             'total_amount' => $finalTotal,
             'promo_code' => $promoCode,
             'discount_amount' => $discountAmount,
+            'distance_from_store' => $distance,
+            'shipping_cost' => $shippingCost,
             // 'payment_status' => 'pending',
             'status' => 'pending',
             'shipping_address' => $request->shipping_address,

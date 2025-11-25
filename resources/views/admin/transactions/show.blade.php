@@ -99,7 +99,7 @@
                              <dl class="space-y-2">
                                 <div class="flex justify-between">
                                     <dt class="text-gray-600">Subtotal</dt>
-                                    <dd class="font-medium text-gray-900">Rp{{ number_format($transaction->total_amount + $transaction->discount_amount, 0, ',', '.') }}</dd>
+                                    <dd class="font-medium text-gray-900">Rp{{ number_format($transaction->total_amount + $transaction->discount_amount - ($transaction->shipping_cost ?? 0), 0, ',', '.') }}</dd>
                                 </div>
                                 @if($transaction->promo_code)
                                 <div class="flex justify-between">
@@ -110,6 +110,19 @@
                                         </span>
                                     </dt>
                                     <dd class="font-medium text-green-600">-Rp{{ number_format($transaction->discount_amount, 0, ',', '.') }}</dd>
+                                </div>
+                                @endif
+                                @if($transaction->shipping_cost !== null)
+                                <div class="flex justify-between">
+                                    <dt class="text-gray-600 flex items-center">
+                                        <span>Ongkir</span>
+                                        @if($transaction->shipping_cost == 0)
+                                            <span class="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                                                GRATIS
+                                            </span>
+                                        @endif
+                                    </dt>
+                                    <dd class="font-medium text-gray-900">Rp{{ number_format($transaction->shipping_cost, 0, ',', '.') }}</dd>
                                 </div>
                                 @endif
                                 <div class="flex justify-between border-t border-gray-200 pt-2 text-base font-bold text-gray-900">
@@ -125,6 +138,21 @@
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Informasi Pengiriman</h3>
                         <div class="space-y-3 text-sm text-gray-700">
                             <p><strong>Alamat Kirim:</strong> {{ $transaction->shipping_address }}</p>
+                            @if ($transaction->distance_from_store)
+                                <p><strong>Jarak dari Toko:</strong> {{ number_format($transaction->distance_from_store / 1000, 2) }} km</p>
+                            @endif
+                            @if ($transaction->shipping_cost !== null)
+                                <p>
+                                    <strong>Ongkir:</strong> 
+                                    @if ($transaction->shipping_cost == 0)
+                                        <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                                            GRATIS ONGKIR
+                                        </span>
+                                    @else
+                                        Rp{{ number_format($transaction->shipping_cost, 0, ',', '.') }}
+                                    @endif
+                                </p>
+                            @endif
                             @if ($transaction->notes)
                                 <p><strong>Catatan:</strong> {{ $transaction->notes }}</p>
                             @endif
@@ -200,11 +228,76 @@
         {{-- Leaflet JS --}}
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
         <script>
-            var lat = {{ $transaction->latitude ?? 0 }};
-            var lng = {{ $transaction->longitude ?? 0 }};
-            var map = L.map('map', { dragging: false, zoomControl: false, scrollWheelZoom: false }).setView([lat, lng], 15);
+            // Koordinat toko
+            const tokoLat = -6.200000;
+            const tokoLng = 106.816666;
+            const freeShippingRadius = 10000; // 10 km
+            
+            // Koordinat pengiriman
+            var deliveryLat = {{ $transaction->latitude ?? 0 }};
+            var deliveryLng = {{ $transaction->longitude ?? 0 }};
+            
+            // Inisialisasi peta
+            var map = L.map('map', { dragging: true, zoomControl: true, scrollWheelZoom: true }).setView([deliveryLat, deliveryLng], 13);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
-            var marker = L.marker([lat, lng]).addTo(map).bindPopup("<b>Lokasi Pengiriman</b>").openPopup();
+            
+            // Marker toko (merah)
+            var storeIcon = L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+            
+            var storeMarker = L.marker([tokoLat, tokoLng], {icon: storeIcon}).addTo(map);
+            storeMarker.bindPopup("Lokasi Toko");
+            
+            // Lingkaran zona gratis ongkir
+            var radiusCircle = L.circle([tokoLat, tokoLng], {
+                color: '#10b981',
+                fillColor: '#10b981',
+                fillOpacity: 0.1,
+                radius: freeShippingRadius,
+                weight: 2,
+                dashArray: '5, 5'
+            }).addTo(map);
+            
+            radiusCircle.bindPopup(`<b>Zona Gratis Ongkir</b><br>Radius: ${freeShippingRadius/1000} km`);
+            
+            // Marker pengiriman (biru)
+            var deliveryIcon = L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+            
+            var deliveryMarker = L.marker([deliveryLat, deliveryLng], {icon: deliveryIcon}).addTo(map);
+            
+            // Hitung jarak
+            @if($transaction->distance_from_store)
+                var distance = {{ $transaction->distance_from_store }};
+                var distanceKm = (distance / 1000).toFixed(2);
+                var ongkir = {{ $transaction->shipping_cost ?? 0 }};
+                var isInZone = distance <= freeShippingRadius;
+                
+                deliveryMarker.bindPopup(
+                    `<b>📦 Lokasi Pengiriman</b><br>` +
+                    `Jarak: ${distanceKm} km<br>` +
+                    `Ongkir: Rp${ongkir.toLocaleString('id-ID')}` +
+                    `${isInZone ? '<br><span style="color: green;">✓ Gratis Ongkir!</span>' : ''}`
+                ).openPopup();
+            @else
+                deliveryMarker.bindPopup("<b>📦 Lokasi Pengiriman</b>").openPopup();
+            @endif
+            
+            // Fit bounds untuk menampilkan semua marker
+            var group = L.featureGroup([storeMarker, deliveryMarker, radiusCircle]);
+            map.fitBounds(group.getBounds().pad(0.1));
         </script>
     @endpush
 </x-app-layout>

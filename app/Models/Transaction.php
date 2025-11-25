@@ -22,6 +22,8 @@ class Transaction extends Model
         'shipping_address',
         'latitude',
         'longitude',
+        'distance_from_store',
+        'shipping_cost',
         'notes',
         'snap_token',
         // 'payment_type'

@@ -15,9 +15,46 @@
                     <x-nav-link :href="route('landing')" :active="request()->routeIs('landing')">
                         {{ __('Beranda') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
-                        {{ __('Produk') }}
-                    </x-nav-link>
+                    
+                    @php
+                        $isProductsActive = request()->routeIs('products.index');
+                    @endphp
+                    <div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative inline-flex items-center px-1 pt-1 border-b-2 {{ $isProductsActive ? 'border-indigo-400 text-gray-900' : 'border-transparent text-gray-500' }} hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out cursor-pointer text-sm font-semibold leading-5">
+                        <a href="{{ route('products.index') }}" class="inline-flex items-center">
+                            {{ __('Produk') }}
+                            <div class="ml-1">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </a>
+                        
+                        <div x-show="open"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="absolute left-0 top-full mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+                             style="display: none;">
+                            <div class="py-1">
+                                <a href="{{ route('products.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ !request()->has('category') && $isProductsActive ? 'bg-gray-50 font-semibold' : '' }}">
+                                    {{ __('Semua Produk') }}
+                                </a>
+                                <div class="border-t border-gray-100"></div>
+                                @forelse($categories as $category)
+                                    <a href="{{ route('products.index', ['category' => $category->slug]) }}" 
+                                       class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ request()->input('category') == $category->slug ? 'bg-gray-50 font-semibold' : '' }}">
+                                        {{ $category->name }}
+                                    </a>
+                                @empty
+                                    <span class="block px-4 py-2 text-sm text-gray-500">Tidak ada kategori</span>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+
                     <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')" class="relative inline-flex items-center gap-1">
                         {{ __('Keranjang') }}
                         <span
@@ -25,9 +62,6 @@
                             {{ session('cart') ? count(session('cart')) : 0 }}
                         </span>
                     </x-nav-link>
-
-
-
 
 
 
@@ -114,6 +148,35 @@
             <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
                 {{ __('Produk') }}
             </x-responsive-nav-link>
+            
+            {{-- Categories in mobile menu --}}
+            <div x-data="{ categoriesOpen: false }" class="border-t border-gray-200 pt-2 mt-2">
+                <button @click="categoriesOpen = !categoriesOpen" class="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider hover:bg-gray-50 transition">
+                    <span>{{ __('Kategori') }}</span>
+                    <svg class="h-4 w-4 transition-transform duration-200" :class="{ 'rotate-180': categoriesOpen }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                
+                <div x-show="categoriesOpen" 
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="transform opacity-0 -translate-y-2"
+                     x-transition:enter-end="transform opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="transform opacity-100 translate-y-0"
+                     x-transition:leave-end="transform opacity-0 -translate-y-2"
+                     style="display: none;">
+                    @forelse($categories as $category)
+                        <x-responsive-nav-link :href="route('products.index', ['category' => $category->slug])" :active="request()->input('category') == $category->slug">
+                            {{ $category->name }}
+                        </x-responsive-nav-link>
+                    @empty
+                        <div class="px-4 py-2 text-sm text-gray-500">
+                            Tidak ada kategori
+                        </div>
+                    @endforelse
+                </div>
+            </div>
             <x-responsive-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.index')">
                 {{ __('Keranjang') }}
                 @if (session('cart') && count(session('cart')) > 0)
