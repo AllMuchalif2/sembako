@@ -94,7 +94,7 @@
                         <div>
                             <div class="flex items-center justify-between mb-2">
                                 <label class="block text-sm font-medium text-gray-700">
-                                    📍 Pilih Lokasi Toko di Peta
+                                    Pilih Lokasi Toko di Peta
                                 </label>
                                 <button 
                                     type="button" 
@@ -110,7 +110,7 @@
                             </div>
                             <div id="store-map" class="border border-gray-300"></div>
                             <p class="mt-2 text-xs text-gray-500">
-                                <strong>Cara pakai:</strong> Seret (drag) marker merah 📍 ke lokasi toko Anda, atau klik tombol "Gunakan Lokasi Saya" untuk menggunakan lokasi saat ini.
+                                <strong>Cara pakai:</strong> Seret (drag) marker merah ke lokasi toko Anda, atau klik tombol "Gunakan Lokasi Saya" untuk menggunakan lokasi saat ini.
                             </p>
                         </div>
 
@@ -181,7 +181,7 @@
 
                         <!-- Info Box -->
                         <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                            <h3 class="text-sm font-semibold text-blue-800 mb-2">ℹ️ Informasi</h3>
+                            <h3 class="text-sm font-semibold text-blue-800 mb-2"><i class="fas fa-info-circle"></i> Informasi</h3>
                             <ul class="text-sm text-blue-700 space-y-1">
                                 <li>• <strong>Radius Gratis Ongkir:</strong> Jarak dari toko di mana pelanggan mendapat gratis ongkir</li>
                                 <li>• <strong>Jarak Maksimal:</strong> Jarak terjauh yang bisa dilayani untuk pengiriman</li>
@@ -244,7 +244,7 @@
                 draggable: true
             }).addTo(map);
             
-            storeMarker.bindPopup("<b>📍 Lokasi Toko</b><br>Seret marker untuk mengubah lokasi").openPopup();
+            storeMarker.bindPopup("<b><i class='fas fa-map-marker-alt'></i> Lokasi Toko</b><br>Seret marker untuk mengubah lokasi").openPopup();
             
             // Fungsi untuk update input koordinat
             function updateCoordinates(lat, lng) {
@@ -253,7 +253,7 @@
                 
                 // Update popup
                 storeMarker.setPopupContent(
-                    `<b>📍 Lokasi Toko</b><br>` +
+                    `<b><i class='fas fa-map-marker-alt'></i> Lokasi Toko</b><br>` +
                     `Lat: ${lat.toFixed(6)}<br>` +
                     `Lng: ${lng.toFixed(6)}`
                 );

@@ -45,7 +45,7 @@
                             <label class="block text-sm font-medium text-gray-700">Tandai Lokasi di Peta</label>
                             <div id="map" class="mt-2 rounded-lg border border-gray-300"></div>
                             <p class="text-xs text-gray-500 mt-1">
-                                <strong>Cara pakai:</strong> Seret (drag) marker biru 📍 ke lokasi pengiriman Anda. 
+                                <strong>Cara pakai:</strong> Seret (drag) marker biru ke lokasi pengiriman Anda. 
                                 Zona hijau = Gratis Ongkir. Maksimal {{ number_format($settings->max_delivery_distance / 1000, 0) }} km dari toko.
                             </p>
                         </div>
@@ -184,16 +184,12 @@
             const maxDeliveryRadius = {{ $settings->max_delivery_distance }}; // dalam meter (BATAS MAKSIMAL)
             const shippingCost = {{ $settings->shipping_cost }}; // Biaya ongkir jika di luar radius
             
-            var defaultLat = tokoLat;
-            var defaultLng = tokoLng;
-            var defaultZoom = 13;
-
             // Cek apakah ada nilai latitude/longitude dari old() (misal setelah validasi gagal)
-            var initialLat = {{ old('latitude', 'null') }} || defaultLat;
-            var initialLng = {{ old('longitude', 'null') }} || defaultLng;
+            var initialLat = {{ old('latitude', 'null') }} || tokoLat;
+            var initialLng = {{ old('longitude', 'null') }} || tokoLng;
 
             // Inisialisasi peta
-            map = L.map('map').setView([initialLat, initialLng], defaultZoom);
+            map = L.map('map').setView([initialLat, initialLng], 13);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
@@ -211,7 +207,7 @@
             });
 
             storeMarker = L.marker([tokoLat, tokoLng], {icon: storeIcon}).addTo(map);
-            storeMarker.bindPopup("<b>📍 {{ $settings->store_name }}</b><br>Lokasi Toko Kami");
+            storeMarker.bindPopup("<b><i class='fas fa-store'></i> {{ $settings->store_name }}</b><br>Lokasi Toko");
 
             // Tambahkan lingkaran zona radius gratis ongkir
             radiusCircle = L.circle([tokoLat, tokoLng], {
@@ -235,7 +231,7 @@
                 dashArray: '10, 5'
             }).addTo(map);
             
-            maxRadiusCircle.bindPopup(`<b>⚠️ Batas Maksimal Pengiriman</b><br>Radius: ${maxDeliveryRadius/1000} km`);
+            maxRadiusCircle.bindPopup(`<b><i class='fas fa-exclamation-triangle'></i> Batas Maksimal Pengiriman</b><br>Radius: ${maxDeliveryRadius/1000} km`);
 
             // Fungsi untuk menghitung jarak menggunakan Leaflet
             function calculateDistance(lat1, lng1, lat2, lng2) {
@@ -264,7 +260,7 @@
                 if (distance > maxDeliveryRadius) {
                     shippingAmountEl.textContent = '-';
                     shippingBadgeEl.classList.add('hidden');
-                    shippingInfoEl.innerHTML = `<span class="text-red-600 font-semibold">❌ Lokasi terlalu jauh! Maksimal ${maxDeliveryRadius/1000} km dari toko. Jarak Anda: ${(distance/1000).toFixed(2)} km</span>`;
+                    shippingInfoEl.innerHTML = `<span class="text-red-600 font-semibold"><i class='fas fa-times-circle'></i> Lokasi terlalu jauh! Maksimal ${maxDeliveryRadius/1000} km dari toko. Jarak Anda: ${(distance/1000).toFixed(2)} km</span>`;
                     
                     // Disable tombol checkout
                     checkoutButton.disabled = true;
@@ -284,7 +280,7 @@
                     currentShippingCost = 0;
                     shippingText = formatRupiah(0);
                     shippingBadgeEl.classList.remove('hidden');
-                    shippingInfoEl.innerHTML = `<span class="text-green-600">✓ Lokasi Anda dalam zona gratis ongkir (${(distance/1000).toFixed(2)} km dari toko)</span>`;
+                    shippingInfoEl.innerHTML = `<span class="text-green-600"><i class='fas fa-check-circle'></i> Lokasi Anda dalam zona gratis ongkir (${(distance/1000).toFixed(2)} km dari toko)</span>`;
                 } else {
                     currentShippingCost = shippingCost;
                     shippingText = formatRupiah(shippingCost);
@@ -311,14 +307,14 @@
                 const ongkir = isInZone ? 0 : shippingCost;
                 
                 // Update popup marker
-                let popupContent = `<b>📦 Lokasi Pengiriman</b><br>Jarak: ${distanceKm} km<br>`;
+                let popupContent = `<b><i class='fas fa-map-marker-alt'></i> Lokasi Pengiriman</b><br>Jarak: ${distanceKm} km<br>`;
                 
                 if (isTooFar) {
-                    popupContent += `<span style="color: red; font-weight: bold;">❌ TERLALU JAUH!<br>Maks: ${maxDeliveryRadius/1000} km</span>`;
+                    popupContent += `<span style="color: red; font-weight: bold;"><i class='fas fa-times-circle'></i> TERLALU JAUH!<br>Maks: ${maxDeliveryRadius/1000} km</span>`;
                 } else {
                     popupContent += `Ongkir: ${formatRupiah(ongkir)}`;
                     if (isInZone) {
-                        popupContent += '<br><span style="color: green; font-weight: bold;">✓ Gratis Ongkir!</span>';
+                        popupContent += '<br><span style="color: green; font-weight: bold;"><i class="fas fa-check-circle"></i> Gratis Ongkir!</span>';
                     }
                 }
                 
@@ -375,12 +371,12 @@
                 navigator.geolocation.getCurrentPosition(function(position) {
                     var userLat = position.coords.latitude;
                     var userLng = position.coords.longitude;
-                    map.setView([userLat, userLng], defaultZoom);
+                    map.setView([userLat, userLng], 13);
                     placeDeliveryMarker(userLat, userLng);
                 }, function(error) {
                     console.warn('ERROR(' + error.code + '): ' + error.message);
                     // Jika gagal, gunakan default atau old() yang sudah diatur
-                    map.setView([initialLat, initialLng], defaultZoom);
+                    map.setView([initialLat, initialLng], 13);
                     if (!deliveryMarker) { // Hanya tambahkan jika belum ada marker dari old()
                         placeDeliveryMarker(initialLat, initialLng);
                     }
@@ -389,9 +385,6 @@
                 // Jika geolocation tidak didukung atau sudah ada old() dan tidak ada marker, gunakan default
                 placeDeliveryMarker(initialLat, initialLng);
             }
-
-            // HAPUS event listener klik peta (tidak dipakai lagi)
-            // Sekarang hanya pakai drag marker
 
             // Pastikan peta di-render ulang dengan benar jika ada masalah tampilan
             map.invalidateSize();

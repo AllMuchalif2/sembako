@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
+use App\Models\StoreSetting;
 use Illuminate\Http\Request;
 
 class TransactionController extends Controller
@@ -45,7 +46,8 @@ class TransactionController extends Controller
     public function show(Transaction $transaction)
     {
         $transaction->load('items.product', 'user');
-        return view('admin.transactions.show', compact('transaction'));
+        $settings = StoreSetting::getSettings();
+        return view('admin.transactions.show', compact('transaction', 'settings'));
     }
 
     /**

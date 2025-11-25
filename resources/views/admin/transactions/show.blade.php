@@ -228,10 +228,10 @@
         {{-- Leaflet JS --}}
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
         <script>
-            // Koordinat toko
-            const tokoLat = -6.200000;
-            const tokoLng = 106.816666;
-            const freeShippingRadius = 10000; // 10 km
+            // Koordinat toko dari database
+            const tokoLat = {{ $settings->store_latitude }};
+            const tokoLng = {{ $settings->store_longitude }};
+            const freeShippingRadius = {{ $settings->free_shipping_radius }};
             
             // Koordinat pengiriman
             var deliveryLat = {{ $transaction->latitude ?? 0 }};
@@ -286,13 +286,13 @@
                 var isInZone = distance <= freeShippingRadius;
                 
                 deliveryMarker.bindPopup(
-                    `<b>📦 Lokasi Pengiriman</b><br>` +
+                    `<b><i class='fas fa-map-marker-alt'></i> Lokasi Pengiriman</b><br>` +
                     `Jarak: ${distanceKm} km<br>` +
                     `Ongkir: Rp${ongkir.toLocaleString('id-ID')}` +
-                    `${isInZone ? '<br><span style="color: green;">✓ Gratis Ongkir!</span>' : ''}`
+                    `${isInZone ? '<br><span style="color: green;"><i class="fas fa-check-circle"></i> Gratis Ongkir!</span>' : ''}`
                 ).openPopup();
             @else
-                deliveryMarker.bindPopup("<b>📦 Lokasi Pengiriman</b>").openPopup();
+                deliveryMarker.bindPopup("<b><i class='fas fa-map-marker-alt'></i> Lokasi Pengiriman</b>").openPopup();
             @endif
             
             // Fit bounds untuk menampilkan semua marker

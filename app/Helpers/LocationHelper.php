@@ -44,8 +44,14 @@ class LocationHelper
      * @param int $shippingCost Biaya ongkir jika di luar radius (default 5000)
      * @return int Biaya ongkir
      */
-    public static function calculateShippingCost($distance, $freeShippingRadius = 10000, $shippingCost = 5000)
+    public static function calculateShippingCost($distance, $freeShippingRadius = null, $shippingCost = null)
     {
+        if ($freeShippingRadius === null || $shippingCost === null) {
+            $settings = \App\Models\StoreSetting::getSettings();
+            $freeShippingRadius = $freeShippingRadius ?? $settings->free_shipping_radius;
+            $shippingCost = $shippingCost ?? $settings->shipping_cost;
+        }
+
         if ($distance <= $freeShippingRadius) {
             return 0; // Gratis ongkir
         }
@@ -54,18 +60,18 @@ class LocationHelper
     }
 
     /**
-     * Get koordinat toko (bisa diambil dari config atau database)
+     * Get koordinat toko dari database
      * 
-     * @return array ['latitude' => float, 'longitude' => float]
+     * @return array ['latitude' => float, 'longitude' => float, 'name' => string]
      */
     public static function getStoreLocation()
     {
-        // Anda bisa mengubah ini ke database atau config
+        $settings = \App\Models\StoreSetting::getSettings();
+        
         return [
-            'latitude' => -6.200000,
-            'longitude' => 106.816666,
-            'name' => 'Toko Sembako',
-            'address' => 'Jakarta Pusat'
+            'latitude' => $settings->store_latitude,
+            'longitude' => $settings->store_longitude,
+            'name' => $settings->store_name,
         ];
     }
 }
