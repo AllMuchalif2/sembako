@@ -36,7 +36,7 @@
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 -translate-y-2" class="mt-1 space-y-1">
 
-            <a href="{{ route('profile.edit') }}"
+            <a href="{{ route('admin.profile.edit') }}"
                 class="flex items-center px-4 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors">
                 <i class="fa-solid fa-user-edit mr-3"></i>
                 {{ __('Profile') }}
@@ -70,7 +70,7 @@
                 ? 'bg-gray-100 text-gray-900' 
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
             <i class="fa-solid fa-tags mr-3"></i>
-            {{ __('Kategori') }}
+            {{ __('Kelola Kategori') }}
         </a>
 
         <a href="{{ route('admin.products.index') }}"
@@ -79,7 +79,7 @@
                 ? 'bg-gray-100 text-gray-900' 
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
             <i class="fa-solid fa-box mr-3"></i>
-            {{ __('Produk') }}
+            {{ __('KelolaProduk') }}
         </a>
 
         <a href="{{ route('admin.promos.index') }}"
@@ -88,7 +88,7 @@
                 ? 'bg-gray-100 text-gray-900' 
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
             <i class="fa-solid fa-percent mr-3"></i>
-            {{ __('Promo') }}
+            {{ __('Kelola Promo') }}
         </a>
 
         <a href="{{ route('admin.transactions.index') }}"
@@ -97,7 +97,16 @@
                 ? 'bg-gray-100 text-gray-900' 
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
             <i class="fa-solid fa-receipt mr-3"></i>
-            {{ __('Transaksi') }}
+            {{ __('Riwayat Transaksi') }}
+        </a>
+
+        <a href="{{ route('admin.admins.index') }}"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
+            {{ request()->routeIs('admin.admins.*') 
+                ? 'bg-gray-100 text-gray-900' 
+                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+            <i class="fa-solid fa-users-cog mr-3"></i>
+            {{ __('Kelola Admin') }}
         </a>
 
         <a href="{{ route('admin.store-settings.edit') }}"
@@ -108,6 +117,8 @@
             <i class="fa-solid fa-cog mr-3"></i>
             {{ __('Pengaturan Toko') }}
         </a>
+
+        
     </nav>
 
     {{-- Theme Toggle (Dark/Light) --}}

@@ -72,6 +72,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Store Settings
     Route::get('store-settings', [StoreSettingController::class, 'edit'])->name('store-settings.edit');
     Route::put('store-settings', [StoreSettingController::class, 'update'])->name('store-settings.update');
+
+    // Admin Profile
+    Route::get('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
+
+    // Admin Management
+    Route::resource('admins', \App\Http\Controllers\Admin\AdminController::class);
 });
 
 
