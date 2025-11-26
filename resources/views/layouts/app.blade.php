@@ -6,7 +6,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    @php
+        $routeName = Route::currentRouteName() ?? '';
+        
+        // Mapping route patterns to Indonesian titles
+        $titleMap = [
+            'admin.dashboard' => 'Dashboard',
+            'admin.categories' => 'Kategori',
+            'admin.products' => 'Produk',
+            'admin.promos' => 'Promo',
+            'admin.transactions' => 'Transaksi',
+            'admin.admins' => 'Admin',
+            'admin.store-settings' => 'Toko',
+            'admin.profile' => 'Profil',
+            'customer.dashboard' => 'Dashboard',
+            'profile' => 'Profil',
+            'cart' => 'Keranjang',
+            'checkout' => 'Checkout',
+        ];
+
+        $pageTitle = 'Halaman'; // Default
+        
+        // Check for exact match first
+        if (isset($titleMap[$routeName])) {
+            $pageTitle = $titleMap[$routeName];
+        } else {
+            // Check for prefix match (e.g. admin.products.index matches admin.products)
+            foreach ($titleMap as $key => $value) {
+                if (str_starts_with($routeName, $key)) {
+                    $pageTitle = $value;
+                    break;
+                }
+            }
+            // Fallback if no map found: use the last segment of the route name
+            if (!isset($titleMap[$routeName]) && $pageTitle === 'Halaman') {
+                 $segments = explode('.', $routeName);
+                 $pageTitle = ucwords(str_replace(['-', '_'], ' ', end($segments)));
+            }
+        }
+
+        $fullTitle = $pageTitle;
+        if (request()->routeIs('admin.*')) {
+            $fullTitle .= ' | Admin MyMart';
+        } else {
+            $fullTitle .= ' | My Mart';
+        }
+    @endphp
+    <title>{{ $fullTitle }}</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />

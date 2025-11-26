@@ -79,7 +79,7 @@
                 ? 'bg-gray-100 text-gray-900' 
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
             <i class="fa-solid fa-box mr-3"></i>
-            {{ __('KelolaProduk') }}
+            {{ __('Kelola Produk') }}
         </a>
 
         <a href="{{ route('admin.promos.index') }}"

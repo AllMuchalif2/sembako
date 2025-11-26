@@ -6,7 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    @php
+        $routeName = Route::currentRouteName() ?? '';
+        
+        $titleMap = [
+            'login' => 'Masuk',
+            'register' => 'Daftar',
+            'password' => 'Password',
+        ];
+
+        $pageTitle = 'Halaman';
+        
+        foreach ($titleMap as $key => $value) {
+            if (str_starts_with($routeName, $key)) {
+                $pageTitle = $value;
+                break;
+            }
+        }
+        
+        if ($pageTitle === 'Halaman') {
+             $segments = explode('.', $routeName);
+             $pageTitle = ucwords(str_replace(['-', '_'], ' ', end($segments)));
+        }
+    @endphp
+    <title>{{ $pageTitle }} | My Mart</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
