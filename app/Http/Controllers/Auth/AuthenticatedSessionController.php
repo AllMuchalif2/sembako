@@ -16,6 +16,12 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
+        // Store the previous URL in the session to redirect back after login
+        // We check if the previous URL is not the login page itself to avoid loops
+        if (url()->previous() !== route('login') && url()->previous() !== '' && url()->previous() !== url()->current()) {
+            session(['url.previous_visit' => url()->previous()]);
+        }
+
         return view('auth.login');
     }
 
@@ -33,7 +39,10 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        return redirect()->intended(route('customer.dashboard', absolute: false));
+        // Redirect to intended URL or the previous visit URL, fallback to dashboard
+        $fallbackUrl = session('url.previous_visit', route('customer.dashboard', absolute: false));
+        
+        return redirect()->intended($fallbackUrl);
     }
 
     /**
