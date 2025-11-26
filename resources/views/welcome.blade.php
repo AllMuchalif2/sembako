@@ -69,9 +69,9 @@
             </div>
 
             @if(isset($promos) && $promos->isNotEmpty())
-                <div class="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="mt-12 flex flex-wrap justify-center gap-6">
                     @foreach ($promos as $promo)
-                        <div x-data="{ code: '{{ $promo->code }}', tooltip: 'Salin Kode' }" class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                        <div x-data="{ code: '{{ $promo->code }}', tooltip: 'Salin Kode' }" class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
                             <div class="p-6 flex-grow flex flex-col">
                                 <div class="mb-4">
                                     @if($promo->type == 'percentage')
@@ -94,7 +94,7 @@
                             <div class="bg-gray-50 p-4 border-t border-gray-200">
                                 <div class="flex items-center justify-between rounded-md border-2 border-dashed border-gray-300 bg-white px-4 py-2">
                                     <span class="text-lg font-bold text-gray-800 tracking-wider">{{ $promo->code }}</span>
-                                    <button x-on:click="navigator.clipboard.writeText(code); tooltip = 'Tersalin!'; setTimeout(() => tooltip = 'Salin Kode', 2000)" 
+                                    <button x-on:click="navigator.clipboard.writeText(code); tooltip = 'Tersalin!'; setTimeout(() => tooltip = 'Salin Kode', 3000)" 
                                             class="relative text-gray-500 hover:text-blue-600 transition-colors"
                                             x-tooltip.top="tooltip">
                                         <i class="fa-regular fa-copy text-lg"></i>

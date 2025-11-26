@@ -19,6 +19,7 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
-        "simple-datatables": "^10.2.0"
+        "simple-datatables": "^10.2.0",
+        "tippy.js": "^6.3.7"
     }
 }

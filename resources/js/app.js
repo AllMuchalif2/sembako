@@ -5,8 +5,12 @@ import Alpine from "alpinejs";
 import { initDataTables } from './datatables.js';
 import { initConfirmDelete } from './ui.js';
 import { initCartEvents } from './cart.js';
+import { initTooltip } from './tooltip.js';
 
 window.Alpine = Alpine;
+
+initTooltip(Alpine);
+
 Alpine.start();
 
 document.addEventListener("DOMContentLoaded", function () {
