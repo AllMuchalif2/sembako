@@ -62,7 +62,16 @@ class User extends Authenticatable
 
     public function hasRole($roleName)
     {
-        return strtolower($this->role->name) === strtolower($roleName);
+        // Owner (role_id 0) has access to everything Admin has
+        if ($this->role_id === 0) {
+            return true;
+        }
+
+        if ($this->role) {
+            return strtolower($this->role->name) === strtolower($roleName);
+        }
+
+        return false;
     }
 
     public function transactions()

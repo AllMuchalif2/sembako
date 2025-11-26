@@ -100,6 +100,7 @@
             {{ __('Riwayat Transaksi') }}
         </a>
 
+        @if (Auth::user()->role_id == '0') 
         <a href="{{ route('admin.admins.index') }}"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
             {{ request()->routeIs('admin.admins.*') 
@@ -108,7 +109,6 @@
             <i class="fa-solid fa-users-cog mr-3"></i>
             {{ __('Kelola Admin') }}
         </a>
-
         <a href="{{ route('admin.store-settings.edit') }}"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
             {{ request()->routeIs('admin.store-settings.*') 
@@ -117,6 +117,8 @@
             <i class="fa-solid fa-cog mr-3"></i>
             {{ __('Pengaturan Toko') }}
         </a>
+        @endif
+
 
         
     </nav>

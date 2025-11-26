@@ -24,6 +24,10 @@ class CheckRole
         if ($user->hasRole($role)) {
             return $next($request);
         }
-        return redirect('/dashboard')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+
+        if ($user->role_id == 1) {
+            return redirect()->route('admin.dashboard')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
+        return redirect('dashboard')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
     }
 }

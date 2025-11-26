@@ -11,6 +11,8 @@ use Illuminate\Validation\Rules;
 
 class AdminController extends Controller
 {
+
+
     /**
      * Display a listing of the resource.
      */

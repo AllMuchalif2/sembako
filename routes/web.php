@@ -56,7 +56,7 @@ Route::post('/midtrans/callback', [CheckoutController::class, 'callback'])->name
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
+    
     Route::resource('categories', CategoryController::class);
     
     Route::resource('products', ProductController::class);
@@ -69,14 +69,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('transactions/{transaction}/cancel', [AdminTransactionController::class, 'cancel'])->name('transactions.cancel');
     Route::get('transactions/{transaction}/invoice', [AdminTransactionController::class, 'invoice'])->name('transactions.invoice');
     
-    // Store Settings
-    Route::get('store-settings', [StoreSettingController::class, 'edit'])->name('store-settings.edit');
-    Route::put('store-settings', [StoreSettingController::class, 'update'])->name('store-settings.update');
-
+    
     // Admin Profile
     Route::get('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
+});
 
+// Owner Management (Only Owner can access)
+Route::middleware(['auth', 'role:owner'])->prefix('admin')->name('admin.')->group(function () {
+    // Store Settings
+    Route::get('store-settings', [StoreSettingController::class, 'edit'])->name('store-settings.edit');
+    Route::put('store-settings', [StoreSettingController::class, 'update'])->name('store-settings.update');
     // Admin Management
     Route::resource('admins', \App\Http\Controllers\Admin\AdminController::class);
 });

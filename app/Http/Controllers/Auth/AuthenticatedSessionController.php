@@ -35,7 +35,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
         $user = $request->user();
 
-        if ($user->role_id === 1) { // 1 = Admin
+        if ($user->role_id === 1 || $user->role_id === 0) { // 1 = Admin, 0 = Owner
             return redirect()->route('admin.dashboard');
         }
 
