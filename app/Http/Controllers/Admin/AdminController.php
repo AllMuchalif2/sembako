@@ -73,7 +73,6 @@ class AdminController extends Controller
      */
     public function edit(User $admin)
     {
-        // Ensure the user is actually an admin
         if (!$admin->hasRole('admin')) {
             abort(404);
         }
@@ -117,7 +116,6 @@ class AdminController extends Controller
      */
     public function destroy(User $admin)
     {
-        // Ensure the user is actually an admin
         if (!$admin->hasRole('admin')) {
             abort(404);
         }

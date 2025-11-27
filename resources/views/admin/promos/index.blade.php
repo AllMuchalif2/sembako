@@ -58,8 +58,10 @@
                                 @forelse ($promos as $promo)
                                     <tr class="border-b border-gray-200 hover:bg-gray-50">
                                         <td class="py-3 px-4 whitespace-nowrap">
-                                            <div class="text-sm font-mono font-bold text-gray-900">{{ $promo->code }}</div>
-                                            <div class="text-xs text-gray-500 truncate max-w-xs">{{ Str::limit($promo->description, 50) }}</div>
+                                            <div class="text-sm font-mono font-bold text-gray-900">{{ $promo->code }}
+                                            </div>
+                                            <div class="text-xs text-gray-500 truncate max-w-xs">
+                                                {{ Str::limit($promo->description, 50) }}</div>
                                         </td>
                                         <td class="py-3 px-4 whitespace-nowrap">
                                             {{ $promo->type == 'fixed' ? 'Tetap' : 'Persen' }}
@@ -72,16 +74,20 @@
                                             @endif
                                         </td>
                                         <td class="py-3 px-4 whitespace-nowrap">
-                                            {{ $promo->start_date->format('d M Y') }} - {{ $promo->end_date->format('d M Y') }}
+                                            {{ $promo->start_date->format('d M Y') }} -
+                                            {{ $promo->end_date->format('d M Y') }}
                                         </td>
                                         <td class="py-3 px-4 whitespace-nowrap">
                                             {{ $promo->times_used }} / {{ $promo->usage_limit ?? '∞' }}
                                         </td>
                                         <td class="py-3 px-4 whitespace-nowrap">
                                             @if ($promo->status == 'active' && $promo->end_date->isFuture())
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Aktif</span>
+                                                <span
+                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Aktif</span>
                                             @else
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Tidak Aktif</span>
+                                                <span
+                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Tidak
+                                                    Aktif</span>
                                             @endif
                                         </td>
                                         <td class="py-3 px-4 whitespace-nowrap">
@@ -90,7 +96,8 @@
                                                     class="inline-flex items-center justify-center w-8 h-8 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </a>
-                                                <form action="{{ route('admin.promos.destroy', $promo) }}" method="POST" class="inline delete-form">
+                                                <form action="{{ route('admin.promos.destroy', $promo) }}"
+                                                    method="POST" class="inline delete-form">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" title="Hapus Promo"
@@ -111,9 +118,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="mt-4">
-                        {{ $promos->links() }}
-                    </div>
+
                 </div>
             </div>
         </div>

@@ -7,89 +7,186 @@
 
     <div class="py-12 bg-gray-100">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Welcome Banner -->
+
+            {{-- <!-- Welcome Banner -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-medium text-gray-900">{{ __("Selamat Datang Kembali, Admin!") }}</h3>
+                    <h3 class="text-lg font-medium text-gray-900">{{ __('Selamat Datang Kembali, Admin!') }}</h3>
                     <p class="mt-1 text-sm text-gray-600">
-                        {{ __("Berikut adalah ringkasan aktivitas toko Anda hari ini.") }}
+                        {{ __('Berikut adalah ringkasan aktivitas toko Anda hari ini.') }}
                     </p>
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Grid for Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Stat Card 1: Total Pesanan -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div
-                                class="flex-shrink-0 bg-blue-500 rounded-md h-12 w-12 flex items-center justify-center">
-                                <i class="fa-solid fa-box-open text-white text-xl"></i>
-                            </div>
-                            <div class="ml-4">
-                                <h4 class="text-sm font-medium text-gray-500">Total Pesanan Baru</h4>
-                                <p class="mt-1 text-2xl font-semibold text-gray-900">
-                                    {{ $newOrders }}
-                                </p>
+                <a href="{{ route('admin.transactions.index') }}"
+                    class="block transform transition duration-300 hover:scale-105 hover:shadow-lg">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full">
+                        <div class="p-6">
+                            <div class="flex items-center">
+                                <div
+                                    class="flex-shrink-0 bg-blue-500 rounded-md h-12 w-12 flex items-center justify-center">
+                                    <i class="fa-solid fa-box-open text-white text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="text-sm font-medium text-gray-500">Total Pesanan Baru</h4>
+                                    <p class="mt-1 text-2xl font-semibold text-gray-900">
+                                        {{ $newOrders }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- Stat Card 2: Pendapatan -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div
-                                class="flex-shrink-0 bg-green-500 rounded-md h-12 w-12 flex items-center justify-center">
-                                <i class="fa-solid fa-dollar-sign text-white text-xl"></i>
-                            </div>
-                            <div class="ml-4">
-                                <h4 class="text-sm font-medium text-gray-500">Pendapatan Hari Ini</h4>
-                                <p class="mt-1 text-2xl font-semibold text-gray-900">
-                                    Rp {{ number_format($todaysRevenue, 0, ',', '.') }}
-                                </p>
+                <a href="{{ route('admin.transactions.index') }}"
+                    class="block transform transition duration-300 hover:scale-105 hover:shadow-lg">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full">
+                        <div class="p-6">
+                            <div class="flex items-center">
+                                <div
+                                    class="flex-shrink-0 bg-green-500 rounded-md h-12 w-12 flex items-center justify-center">
+                                    <i class="fa-solid fa-dollar-sign text-white text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="text-sm font-medium text-gray-500">Pendapatan Hari Ini</h4>
+                                    <p class="mt-1 text-2xl font-semibold text-gray-900">
+                                        Rp {{ number_format($todaysRevenue, 0, ',', '.') }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- Stat Card 3: Jumlah Pelanggan -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div
-                                class="flex-shrink-0 bg-yellow-500 rounded-md h-12 w-12 flex items-center justify-center">
-                                <i class="fa-solid fa-users text-white text-xl"></i>
-                            </div>
-                            <div class="ml-4">
-                                <h4 class="text-sm font-medium text-gray-500">Pelanggan Terdaftar</h4>
-                                <p class="mt-1 text-2xl font-semibold text-gray-900">
-                                    {{ $totalCustomers }}
-                                </p>
+                <a href="#"
+                    class="block transform transition duration-300 hover:scale-105 hover:shadow-lg cursor-default">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full">
+                        <div class="p-6">
+                            <div class="flex items-center">
+                                <div
+                                    class="flex-shrink-0 bg-yellow-500 rounded-md h-12 w-12 flex items-center justify-center">
+                                    <i class="fa-solid fa-users text-white text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="text-sm font-medium text-gray-500">Pelanggan Terdaftar</h4>
+                                    <p class="mt-1 text-2xl font-semibold text-gray-900">
+                                        {{ $totalCustomers }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- Stat Card 4: Stok Menipis -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div
-                                class="flex-shrink-0 bg-red-500 rounded-md h-12 w-12 flex items-center justify-center">
-                                <i class="fa-solid fa-triangle-exclamation text-white text-xl"></i>
-                            </div>
-                            <div class="ml-4">
-                                <h4 class="text-sm font-medium text-gray-500">Produk Stok Menipis</h4>
-                                <p class="mt-1 text-2xl font-semibold text-red-600">
-                                    {{ $lowStockProducts }}
-                                </p>
+                <a href="{{ route('admin.products.index') }}"
+                    class="block transform transition duration-300 hover:scale-105 hover:shadow-lg">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full">
+                        <div class="p-6">
+                            <div class="flex items-center">
+                                <div
+                                    class="flex-shrink-0 bg-red-500 rounded-md h-12 w-12 flex items-center justify-center">
+                                    <i class="fa-solid fa-triangle-exclamation text-white text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="text-sm font-medium text-gray-500">Produk Stok Menipis</h4>
+                                    <p class="mt-1 text-2xl font-semibold text-red-600">
+                                        {{ $lowStockProducts }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
+
+                <!-- Stat Card 5: Total Produk -->
+                <a href="{{ route('admin.products.index') }}"
+                    class="block transform transition duration-300 hover:scale-105 hover:shadow-lg">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full">
+                        <div class="p-6">
+                            <div class="flex items-center">
+                                <div
+                                    class="flex-shrink-0 bg-indigo-500 rounded-md h-12 w-12 flex items-center justify-center">
+                                    <i class="fa-solid fa-boxes-stacked text-white text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="text-sm font-medium text-gray-500">Total Produk</h4>
+                                    <p class="mt-1 text-2xl font-semibold text-gray-900">
+                                        {{ $totalProducts }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Stat Card 6: Promo Aktif -->
+                <a href="{{ route('admin.promos.index') }}"
+                    class="block transform transition duration-300 hover:scale-105 hover:shadow-lg">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full">
+                        <div class="p-6">
+                            <div class="flex items-center">
+                                <div
+                                    class="flex-shrink-0 bg-pink-500 rounded-md h-12 w-12 flex items-center justify-center">
+                                    <i class="fa-solid fa-tags text-white text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="text-sm font-medium text-gray-500">Promo Aktif</h4>
+                                    <p class="mt-1 text-2xl font-semibold text-gray-900">
+                                        {{ $activePromos }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Stat Card 7: Transaksi Selesai -->
+                <a href="{{ route('admin.transactions.index') }}"
+                    class="block transform transition duration-300 hover:scale-105 hover:shadow-lg">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full">
+                        <div class="p-6">
+                            <div class="flex items-center">
+                                <div
+                                    class="flex-shrink-0 bg-teal-500 rounded-md h-12 w-12 flex items-center justify-center">
+                                    <i class="fa-solid fa-check-circle text-white text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="text-sm font-medium text-gray-500">Transaksi Selesai</h4>
+                                    <p class="mt-1 text-2xl font-semibold text-gray-900">
+                                        {{ $completedTransactions }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Stat Card 8: Total Pendapatan -->
+                <a href="{{ route('admin.transactions.index') }}"
+                    class="block transform transition duration-300 hover:scale-105 hover:shadow-lg">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full">
+                        <div class="p-6">
+                            <div class="flex items-center">
+                                <div
+                                    class="flex-shrink-0 bg-purple-500 rounded-md h-12 w-12 flex items-center justify-center">
+                                    <i class="fa-solid fa-wallet text-white text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="text-sm font-medium text-gray-500">Total Pendapatan</h4>
+                                    <p class="mt-1 text-2xl font-semibold text-gray-900">
+                                        Rp {{ number_format($totalRevenue, 0, ',', '.') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             </div>
 
             <!-- Grid for Recent Transactions and Low Stock Products -->

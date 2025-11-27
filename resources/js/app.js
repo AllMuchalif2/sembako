@@ -3,11 +3,12 @@ import "../css/app.css";
 import Alpine from "alpinejs";
 
 import { initDataTables } from './datatables.js';
-import { initConfirmDelete } from './ui.js';
+import { initConfirmDelete, showGlobalNotification } from './ui.js';
 import { initCartEvents } from './cart.js';
 import { initTooltip } from './tooltip.js';
 
 window.Alpine = Alpine;
+window.showNotification = showGlobalNotification;
 
 initTooltip(Alpine);
 

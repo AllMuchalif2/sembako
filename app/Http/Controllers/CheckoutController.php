@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use Midtrans\Snap;
+use Midtrans\Config;
 use App\Models\Promo;
 use App\Models\Product;
 use App\Models\Transaction;
+use Illuminate\Support\Str;
 use App\Models\StoreSetting;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+use App\Helpers\LocationHelper;
 use Illuminate\Support\Facades\Log;
-use Midtrans\Config;
-use Midtrans\Snap;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class CheckoutController extends Controller
 {
@@ -43,12 +44,10 @@ class CheckoutController extends Controller
             $subtotal += $item['price'] * $item['quantity'];
         }
 
-        // Cek jika ada promo di session
         $promo = Session::get('promo');
         $discountAmount = $promo['discount_amount'] ?? 0;
         $finalTotal = $subtotal - $discountAmount;
 
-        // Ambil pengaturan toko
         $settings = StoreSetting::getSettings();
 
         return view('checkout.index', [
@@ -108,7 +107,7 @@ class CheckoutController extends Controller
         $settings = StoreSetting::getSettings();
         
         // Hitung jarak
-        $distance = \App\Helpers\LocationHelper::calculateDistance(
+        $distance = LocationHelper::calculateDistance(
             $settings->store_latitude,
             $settings->store_longitude,
             $request->latitude,
@@ -128,7 +127,7 @@ class CheckoutController extends Controller
         }
         
         // Hitung ongkir berdasarkan pengaturan
-        $shippingCost = \App\Helpers\LocationHelper::calculateShippingCost(
+        $shippingCost = LocationHelper::calculateShippingCost(
             $distance, 
             $settings->free_shipping_radius, 
             $settings->shipping_cost

@@ -81,7 +81,7 @@
                         <table class="min-w-full w-full">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3">#</th>
+                                    <th scope="col" class="px-6 py-3">No</th>
                                     <th scope="col" class="px-6 py-3">Order ID</th>
                                     <th scope="col" class="px-6 py-3">Pelanggan</th>
                                     <th scope="col" class="px-6 py-3">Tanggal</th>

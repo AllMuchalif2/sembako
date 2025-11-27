@@ -6,6 +6,7 @@ export function initDataTables() {
         { selector: "#categoriesTb" },
         { selector: "#productsTb" },
         { selector: "#promosTb" },
+        { selector: "#adminsTb" },
     ];
 
     // Konfigurasi bahasa Indonesia

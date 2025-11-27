@@ -11,7 +11,17 @@ class PromoController extends Controller
 
     public function index()
     {
-        $promos = Promo::latest()->paginate(10);
+        $today = now()->toDateString();
+
+        Promo::where('start_date', '>', $today)->update(['status' => 'inactive']);
+
+        Promo::where('end_date', '<', $today)->update(['status' => 'inactive']);
+
+        Promo::where('start_date', '<=', $today)
+            ->where('end_date', '>=', $today)
+            ->update(['status' => 'active']);
+
+        $promos = Promo::latest()->get();
         return view('admin.promos.index', compact('promos'));
     }
 
