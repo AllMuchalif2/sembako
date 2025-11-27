@@ -83,7 +83,7 @@
                                 <div class="flex mt-1 rounded-md shadow-sm">
                                     <span
                                         class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">Rp</span>
-                                    <input type="number" name="price" id="price"
+                                    <input min="1000" type="number" name="price" id="price"
                                         value="{{ old('price', $product->price) }}"
                                         class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 @error('price') border-red-500 @enderror"
                                         placeholder="10000" required>
@@ -96,7 +96,7 @@
                             <!-- Stok -->
                             <div>
                                 <label for="stock" class="block text-gray-700 text-sm font-bold mb-2">Stok:</label>
-                                <input type="number" name="stock" id="stock"
+                                <input min="1" type="number" name="stock" id="stock"
                                     value="{{ old('stock', $product->stock) }}"
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 @error('stock') border-red-500 @enderror"
                                     required>

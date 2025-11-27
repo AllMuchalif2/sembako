@@ -2,23 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\StoreSetting;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class StoreSettingController extends Controller
 {
-    /**
-     * Show the form for editing store settings.
-     */
+
     public function edit()
     {
-        $settings = \App\Models\StoreSetting::getSettings();
+        $settings = StoreSetting::getSettings();
         return view('admin.store-settings.edit', compact('settings'));
     }
 
-    /**
-     * Update the store settings.
-     */
+
     public function update(Request $request)
     {
         $validated = $request->validate([
@@ -30,7 +27,7 @@ class StoreSettingController extends Controller
             'shipping_cost' => 'required|integer|min:0',
         ]);
 
-        $settings = \App\Models\StoreSetting::getSettings();
+        $settings = StoreSetting::getSettings();
         $settings->update($validated);
 
         return redirect()

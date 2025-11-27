@@ -9,35 +9,27 @@ use App\Http\Controllers\Controller;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        //
         $categories = Category::latest()->get();
         return view('admin.categories.index', compact('categories'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
         return view('admin.categories.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request)
     {
-        //
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
             'description' => 'nullable|string',
-        ], [
+        ], 
+        [
             'name.required' => 'Nama kategori wajib diisi.',
             'name.max' => 'Nama kategori tidak boleh lebih dari 255 karakter.',
             'name.unique' => 'Nama kategori sudah ada, silakan gunakan nama lain.',
