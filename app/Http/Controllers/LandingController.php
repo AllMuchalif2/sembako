@@ -11,16 +11,20 @@ class LandingController extends Controller
 {
     public function index()
     {
+
+
         // Ambil 8 produk terbaru untuk ditampilkan di landing page
         $products = Product::latest()->take(8)->get();
-        $promos = Promo::where('status', 'active')->get();
-        // Perbarui status promo jika end_date sudah terlewat
-        foreach ($promos as $promo) {
-            if ($promo->status === 'active' && now()->isAfter($promo->end_date)) {
-                $promo->status = 'expired';
-                $promo->save();
-            }
-        }
+        $today = now()->toDateString();
+
+        Promo::where('start_date', '>', $today)->update(['status' => 'inactive']);
+
+        Promo::where('end_date', '<', $today)->update(['status' => 'inactive']);
+
+        Promo::where('start_date', '<=', $today)
+            ->where('end_date', '>=', $today)
+            ->update(['status' => 'active']);
+
         // Ambil kembali promo setelah potensi update status
         $promos = Promo::where('status', 'active')->get();
 

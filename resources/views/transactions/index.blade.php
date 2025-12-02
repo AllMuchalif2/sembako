@@ -13,14 +13,16 @@
                     <form method="GET" action="{{ route('transactions.index') }}" class="mb-6">
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
                             <div>
-                                <label for="order_id" class="block text-sm font-medium text-gray-700">Nama (Order ID)</label>
+                                <label for="order_id" class="block text-sm font-medium text-gray-700">Nama (Order
+                                    ID)</label>
                                 <input type="text" name="order_id" id="order_id" value="{{ request('order_id') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="Cari berdasarkan Order ID">
                             </div>
                             <div>
                                 <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                                <select name="status" id="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                <select name="status" id="status"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                     <option value="">Semua Status</option>
                                     <option value="pending" @selected(request('status') == 'pending')>Pending</option>
                                     <option value="diproses" @selected(request('status') == 'diproses')>Diproses</option>
@@ -30,17 +32,21 @@
                                 </select>
                             </div>
                             <div>
-                                <label for="start_date" class="block text-sm font-medium text-gray-700">Tanggal Mulai</label>
-                                <input type="date" name="start_date" id="start_date" value="{{ request('start_date') }}"
+                                <label for="start_date" class="block text-sm font-medium text-gray-700">Tanggal
+                                    Mulai</label>
+                                <input type="date" name="start_date" id="start_date"
+                                    value="{{ request('start_date') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                             </div>
                             <div>
-                                <label for="end_date" class="block text-sm font-medium text-gray-700">Tanggal Akhir</label>
+                                <label for="end_date" class="block text-sm font-medium text-gray-700">Tanggal
+                                    Akhir</label>
                                 <input type="date" name="end_date" id="end_date" value="{{ request('end_date') }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                             </div>
                             <div class="flex items-center space-x-2">
-                                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Filter</button>
+                                <button type="submit"
+                                    class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Filter</button>
 
                                 <a href="{{ route('transactions.index') }}"
                                     class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -50,7 +56,46 @@
                     </form>
 
                     @if ($transactions->count())
-                        <div class="overflow-x-auto">
+                        <!-- Mobile View (Cards) -->
+                        <div class="md:hidden space-y-4">
+                            @foreach ($transactions as $transaction)
+                                <div class="bg-white p-4 rounded-lg shadow border border-gray-200 cursor-pointer hover:bg-gray-50 transition"
+                                    onclick="window.location.href='{{ route('transactions.show', $transaction) }}'">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div>
+                                            <span class="text-xs text-gray-500 block">Order ID</span>
+                                            <span
+                                                class="font-bold text-gray-900 text-lg">#{{ $transaction->order_id }}</span>
+                                        </div>
+                                        <span
+                                            class="px-2 py-1 text-xs font-semibold rounded-full 
+                                            @if ($transaction->status == 'pending') bg-yellow-100 text-yellow-800
+                                            @elseif($transaction->status == 'diproses') bg-blue-100 text-blue-800
+                                            @elseif($transaction->status == 'dikirim') bg-purple-100 text-purple-800
+                                            @elseif($transaction->status == 'selesai') bg-green-100 text-green-800
+                                            @else bg-red-100 text-red-800 @endif">
+                                            {{ ucfirst($transaction->status) }}
+                                        </span>
+                                    </div>
+
+                                    <div class="flex justify-between items-center border-t pt-3">
+                                        <div>
+                                            <span class="text-xs text-gray-500 block">Tanggal</span>
+                                            <span
+                                                class="text-sm text-gray-700">{{ $transaction->created_at->format('d M Y, H:i') }}</span>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="text-xs text-gray-500 block">Total</span>
+                                            <span
+                                                class="font-bold text-blue-600 text-lg">Rp{{ number_format($transaction->total_amount, 0, ',', '.') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Desktop View (Table) -->
+                        <div class="hidden md:block overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200" id="transactionsTb">
                                 <thead class="bg-gray-50">
                                     <tr>
@@ -70,10 +115,6 @@
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Status Transaksi
                                         </th>
-                                        {{-- <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Status Pembayaran
-                                    </th> --}}
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -100,15 +141,6 @@
                                                     {{ ucfirst($transaction->status) }}
                                                 </span>
                                             </td>
-                                            {{-- <td class="px-6 py-4 whitespace-nowrap">
-                                                <span
-                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full  
-                                                    @if ($transaction->payment_status == 'settlement') bg-green-100 text-green-800
-                                                    @elseif($transaction->payment_status == 'pending') bg-yellow-100 text-yellow-800
-                                                    @else bg-red-100 text-red-800 @endif">
-                                                    {{ ucfirst($transaction->payment_status) }}
-                                                </span>
-                                            </td> --}}
                                         </tr>
                                     @endforeach
                                 </tbody>

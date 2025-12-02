@@ -93,7 +93,7 @@
                         </x-slot>
 
                         <x-slot name="content">
-                            @if (Auth::user()->role_id == '0')
+                            @if (Auth::user()->role_id == '0' || Auth::user()->role_id == '1')
                                 <x-dropdown-link :href="route('admin.dashboard')">
                                     {{ __('Dashboard admin') }}
                                 </x-dropdown-link>

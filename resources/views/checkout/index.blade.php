@@ -18,7 +18,7 @@
 
     <div class="py-12 bg-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
+
 
             <form action="{{ route('checkout.process') }}" method="POST">
                 @csrf
@@ -34,10 +34,18 @@
                                 Lengkap</label>
                             <textarea id="shipping_address" name="shipping_address" rows="3"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                                placeholder="Contoh: Jl. Pahlawan No. 123, Kel. Suka Maju, Kec. Damai" required>{{ old('shipping_address',$user->address ?? "") }}</textarea>
+                                placeholder="Contoh: Jl. Pahlawan No. 123, Kel. Suka Maju, Kec. Damai" required>{{ old('shipping_address', $user->address ?? '') }}</textarea>
                             @error('shipping_address')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
+                        </div>
+
+                        <!-- Tombol Gunakan Lokasi Saya -->
+                        <div class="mt-4 mb-2">
+                            <button type="button" id="use-my-location-btn"
+                                class="w-full flex items-center justify-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                Gunakan Lokasi Saya
+                            </button>
                         </div>
 
                         <!-- Peta Leaflet -->
@@ -45,8 +53,9 @@
                             <label class="block text-sm font-medium text-gray-700">Tandai Lokasi di Peta</label>
                             <div id="map" class="mt-2 rounded-lg border border-gray-300"></div>
                             <p class="text-xs text-gray-500 mt-1">
-                                <strong>Cara pakai:</strong> Seret (drag) marker biru ke lokasi pengiriman Anda. 
-                                Zona hijau = Gratis Ongkir. Maksimal {{ number_format($settings->max_delivery_distance / 1000, 0) }} km dari toko.
+                                <strong>Cara pakai:</strong> Seret (drag) marker biru ke lokasi pengiriman Anda.
+                                Zona hijau = Gratis Ongkir. Maksimal
+                                {{ number_format($settings->max_delivery_distance / 1000, 0) }} km dari toko.
                             </p>
                         </div>
 
@@ -82,8 +91,7 @@
                                         </div>
                                         <div class="ml-4 flex flex-1 flex-col">
                                             <div>
-                                                <div
-                                                    class="flex justify-between text-sm font-medium text-gray-900">
+                                                <div class="flex justify-between text-sm font-medium text-gray-900">
                                                     <h3>{{ $item['name'] }}</h3>
                                                     <p class="ml-4">
                                                         Rp{{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}
@@ -100,10 +108,13 @@
                             <!-- Form Promo Code -->
                             <div class="mt-6">
                                 <div id="promo-form-container" class="{{ Session::has('promo') ? 'hidden' : '' }}">
-                                    <label for="promo_code" class="block text-sm font-medium text-gray-700">Punya kode promo?</label>
+                                    <label for="promo_code" class="block text-sm font-medium text-gray-700">Punya kode
+                                        promo?</label>
                                     <div class="mt-1 flex rounded-md shadow-sm">
-                                        <input type="text" name="promo_code" id="promo_code" class="block w-full flex-1 rounded-none rounded-l-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm uppercase">
-                                        <button type="button" id="apply-promo-btn" class="inline-flex items-center rounded-r-md border border-l-0 border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                        <input type="text" name="promo_code" id="promo_code"
+                                            class="block w-full flex-1 rounded-none rounded-l-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 sm:text-sm uppercase">
+                                        <button type="button" id="apply-promo-btn"
+                                            class="inline-flex items-center rounded-r-md border border-l-0 border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
                                             Terapkan
                                         </button>
                                     </div>
@@ -111,11 +122,17 @@
                                 <!-- Applied Promo Display -->
                                 <div id="applied-promo-container" class="{{ Session::has('promo') ? '' : 'hidden' }}">
                                     <p class="text-sm font-medium text-gray-700">Promo diterapkan:</p>
-                                    <div class="mt-1 flex items-center justify-between rounded-md bg-green-50 border border-green-200 px-3 py-2">
-                                        <span id="promo-code-display" class="text-sm font-bold text-green-800 uppercase">{{ Session::get('promo.code') }}</span>
-                                        <button type="button" id="remove-promo-btn" class="text-gray-400 hover:text-red-600" title="Hapus Promo">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                    <div
+                                        class="mt-1 flex items-center justify-between rounded-md bg-green-50 border border-green-200 px-3 py-2">
+                                        <span id="promo-code-display"
+                                            class="text-sm font-bold text-green-800 uppercase">{{ Session::get('promo.code') }}</span>
+                                        <button type="button" id="remove-promo-btn"
+                                            class="text-gray-400 hover:text-red-600" title="Hapus Promo">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                                fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                                    clip-rule="evenodd" />
                                             </svg>
                                         </button>
                                     </div>
@@ -127,30 +144,38 @@
                                 <dl class="space-y-2 text-sm text-gray-700">
                                     <div class="flex justify-between">
                                         <dt>Subtotal</dt>
-                                        <dd class="font-medium" id="subtotal-amount">Rp{{ number_format($subtotal, 0, ',', '.') }}</dd>
+                                        <dd class="font-medium" id="subtotal-amount">
+                                            Rp{{ number_format($subtotal, 0, ',', '.') }}</dd>
                                     </div>
-                                    <div id="discount-row" class="flex justify-between {{ Session::has('promo') ? '' : 'hidden' }}">
+                                    <div id="discount-row"
+                                        class="flex justify-between {{ Session::has('promo') ? '' : 'hidden' }}">
                                         <dt class="flex items-center">
                                             <span>Diskon</span>
                                         </dt>
-                                        <dd id="discount-amount" class="font-medium text-green-600">-Rp{{ number_format(Session::get('promo.discount_amount', 0), 0, ',', '.') }}</dd>
+                                        <dd id="discount-amount" class="font-medium text-green-600">
+                                            -Rp{{ number_format(Session::get('promo.discount_amount', 0), 0, ',', '.') }}
+                                        </dd>
                                     </div>
                                     <div id="shipping-row" class="flex justify-between">
                                         <dt class="flex items-center">
                                             <span>Ongkir</span>
-                                            <span id="shipping-badge" class="ml-2 hidden inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                                            <span id="shipping-badge"
+                                                class="ml-2 hidden inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
                                                 GRATIS
                                             </span>
                                         </dt>
                                         <dd id="shipping-amount" class="font-medium">-</dd>
                                     </div>
-                                    <div class="flex justify-between border-t border-gray-200 pt-2 text-base font-bold text-gray-900">
+                                    <div
+                                        class="flex justify-between border-t border-gray-200 pt-2 text-base font-bold text-gray-900">
                                         <dt>Total</dt>
-                                        <dd id="final-total-amount">Rp{{ number_format($finalTotal, 0, ',', '.') }}</dd>
+                                        <dd id="final-total-amount">Rp{{ number_format($finalTotal, 0, ',', '.') }}
+                                        </dd>
                                     </div>
                                 </dl>
 
-                                <p id="shipping-info" class="mt-2 text-xs text-gray-500">Pilih lokasi di peta untuk menghitung ongkir.</p>
+                                <p id="shipping-info" class="mt-2 text-xs text-gray-500">Pilih lokasi di peta untuk
+                                    menghitung ongkir.</p>
 
                                 <div class="mt-6">
                                     <button type="submit" id="checkout-button"
@@ -176,14 +201,14 @@
             var deliveryMarker; // Marker lokasi pengiriman
             var storeMarker; // Marker lokasi toko
             var radiusCircle; // Lingkaran zona radius
-            
+
             // Koordinat toko dari database
             const tokoLat = {{ $settings->store_latitude }};
             const tokoLng = {{ $settings->store_longitude }};
             const freeShippingRadius = {{ $settings->free_shipping_radius }}; // dalam meter
             const maxDeliveryRadius = {{ $settings->max_delivery_distance }}; // dalam meter (BATAS MAKSIMAL)
             const shippingCost = {{ $settings->shipping_cost }}; // Biaya ongkir jika di luar radius
-            
+
             // Cek apakah ada nilai latitude/longitude dari old() (misal setelah validasi gagal)
             var initialLat = {{ old('latitude', 'null') }} || tokoLat;
             var initialLng = {{ old('longitude', 'null') }} || tokoLng;
@@ -206,32 +231,36 @@
                 shadowSize: [41, 41]
             });
 
-            storeMarker = L.marker([tokoLat, tokoLng], {icon: storeIcon}).addTo(map);
+            storeMarker = L.marker([tokoLat, tokoLng], {
+                icon: storeIcon
+            }).addTo(map);
             storeMarker.bindPopup("<b><i class='fas fa-store'></i> {{ $settings->store_name }}</b><br>Lokasi Toko");
 
             // Tambahkan lingkaran zona radius gratis ongkir
             radiusCircle = L.circle([tokoLat, tokoLng], {
-                color: '#10b981',        // Warna border (green-500)
-                fillColor: '#10b981',    // Warna fill (green-500)
+                color: '#10b981', // Warna border (green-500)
+                fillColor: '#10b981', // Warna fill (green-500)
                 fillOpacity: 0.1,
                 radius: freeShippingRadius,
                 weight: 2,
                 dashArray: '5, 5'
             }).addTo(map);
-            
+
             radiusCircle.bindPopup(`<b>Zona Gratis Ongkir</b><br>Radius: ${freeShippingRadius/1000} km`);
 
             // Tambahkan lingkaran zona maksimal pengiriman (50 km)
             var maxRadiusCircle = L.circle([tokoLat, tokoLng], {
-                color: '#ef4444',        // Warna border (red-500)
-                fillColor: '#ef4444',    // Warna fill (red-500)
+                color: '#ef4444', // Warna border (red-500)
+                fillColor: '#ef4444', // Warna fill (red-500)
                 fillOpacity: 0.05,
                 radius: maxDeliveryRadius,
                 weight: 2,
                 dashArray: '10, 5'
             }).addTo(map);
-            
-            maxRadiusCircle.bindPopup(`<b><i class='fas fa-exclamation-triangle'></i> Batas Maksimal Pengiriman</b><br>Radius: ${maxDeliveryRadius/1000} km`);
+
+            maxRadiusCircle.bindPopup(
+                `<b><i class='fas fa-exclamation-triangle'></i> Batas Maksimal Pengiriman</b><br>Radius: ${maxDeliveryRadius/1000} km`
+            );
 
             // Fungsi untuk menghitung jarak menggunakan Leaflet
             function calculateDistance(lat1, lng1, lat2, lng2) {
@@ -252,44 +281,47 @@
                 const shippingInfoEl = document.getElementById('shipping-info');
                 const finalTotalAmountEl = document.getElementById('final-total-amount');
                 const checkoutButton = document.getElementById('checkout-button');
-                
+
                 let currentShippingCost = 0;
                 let shippingText = '';
-                
+
                 // Validasi jarak maksimal 50 km
                 if (distance > maxDeliveryRadius) {
                     shippingAmountEl.textContent = '-';
                     shippingBadgeEl.classList.add('hidden');
-                    shippingInfoEl.innerHTML = `<span class="text-red-600 font-semibold"><i class='fas fa-times-circle'></i> Lokasi terlalu jauh! Maksimal ${maxDeliveryRadius/1000} km dari toko. Jarak Anda: ${(distance/1000).toFixed(2)} km</span>`;
-                    
+                    shippingInfoEl.innerHTML =
+                        `<span class="text-red-600 font-semibold"><i class='fas fa-times-circle'></i> Lokasi terlalu jauh! Maksimal ${maxDeliveryRadius/1000} km dari toko. Jarak Anda: ${(distance/1000).toFixed(2)} km</span>`;
+
                     // Disable tombol checkout
                     checkoutButton.disabled = true;
                     checkoutButton.classList.add('opacity-50', 'cursor-not-allowed');
                     checkoutButton.classList.remove('hover:bg-blue-700');
-                    
+
                     finalTotalAmountEl.textContent = '-';
                     return;
                 }
-                
+
                 // Enable tombol checkout jika dalam jangkauan
                 checkoutButton.disabled = false;
                 checkoutButton.classList.remove('opacity-50', 'cursor-not-allowed');
                 checkoutButton.classList.add('hover:bg-blue-700');
-                
+
                 if (distance <= freeShippingRadius) {
                     currentShippingCost = 0;
                     shippingText = formatRupiah(0);
                     shippingBadgeEl.classList.remove('hidden');
-                    shippingInfoEl.innerHTML = `<span class="text-green-600"><i class='fas fa-check-circle'></i> Lokasi Anda dalam zona gratis ongkir (${(distance/1000).toFixed(2)} km dari toko)</span>`;
+                    shippingInfoEl.innerHTML =
+                        `<span class="text-green-600"><i class='fas fa-check-circle'></i> Lokasi Anda dalam zona gratis ongkir (${(distance/1000).toFixed(2)} km dari toko)</span>`;
                 } else {
                     currentShippingCost = shippingCost;
                     shippingText = formatRupiah(shippingCost);
                     shippingBadgeEl.classList.add('hidden');
-                    shippingInfoEl.innerHTML = `<span class="text-orange-600">Lokasi Anda di luar zona gratis ongkir (${(distance/1000).toFixed(2)} km dari toko)</span>`;
+                    shippingInfoEl.innerHTML =
+                        `<span class="text-orange-600">Lokasi Anda di luar zona gratis ongkir (${(distance/1000).toFixed(2)} km dari toko)</span>`;
                 }
-                
+
                 shippingAmountEl.textContent = shippingText;
-                
+
                 // Update total
                 const subtotal = {{ $subtotal }};
                 const discount = {{ Session::get('promo.discount_amount', 0) }};
@@ -305,26 +337,29 @@
                 const isInZone = distance <= freeShippingRadius;
                 const isTooFar = distance > maxDeliveryRadius;
                 const ongkir = isInZone ? 0 : shippingCost;
-                
+
                 // Update popup marker
-                let popupContent = `<b><i class='fas fa-map-marker-alt'></i> Lokasi Pengiriman</b><br>Jarak: ${distanceKm} km<br>`;
-                
+                let popupContent =
+                    `<b><i class='fas fa-map-marker-alt'></i> Lokasi Pengiriman</b><br>Jarak: ${distanceKm} km<br>`;
+
                 if (isTooFar) {
-                    popupContent += `<span style="color: red; font-weight: bold;"><i class='fas fa-times-circle'></i> TERLALU JAUH!<br>Maks: ${maxDeliveryRadius/1000} km</span>`;
+                    popupContent +=
+                        `<span style="color: red; font-weight: bold;"><i class='fas fa-times-circle'></i> TERLALU JAUH!<br>Maks: ${maxDeliveryRadius/1000} km</span>`;
                 } else {
                     popupContent += `Ongkir: ${formatRupiah(ongkir)}`;
                     if (isInZone) {
-                        popupContent += '<br><span style="color: green; font-weight: bold;"><i class="fas fa-check-circle"></i> Gratis Ongkir!</span>';
+                        popupContent +=
+                            '<br><span style="color: green; font-weight: bold;"><i class="fas fa-check-circle"></i> Gratis Ongkir!</span>';
                     }
                 }
-                
+
                 deliveryMarker.setPopupContent(popupContent);
                 deliveryMarker.openPopup();
-                
+
                 // Update hidden input
                 document.getElementById('latitude').value = lat;
                 document.getElementById('longitude').value = lng;
-                
+
                 // Update ringkasan ongkir
                 updateShippingCost(distance);
             }
@@ -334,7 +369,7 @@
                 if (deliveryMarker) {
                     map.removeLayer(deliveryMarker);
                 }
-                
+
                 var deliveryIcon = L.icon({
                     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
                     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
@@ -343,23 +378,70 @@
                     popupAnchor: [1, -34],
                     shadowSize: [41, 41]
                 });
-                
+
                 // Marker bisa di-drag (seret)
                 deliveryMarker = L.marker([lat, lng], {
                     icon: deliveryIcon,
-                    draggable: true  // ← PENTING: Marker bisa diseret!
+                    draggable: true, // ← PENTING: Marker bisa diseret!
+                    zIndexOffset: 1000 // Agar marker biru selalu di atas marker merah
                 }).addTo(map);
-                
+
                 // Event saat marker selesai di-drag
                 deliveryMarker.on('dragend', function(e) {
                     const newLat = e.target.getLatLng().lat;
                     const newLng = e.target.getLatLng().lng;
                     updateMarkerPosition(newLat, newLng);
                 });
-                
+
                 // Update posisi awal
                 updateMarkerPosition(lat, lng);
             }
+
+            // Event Listener untuk Tombol Gunakan Lokasi Saya
+            document.getElementById('use-my-location-btn').addEventListener('click', function() {
+                const btn = this;
+                const originalText = btn.innerHTML;
+
+                // Tampilkan loading state
+                btn.disabled = true;
+                btn.innerHTML = `
+                    <svg class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Mencari Lokasi...
+                `;
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        var userLat = position.coords.latitude;
+                        var userLng = position.coords.longitude;
+
+                        map.setView([userLat, userLng], 15); // Zoom in lebih dekat
+                        placeDeliveryMarker(userLat, userLng);
+
+                        // Kembalikan tombol ke state awal
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
+
+                    }, function(error) {
+                        console.warn('ERROR(' + error.code + '): ' + error.message);
+                        alert('Gagal mendapatkan lokasi Anda. Pastikan GPS aktif dan izin lokasi diberikan.');
+
+                        // Kembalikan tombol ke state awal
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
+                    }, {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    });
+                } else {
+                    alert('Browser Anda tidak mendukung Geolocation.');
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            });
 
             // Jika ada nilai old() atau default, langsung tempatkan marker
             if (initialLat !== null && initialLng !== null) {
@@ -367,7 +449,8 @@
             }
 
             // Coba dapatkan lokasi pengguna saat ini
-            if (navigator.geolocation && ({{ old('latitude', 'null') }} === null || {{ old('longitude', 'null') }} === null)) {
+            if (navigator.geolocation && ({{ old('latitude', 'null') }} === null || {{ old('longitude', 'null') }} ===
+                    null)) {
                 navigator.geolocation.getCurrentPosition(function(position) {
                     var userLat = position.coords.latitude;
                     var userLng = position.coords.longitude;
@@ -412,30 +495,32 @@
                     setLoading(applyBtn, true);
 
                     fetch('{{ route('promo.apply') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json',
-                        },
-                        body: JSON.stringify({ promo_code: promoCode })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            showFeedback(data.message, 'green');
-                            updateSummary(data.discount_formatted, data.new_total_formatted, promoCode);
-                        } else {
-                            showFeedback(data.message, 'red');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showFeedback('Terjadi kesalahan. Silakan coba lagi.', 'red');
-                    })
-                    .finally(() => {
-                        setLoading(applyBtn, false);
-                    });
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                promo_code: promoCode
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                showFeedback(data.message, 'green');
+                                updateSummary(data.discount_formatted, data.new_total_formatted, promoCode);
+                            } else {
+                                showFeedback(data.message, 'red');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showFeedback('Terjadi kesalahan. Silakan coba lagi.', 'red');
+                        })
+                        .finally(() => {
+                            setLoading(applyBtn, false);
+                        });
                 });
 
                 removeBtn.addEventListener('click', function() {
@@ -443,29 +528,29 @@
                     showFeedback('', 'green'); // Clear feedback
 
                     fetch('{{ route('promo.remove') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json',
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            showFeedback(data.message, 'green');
-                            resetSummary(data.new_total_formatted);
-                        } else {
-                            showFeedback(data.message || 'Gagal menghapus promo.', 'red');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showFeedback('Terjadi kesalahan. Silakan coba lagi.', 'red');
-                    })
-                    .finally(() => {
-                        setLoading(removeBtn, false);
-                    });
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                showFeedback(data.message, 'green');
+                                resetSummary(data.new_total_formatted);
+                            } else {
+                                showFeedback(data.message || 'Gagal menghapus promo.', 'red');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showFeedback('Terjadi kesalahan. Silakan coba lagi.', 'red');
+                        })
+                        .finally(() => {
+                            setLoading(removeBtn, false);
+                        });
                 });
 
                 function showFeedback(message, color) {
@@ -476,7 +561,7 @@
                 function updateSummary(discount, total, code) {
                     discountRow.classList.remove('hidden');
                     discountAmountEl.textContent = discount;
-                    finalTotalAmountEl.textContent = total; 
+                    finalTotalAmountEl.textContent = total;
                     promoCodeDisplay.textContent = code.toUpperCase();
                     promoFormContainer.classList.add('hidden');
                     appliedPromoContainer.classList.remove('hidden');
@@ -497,7 +582,8 @@
                         if (button.id === 'apply-promo-btn') {
                             // Simpan konten asli sebelum mengubahnya
                             button.dataset.originalContent = button.innerHTML;
-                            button.innerHTML = '<svg class="animate-spin h-5 w-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+                            button.innerHTML =
+                                '<svg class="animate-spin h-5 w-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
                         } else {
                             // Spinner for remove button
                             button.classList.add('animate-spin');
