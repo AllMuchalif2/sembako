@@ -237,20 +237,64 @@
 
     <!-- Global Notification -->
     @if (session('success') || session('warning') || session('error'))
-        <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 5000)" x-show="show" x-transition:enter="transform ease-out duration-300 transition"
+        <div x-data="{ 
+                show: true, 
+                progress: 100,
+                duration: 5000,
+                interval: null,
+                startTimer() {
+                    const step = 100 / (this.duration / 50);
+                    this.interval = setInterval(() => {
+                        this.progress -= step;
+                        if (this.progress <= 0) {
+                            clearInterval(this.interval);
+                            this.show = false;
+                        }
+                    }, 50);
+                },
+                close() {
+                    clearInterval(this.interval);
+                    this.show = false;
+                }
+            }" 
+            x-init="startTimer()" 
+            x-show="show" 
+            x-transition:enter="transform ease-out duration-300 transition"
             x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
             x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
-            x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100"
+            x-transition:leave="transition ease-in duration-100" 
+            x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            class="fixed bottom-5 right-5 z-50 max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
-            <div class="p-4">
+            class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-5 sm:bottom-5 z-50 sm:max-w-sm w-auto sm:w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
+            
+            <!-- Progress bar -->
+            <div class="absolute bottom-0 left-0 h-1 bg-gradient-to-r 
+                @if (session('success')) from-green-400 to-green-600
+                @elseif (session('warning')) from-yellow-400 to-yellow-600
+                @else from-red-400 to-red-600
+                @endif
+                transition-all duration-50 ease-linear"
+                :style="'width: ' + progress + '%'">
+            </div>
+
+            <div class="p-3 sm:p-4">
                 <div class="flex items-start">
                     <div class="flex-shrink-0">
-                        @if (session('success')) <i class="fa-solid fa-circle-check text-green-500 text-xl"></i> @endif
-                        @if (session('warning')) <i class="fa-solid fa-triangle-exclamation text-yellow-500 text-xl"></i> @endif
-                        @if (session('error')) <i class="fa-solid fa-circle-xmark text-red-500 text-xl"></i> @endif
+                        @if (session('success')) <i class="fa-solid fa-circle-check text-green-500 text-lg sm:text-xl"></i> @endif
+                        @if (session('warning')) <i class="fa-solid fa-triangle-exclamation text-yellow-500 text-lg sm:text-xl"></i> @endif
+                        @if (session('error')) <i class="fa-solid fa-circle-xmark text-red-500 text-lg sm:text-xl"></i> @endif
                     </div>
-                    <div class="ml-3 w-0 flex-1 pt-0.5"><p class="text-sm font-medium text-gray-900">{{ session('success') ?? session('warning') ?? session('error') }}</p></div>
+                    <div class="ml-2 sm:ml-3 w-0 flex-1 pt-0.5">
+                        <p class="text-xs sm:text-sm font-medium text-gray-900">{{ session('success') ?? session('warning') ?? session('error') }}</p>
+                    </div>
+                    <div class="ml-2 flex-shrink-0 flex">
+                        <button @click="close()" class="inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 rounded-md p-1">
+                            <span class="sr-only">Close</span>
+                            <svg class="h-4 w-4 sm:h-5 sm:w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
