@@ -81,7 +81,7 @@ class CheckoutController extends Controller
         $item_details = [];
         foreach ($cartItems as $id => $item) {
             $product = Product::find($id);
-            if (!$product) { // Tambahkan pengecekan jika produk tidak ditemukan
+            if (!$product) {
                 Log::error('Checkout process: Product not found in DB for cart item. Redirecting to cart index.', ['product_id' => $id, 'user_id' => Auth::id() ?? 'guest']);
                 return redirect()->route('cart.index')->with('error', 'Produk tidak ditemukan.');
             }
@@ -102,10 +102,10 @@ class CheckoutController extends Controller
         $promo = Session::get('promo');
         $discountAmount = $promo['discount_amount'] ?? 0;
         $promoCode = $promo['code'] ?? null;
-        
+
         // Ambil pengaturan toko dari database
         $settings = StoreSetting::getSettings();
-        
+
         // Hitung jarak
         $distance = LocationHelper::calculateDistance(
             $settings->store_latitude,
@@ -113,7 +113,7 @@ class CheckoutController extends Controller
             $request->latitude,
             $request->longitude
         );
-        
+
         // Validasi jarak maksimal dari pengaturan
         if ($distance > $settings->max_delivery_distance) {
             Log::warning('Checkout process: Delivery location too far.', [
@@ -121,18 +121,19 @@ class CheckoutController extends Controller
                 'max_allowed' => $settings->max_delivery_distance,
                 'user_id' => Auth::id()
             ]);
-            return redirect()->route('checkout.index')->with('error', 
-                'Lokasi pengiriman terlalu jauh! Maksimal ' . ($settings->max_delivery_distance/1000) . ' km dari toko. Jarak Anda: ' . number_format($distance/1000, 2) . ' km'
+            return redirect()->route('checkout.index')->with(
+                'error',
+                'Lokasi pengiriman terlalu jauh! Maksimal ' . ($settings->max_delivery_distance / 1000) . ' km dari toko. Jarak Anda: ' . number_format($distance / 1000, 2) . ' km'
             );
         }
-        
+
         // Hitung ongkir berdasarkan pengaturan
         $shippingCost = LocationHelper::calculateShippingCost(
-            $distance, 
-            $settings->free_shipping_radius, 
+            $distance,
+            $settings->free_shipping_radius,
             $settings->shipping_cost
         );
-        
+
         $finalTotal = $subtotal - $discountAmount + $shippingCost;
 
 
@@ -145,7 +146,6 @@ class CheckoutController extends Controller
             'discount_amount' => $discountAmount,
             'distance_from_store' => $distance,
             'shipping_cost' => $shippingCost,
-            // 'payment_status' => 'pending',
             'status' => 'pending',
             'shipping_address' => $request->shipping_address,
             'latitude' => $request->latitude,
@@ -198,7 +198,7 @@ class CheckoutController extends Controller
             $transaction->save();
 
             session()->forget('cart');
-            session()->forget('promo'); // Hapus promo setelah berhasil checkout
+            session()->forget('promo');
             Log::info('Checkout process: Snap token generated, cart cleared, redirecting to payment view.', ['order_id' => $transaction->order_id, 'user_id' => Auth::id() ?? 'guest']);
 
             return view('checkout.payment', ['snapToken' => $snapToken, 'client_key' => config('midtrans.client_key'), 'order' => $transaction]);
@@ -213,27 +213,6 @@ class CheckoutController extends Controller
         }
     }
 
-    public function markAsProcessed(Request $request, $order_id)
-    {
-        Log::info('FAKE SUCCESS: Memicu status "diproses" untuk order.', ['order_id' => $order_id]);
-
-        $transaction = Transaction::where('order_id', $order_id)
-            ->where('user_id', Auth::id())
-            ->first();
-
-        if ($transaction && $transaction->status === 'pending') {
-            // INI INTINYA: Langsung ubah status
-            $transaction->update(['status' => 'diproses']);
-
-            return response()->json(['success' => true, 'message' => 'Status diubah ke diproses.']);
-        }
-
-        if ($transaction) {
-            return response()->json(['success' => false, 'message' => 'Status sudah diproses.'], 200);
-        }
-
-        return response()->json(['success' => false, 'message' => 'Transaksi tidak ditemukan.'], 404);
-    }
     public function callback(Request $request)
     {
         Log::info('Midtrans notification received.', $request->all());
@@ -246,13 +225,12 @@ class CheckoutController extends Controller
                 return response()->json(['message' => 'Invalid signature'], 403);
             }
 
-            // 2. Ambil data langsung dari request Laravel yang sudah terbukti benar dari log
+            // 2. Ambil data dari request
             $orderId = $request->order_id;
             $transactionStatus = $request->transaction_status;
-            // $paymentType = $request->payment_type ?? null;
             $fraudStatus = $request->fraud_status;
 
-            // 3. Cari transaksi berdasarkan order_id yang benar
+            // 3. Cari transaksi berdasarkan order_id
             $transaction = Transaction::where('order_id', $orderId)->first();
 
             if (!$transaction) {
@@ -260,53 +238,44 @@ class CheckoutController extends Controller
                 return response()->json(['message' => 'Transaction not found.'], 404);
             }
 
-            // 3. Jangan proses notifikasi yang sama berulang kali (Idempotency)
-            if ($transaction->payment_status === 'settlement') {
+            // 4. Jangan proses notifikasi yang sama berulang kali (Idempotency)
+            if ($transaction->status === 'diproses' || $transaction->status === 'settlement') {
                 Log::info('Midtrans callback: Transaction already marked as success.', ['order_id' => $orderId]);
                 return response()->json(['message' => 'Transaction already processed.'], 200);
             }
 
             // 5. Handle status berdasarkan notifikasi
             if ($transactionStatus == 'settlement') {
-                // Transaksi berhasil dan dana sudah masuk.
                 $transaction->update([
                     'payment_status' => 'settlement',
                     'status' => 'diproses',
-                    // 'payment_type' => $paymentType
                 ]);
                 Log::info('Midtrans callback: Transaction status updated to settlement.', ['order_id' => $orderId]);
             } else if ($transactionStatus == 'capture' && $fraudStatus == 'accept') {
-                // Khusus untuk kartu kredit, setelah 'capture' dan fraud 'accept'
                 $transaction->update([
                     'payment_status' => 'settlement',
                     'status' => 'diproses',
-                    // 'payment_type' => $paymentType
                 ]);
                 Log::info('Midtrans callback: Transaction status updated to success after capture.', ['order_id' => $orderId]);
             } else if ($transactionStatus == 'pending') {
-                // Transaksi menunggu pembayaran
                 $transaction->update([
                     'payment_status' => 'pending',
-                    // 'payment_type' => $paymentType
                 ]);
             } else if ($transactionStatus == 'deny' || $transactionStatus == 'expire' || $transactionStatus == 'cancel') {
-                // Transaksi gagal, dibatalkan, atau kadaluarsa
                 $transaction->update([
                     'payment_status' => 'failed',
                     'status' => 'failed'
                 ]);
 
-                // 3. Kembalikan stok produk karena pembayaran gagal
+                // Kembalikan stok produk
                 foreach ($transaction->items as $item) {
                     Product::find($item->product_id)->increment('stock', $item->quantity);
                 }
                 Log::info('Midtrans callback: Transaction failed, stock returned.', ['order_id' => $orderId]);
             } else if ($fraudStatus == 'challenge') {
-                // Transaksi ditahan karena dugaan fraud
                 $transaction->update([
                     'payment_status' => 'challenge',
                     'status' => 'challenge',
-                    // 'payment_type' => $paymentType
                 ]);
                 Log::warning('Midtrans callback: Transaction is challenged by FDS.', ['order_id' => $orderId]);
             }
@@ -321,7 +290,71 @@ class CheckoutController extends Controller
     public function success(Request $request)
     {
         $orderId = $request->query('order_id');
+
+        if (!$orderId) {
+            return redirect()->route('transactions.index')->with('error', 'Order ID tidak ditemukan.');
+        }
+
         $transaction = Transaction::where('order_id', $orderId)->where('user_id', Auth::id())->firstOrFail();
+
+        // FORCED SUCCESS for InfinityFree (no callback support)
+        // If user reaches this page with valid order_id, assume payment success
+        if ($transaction->status == 'pending') {
+            $transaction->update([
+                'status' => 'diproses',
+                'payment_status' => 'settlement'
+            ]);
+            Log::info('Success Page: Forced status update (InfinityFree workaround)', ['order_id' => $orderId]);
+        }
+
         return view('checkout.success', ['order' => $transaction]);
+    }
+
+    public function pay($order_id)
+    {
+        $transaction = Transaction::where('order_id', $order_id)->where('user_id', Auth::id())->firstOrFail();
+
+        if ($transaction->status != 'pending') {
+            return redirect()->route('transactions.index')->with('error', 'Transaksi ini tidak dapat dibayar lagi.');
+        }
+
+        // Generate new Snap token for this transaction
+        $item_details = [];
+        foreach ($transaction->items as $item) {
+            $item_details[] = [
+                'id' => $item->product_id,
+                'price' => $item->price,
+                'quantity' => $item->quantity,
+                'name' => Str::limit($item->product_name, 50),
+            ];
+        }
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => $transaction->order_id,
+                'gross_amount' => $transaction->total_amount,
+            ],
+            'customer_details' => [
+                'first_name' => Auth::user()->name,
+                'email' => Auth::user()->email,
+            ],
+            'callbacks' => [
+                'finish' => route('checkout.success', ['order_id' => $transaction->order_id]),
+                'error' => route('cart.index', ['status' => 'error', 'order_id' => $transaction->order_id]),
+                'pending' => route('cart.index', ['status' => 'pending', 'order_id' => $transaction->order_id]),
+            ],
+            'item_details' => $item_details,
+        ];
+
+        try {
+            $snapToken = Snap::getSnapToken($params);
+            $transaction->snap_token = $snapToken;
+            $transaction->save();
+
+            return view('checkout.payment', ['snapToken' => $snapToken, 'client_key' => config('midtrans.client_key'), 'order' => $transaction]);
+        } catch (\Exception $e) {
+            Log::error('Pay method: Failed to generate Snap token.', ['error' => $e->getMessage(), 'order_id' => $order_id]);
+            return redirect()->route('transactions.index')->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
+        }
     }
 }

@@ -30,38 +30,21 @@
                 payButton.disabled = true;
                 payButton.innerText = 'Memproses...';
 
-                // 2. Panggil "hiasan" Midtrans
+                // 2. Panggil Midtrans Snap
                 window.snap.pay('{{ $snapToken }}', {
                     onClose: function() {
-                        // Jika user menutup popup, kita anggap sukses & redirect
-                        // karena status di server SUDAH diubah
-                        window.location.href = '{{ route('checkout.success', ['order_id' => $order->order_id]) }}';
+                        // User closed popup without completing - just re-enable the button
+                        console.log('Payment popup closed');
+                        payButton.disabled = false;
+                        payButton.innerText = 'Bayar Sekarang';
                     },
                     onError: function(result) {
-                        // Jika error, tetap redirect ke success (karena kita curang)
-                        window.location.href = '{{ route('checkout.success', ['order_id' => $order->order_id]) }}';
+                        console.log('Payment error!', result);
+                        payButton.disabled = false;
+                        payButton.innerText = 'Bayar Sekarang';
+                        alert('Terjadi kesalahan saat memproses pembayaran. Silakan coba lagi.');
                     }
-                    // Kita tidak butuh onSuccess karena 'finish' callback sudah di-set di controller
-                });
-                
-                // 3. SEGERA KIRIM PERINTAH "FAKE SUCCESS" KE SERVER
-                // Ini dieksekusi bersamaan dengan munculnya popup
-                fetch('{{ route('checkout.mark-processed', ['order_id' => $order->order_id]) }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Server response (fake success):', data.message);
-                    // Tidak perlu melakukan apa-apa lagi, popup sudah terbuka
-                    // dan status di DB sudah berubah.
-                })
-                .catch(error => {
-                    console.error('Gagal trigger fake success:', error);
-                    // Biarkan saja, jaring pengaman di success.blade.php akan menangani
+                    // Midtrans will auto-redirect via 'finish' callback after successful payment
                 });
                 
             });

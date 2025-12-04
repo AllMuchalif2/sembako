@@ -40,14 +40,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::get('/checkout/pay/{order_id}', [CheckoutController::class, 'pay'])->name('checkout.pay');
 
     // rute transaksi pelanggan
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
     Route::patch('/transactions/{transaction}/complete', [TransactionController::class, 'markAsCompleted'])->name('transactions.complete');
     Route::patch('/transactions/{transaction}/cancel', [TransactionController::class, 'cancel'])->name('transactions.cancel');
-    // rute mark order as processed (untuk mengubah status pesanan menjadi diproses)
-    Route::post('/checkout/mark-processed/{order_id}', [CheckoutController::class, 'markAsProcessed'])->name('checkout.mark-processed');
 
     // rute profil pelanggan
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -78,8 +77,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 
     // Admin Profile
-    Route::get('/profile', [ ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 // rute owner (hanya owner yang bisa mengakses)
@@ -88,12 +87,13 @@ Route::middleware(['auth', 'role:owner'])->prefix('admin')->name('admin.')->grou
     // Store Settings
     Route::get('store-settings', [StoreSettingController::class, 'edit'])->name('store-settings.edit');
     Route::put('store-settings', [StoreSettingController::class, 'update'])->name('store-settings.update');
-    
+
     // Admin Management
-    Route::resource('admins',  AdminController::class);
+    Route::resource('admins', AdminController::class);
 });
 
-// Rute callback Midtrans
+// Rute callback Midtrans (tanpa auth/csrf untuk menerima notifikasi dari Midtrans)
 Route::post('/midtrans/callback', [CheckoutController::class, 'callback'])->name('midtrans.callback');
 
 require __DIR__ . '/auth.php';
+
