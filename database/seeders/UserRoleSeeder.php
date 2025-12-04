@@ -22,17 +22,20 @@ class UserRoleSeeder extends Seeder
         User::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // 1. Create Roles
+        // 1. Create Roles with explicit IDs
         $ownerRole = Role::create([
+            'id' => 1,
             'name' => 'owner',
-            'description' => 'Owner of the tore'
+            'description' => 'Owner of the store'
         ]);
         $adminRole = Role::create([
+            'id' => 2,
             'name' => 'admin',
             'description' => 'Administrator'
         ]);
 
         $customerRole = Role::create([
+            'id' => 3,
             'name' => 'customer',
             'description' => 'Regular Customer'
         ]);
@@ -42,6 +45,7 @@ class UserRoleSeeder extends Seeder
         User::create([
             'name' => 'Owner Toko',
             'email' => 'owner@example.com',
+            'phone' => '081234567890',
             'password' => Hash::make('password'),
             'role_id' => $ownerRole->id,
         ]);
@@ -49,6 +53,7 @@ class UserRoleSeeder extends Seeder
         User::create([
             'name' => 'Admin',
             'email' => 'admin@example.com',
+            'phone' => '081234567891',
             'password' => Hash::make('password'),
             'role_id' => $adminRole->id,
         ]);
@@ -56,6 +61,7 @@ class UserRoleSeeder extends Seeder
         User::create([
             'name' => 'Budi Pelanggan',
             'email' => 'budi@example.com',
+            'phone' => '081234567892',
             'password' => Hash::make('password'),
             'role_id' => $customerRole->id,
         ]);

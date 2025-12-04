@@ -51,7 +51,7 @@ class User extends Authenticatable
     protected static function booted(): void
     {
         static::creating(function ($user) {
-            $user->role_id ??= 2; // Default to 'customer' role
+            $user->role_id ??= 3; // Default to 'customer' role
         });
     }
 
@@ -62,8 +62,8 @@ class User extends Authenticatable
 
     public function hasRole($roleName)
     {
-        // Owner (role_id 0) has access to everything Admin has
-        if ($this->role_id === 0) {
+        // Owner (role_id 1) has access to everything
+        if ($this->role_id === 1) {
             return true;
         }
 

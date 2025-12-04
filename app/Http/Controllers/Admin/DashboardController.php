@@ -23,7 +23,7 @@ class DashboardController extends Controller
             ->where('status', 'selesai')
             ->sum('total_amount');
 
-        $totalCustomers = User::where('role_id', 2)->count();
+        $totalCustomers = User::where('role_id', 3)->count();
 
         $lowStockProducts = Product::where('stock', '<', 10)->count();
 

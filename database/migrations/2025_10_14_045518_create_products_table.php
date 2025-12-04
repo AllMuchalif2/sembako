@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('name')->unique();
             $table->string('slug')->unique();
             $table->text('description')->nullable();
-            $table->string('photo');
+            $table->string('image');
             $table->decimal('price', 15, 2);
             $table->integer('stock');
             $table->timestamps();

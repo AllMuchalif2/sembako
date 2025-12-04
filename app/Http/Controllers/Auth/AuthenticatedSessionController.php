@@ -35,13 +35,13 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
         $user = $request->user();
 
-        if ($user->role_id === 1 || $user->role_id === 0) { // 1 = Admin, 0 = Owner
+        if ($user->role_id === 1 || $user->role_id === 2) { // 1 = Owner, 2 = Admin
             return redirect()->route('admin.dashboard');
         }
 
         // Redirect to intended URL or the previous visit URL, fallback to dashboard
         $fallbackUrl = session('url.previous_visit', route('customer.dashboard', absolute: false));
-        
+
         return redirect()->intended($fallbackUrl);
     }
 
