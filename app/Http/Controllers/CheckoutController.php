@@ -173,29 +173,9 @@ class CheckoutController extends Controller
             Product::find($id)->decrement('stock', $item['quantity']);
         }
 
-        // Siapkan parameter untuk Midtrans Snap
-        $params = [
-            'transaction_details' => [
-                'order_id' => $transaction->order_id,
-                'gross_amount' => $transaction->total_amount,
-            ],
-            'customer_details' => [
-                'first_name' => Auth::user()->name,
-                'email' => Auth::user()->email,
-            ],
-            'callbacks' => [
-                'finish' => route('checkout.success', ['order_id' => $transaction->order_id]),
-                'error' => route('cart.index', ['status' => 'error', 'order_id' => $transaction->order_id]),
-                'pending' => route('cart.index', ['status' => 'pending', 'order_id' => $transaction->order_id]),
-            ],
-            'item_details' => $item_details,
-        ];
-
+        // Generate Snap token
         try {
-            Log::info('Checkout process: Attempting to get Midtrans Snap token.', ['order_id' => $transaction->order_id, 'user_id' => Auth::id() ?? 'guest']);
-            $snapToken = Snap::getSnapToken($params);
-            $transaction->snap_token = $snapToken;
-            $transaction->save();
+            $snapToken = $this->generateSnapToken($transaction);
 
             session()->forget('cart');
             session()->forget('promo');
@@ -318,7 +298,26 @@ class CheckoutController extends Controller
             return redirect()->route('transactions.index')->with('error', 'Transaksi ini tidak dapat dibayar lagi.');
         }
 
-        // Generate new Snap token for this transaction
+        // Generate new Snap token for retry
+        try {
+            $snapToken = $this->generateSnapToken($transaction);
+            return view('checkout.payment', ['snapToken' => $snapToken, 'client_key' => config('midtrans.client_key'), 'order' => $transaction]);
+        } catch (\Exception $e) {
+            Log::error('Pay method: Failed to generate Snap token.', ['error' => $e->getMessage(), 'order_id' => $order_id]);
+            return redirect()->route('transactions.index')->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Generate Midtrans Snap token for a transaction
+     * 
+     * @param Transaction $transaction
+     * @return string Snap token
+     * @throws \Exception
+     */
+    private function generateSnapToken(Transaction $transaction): string
+    {
+        // Prepare item details
         $item_details = [];
         foreach ($transaction->items as $item) {
             $item_details[] = [
@@ -329,6 +328,7 @@ class CheckoutController extends Controller
             ];
         }
 
+        // Prepare Snap parameters
         $params = [
             'transaction_details' => [
                 'order_id' => $transaction->order_id,
@@ -346,15 +346,12 @@ class CheckoutController extends Controller
             'item_details' => $item_details,
         ];
 
-        try {
-            $snapToken = Snap::getSnapToken($params);
-            $transaction->snap_token = $snapToken;
-            $transaction->save();
+        Log::info('Generating Midtrans Snap token.', ['order_id' => $transaction->order_id, 'user_id' => Auth::id() ?? 'guest']);
 
-            return view('checkout.payment', ['snapToken' => $snapToken, 'client_key' => config('midtrans.client_key'), 'order' => $transaction]);
-        } catch (\Exception $e) {
-            Log::error('Pay method: Failed to generate Snap token.', ['error' => $e->getMessage(), 'order_id' => $order_id]);
-            return redirect()->route('transactions.index')->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
-        }
+        $snapToken = Snap::getSnapToken($params);
+        $transaction->snap_token = $snapToken;
+        $transaction->save();
+
+        return $snapToken;
     }
 }
