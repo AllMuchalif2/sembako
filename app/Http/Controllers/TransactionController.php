@@ -87,10 +87,22 @@ class TransactionController extends Controller
         }
 
         if ($transaction->status == 'pending' || $transaction->status == 'diproses') {
+            // Validate cancellation reason
+            $request->validate([
+                'cancellation_reason' => 'required|string|max:500'
+            ], [
+                'cancellation_reason.required' => 'Alasan pembatalan harus diisi.',
+                'cancellation_reason.max' => 'Alasan pembatalan maksimal 500 karakter.'
+            ]);
+
+            // Append cancellation reason to notes
+            $cancellationNote = "\n\n[DIBATALKAN OLEH CUSTOMER]\nTanggal: " . now()->format('d M Y H:i') . "\nAlasan: " . $request->cancellation_reason;
+            $updatedNotes = $transaction->notes ? $transaction->notes . $cancellationNote : $cancellationNote;
+
             // Ubah status transaksi
             $transaction->update([
                 'status' => 'dibatalkan',
-                // 'payment_status' => 'cancel'
+                'notes' => $updatedNotes
             ]);
 
             // Kembalikan stok produk
@@ -101,6 +113,5 @@ class TransactionController extends Controller
             return redirect()->route('transactions.show', $transaction)->with('success', 'Pesanan Anda berhasil dibatalkan.');
         }
         return redirect()->back()->with('error', 'Pesanan yang sudah dikirim tidak dapat dibatalkan.');
-
     }
 }

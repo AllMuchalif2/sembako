@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::get('/checkout/cod-success/{order_id}', [CheckoutController::class, 'codSuccess'])->name('checkout.cod-success');
     Route::get('/checkout/pay/{order_id}', [CheckoutController::class, 'pay'])->name('checkout.pay');
 
     // rute transaksi pelanggan
@@ -73,6 +74,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('transactions/{transaction}', [AdminTransactionController::class, 'show'])->name('transactions.show');
     Route::patch('transactions/{transaction}/status', [AdminTransactionController::class, 'updateStatus'])->name('transactions.updateStatus');
     Route::patch('transactions/{transaction}/cancel', [AdminTransactionController::class, 'cancel'])->name('transactions.cancel');
+    Route::patch('transactions/{transaction}/confirm-cod', [AdminTransactionController::class, 'confirmCodOrder'])->name('transactions.confirmCod');
     Route::get('transactions/{transaction}/invoice', [AdminTransactionController::class, 'invoice'])->name('transactions.invoice');
 
 

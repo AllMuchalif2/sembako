@@ -68,6 +68,7 @@ class CheckoutController extends Controller
             'shipping_address' => 'required|string',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
+            'payment_method' => 'required|in:midtrans,cod',
         ]);
 
         $cartItems = session()->get('cart', []);
@@ -151,6 +152,7 @@ class CheckoutController extends Controller
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'notes' => $request->notes,
+            'payment_method' => $request->payment_method,
         ]);
 
         // Jika promo digunakan, catat penggunaannya
@@ -173,7 +175,17 @@ class CheckoutController extends Controller
             Product::find($id)->decrement('stock', $item['quantity']);
         }
 
-        // Generate Snap token
+        // Handle payment based on selected method
+        if ($request->payment_method === Transaction::PAYMENT_METHOD_COD) {
+            // COD: Skip Midtrans, clear cart, redirect to COD success page
+            session()->forget('cart');
+            session()->forget('promo');
+            Log::info('Checkout process: COD order created, cart cleared, redirecting to COD success page.', ['order_id' => $transaction->order_id, 'user_id' => Auth::id() ?? 'guest']);
+
+            return redirect()->route('checkout.cod-success', ['order_id' => $transaction->order_id]);
+        }
+
+        // Midtrans: Generate Snap token
         try {
             $snapToken = $this->generateSnapToken($transaction);
 
@@ -290,9 +302,27 @@ class CheckoutController extends Controller
         return view('checkout.success', ['order' => $transaction]);
     }
 
+    public function codSuccess($order_id)
+    {
+        $transaction = Transaction::where('order_id', $order_id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        if ($transaction->payment_method !== Transaction::PAYMENT_METHOD_COD) {
+            return redirect()->route('transactions.index')->with('error', 'Halaman ini hanya untuk pesanan COD.');
+        }
+
+        return view('checkout.cod-success', ['order' => $transaction]);
+    }
+
     public function pay($order_id)
     {
         $transaction = Transaction::where('order_id', $order_id)->where('user_id', Auth::id())->firstOrFail();
+
+        // COD orders cannot use payment retry
+        if ($transaction->payment_method === Transaction::PAYMENT_METHOD_COD) {
+            return redirect()->route('transactions.index')->with('error', 'Pesanan COD tidak memerlukan pembayaran online.');
+        }
 
         if ($transaction->status != 'pending') {
             return redirect()->route('transactions.index')->with('error', 'Transaksi ini tidak dapat dibayar lagi.');

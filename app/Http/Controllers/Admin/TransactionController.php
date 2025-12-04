@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-   
+
     public function index(Request $request)
     {
         $query = Transaction::with('user');
@@ -20,6 +20,10 @@ class TransactionController extends Controller
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
+        }
+
+        if ($request->filled('payment_method')) {
+            $query->where('payment_method', $request->payment_method);
         }
 
         if ($request->filled('start_date')) {
@@ -56,10 +60,63 @@ class TransactionController extends Controller
     {
         if (!in_array($transaction->status, ['diproses', 'dikirim', 'selesai'])) {
             abort(403, 'Invoice can only be generated for processed, shipped, or completed transactions.');
-        } 
+        }
 
         $transaction->load(['user', 'items.product']);
 
         return view('admin.transactions.invoice', compact('transaction'));
+    }
+
+    public function confirmCodOrder(Transaction $transaction)
+    {
+        // Validate that order is COD and pending
+        if ($transaction->payment_method !== Transaction::PAYMENT_METHOD_COD) {
+            return redirect()->back()->with('error', 'Pesanan ini bukan metode COD.');
+        }
+
+        if ($transaction->status !== 'pending') {
+            return redirect()->back()->with('error', 'Pesanan ini sudah dikonfirmasi.');
+        }
+
+        // Update status to diproses
+        $transaction->update(['status' => 'diproses']);
+
+        return redirect()->route('admin.transactions.show', $transaction)->with('success', 'Pesanan COD berhasil dikonfirmasi dan sedang diproses.');
+    }
+
+    public function cancel(Request $request, Transaction $transaction)
+    {
+        // Only allow canceling pending or diproses orders
+        if (!in_array($transaction->status, ['pending', 'diproses'])) {
+            return redirect()->back()->with('error', 'Hanya pesanan dengan status pending atau diproses yang dapat dibatalkan.');
+        }
+
+        // Validate cancellation reason
+        $request->validate([
+            'cancellation_reason' => 'required|string|max:500'
+        ], [
+            'cancellation_reason.required' => 'Alasan pembatalan harus diisi.',
+            'cancellation_reason.max' => 'Alasan pembatalan maksimal 500 karakter.'
+        ]);
+
+        // Restore product stock
+        foreach ($transaction->items as $item) {
+            $product = \App\Models\Product::find($item->product_id);
+            if ($product) {
+                $product->increment('stock', $item->quantity);
+            }
+        }
+
+        // Append cancellation reason to notes
+        $cancellationNote = "\n\n[DIBATALKAN OLEH ADMIN]\nTanggal: " . now()->format('d M Y H:i') . "\nAlasan: " . $request->cancellation_reason;
+        $updatedNotes = $transaction->notes ? $transaction->notes . $cancellationNote : $cancellationNote;
+
+        // Update transaction status and notes
+        $transaction->update([
+            'status' => 'dibatalkan',
+            'notes' => $updatedNotes
+        ]);
+
+        return redirect()->route('admin.transactions.show', $transaction)->with('success', 'Pesanan berhasil dibatalkan dan stok produk telah dikembalikan.');
     }
 }

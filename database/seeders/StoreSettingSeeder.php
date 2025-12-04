@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\StoreSetting;
 use Illuminate\Database\Seeder;
 
 class StoreSettingSeeder extends Seeder
@@ -12,14 +12,14 @@ class StoreSettingSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\StoreSetting::updateOrCreate(
+        StoreSetting::updateOrCreate(
             ['id' => 1],
             [
-                'store_name' => 'Toko Sembako',
-                'store_latitude' => -6.200000,
-                'store_longitude' => 106.816666,
-                'free_shipping_radius' => 10000, // 10 km
-                'max_delivery_distance' => 50000, // 50 km
+                'store_name' => 'My Mart',
+                'store_latitude' => -6.87499575,
+                'store_longitude' => 109.66500781,
+                'free_shipping_radius' => 5000, // 5 km
+                'max_delivery_distance' => 10000, // 10 km
                 'shipping_cost' => 5000, // Rp 5.000
             ]
         );

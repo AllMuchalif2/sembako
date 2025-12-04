@@ -23,6 +23,10 @@ class UserRoleSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         // 1. Create Roles
+        $ownerRole = Role::create([
+            'name' => 'owner',
+            'description' => 'Owner of the tore'
+        ]);
         $adminRole = Role::create([
             'name' => 'admin',
             'description' => 'Administrator'
@@ -33,19 +37,26 @@ class UserRoleSeeder extends Seeder
             'description' => 'Regular Customer'
         ]);
 
-        // 2. Create Admin User
+        // 2. Create User
+
         User::create([
-            'name' => 'Admin Sembako',
-            'email' => 'admin@sembako.com',
-            'password' => Hash::make('aabbccdd'), // Ganti dengan password yang aman
+            'name' => 'Owner Toko',
+            'email' => 'owner@example.com',
+            'password' => Hash::make('password'),
+            'role_id' => $ownerRole->id,
+        ]);
+
+        User::create([
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('password'),
             'role_id' => $adminRole->id,
         ]);
 
-        // 3. Create Customer User
         User::create([
             'name' => 'Budi Pelanggan',
             'email' => 'budi@example.com',
-            'password' => Hash::make('aabbccdd'), // Ganti dengan password yang aman
+            'password' => Hash::make('password'),
             'role_id' => $customerRole->id,
         ]);
     }

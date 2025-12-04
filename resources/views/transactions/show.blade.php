@@ -124,7 +124,29 @@
                                 </span>
                             </p>
 
+                            <p class="text-sm text-gray-600">Metode Pembayaran:
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                                    @if($transaction->payment_method == 'cod') bg-green-100 text-green-800
+                                    @else bg-blue-100 text-blue-800 @endif">
+                                    {{ $transaction->payment_method == 'cod' ? 'COD (Bayar di Tempat)' : 'Midtrans (Online)' }}
+                                </span>
+                            </p>
+
                             @if ($transaction->status == 'dikirim')
+                                @if($transaction->payment_method == 'cod')
+                                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 my-3">
+                                        <div class="flex">
+                                            <div class="flex-shrink-0">
+                                                <i class="fas fa-money-bill-wave text-blue-500"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <p class="text-sm text-blue-700">
+                                                    Siapkan uang tunai sejumlah <strong>Rp{{ number_format($transaction->total_amount, 0, ',', '.') }}</strong> untuk dibayarkan ke kurir.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                                 <form action="{{ route('transactions.complete', $transaction) }}" method="POST">
                                     @csrf
                                     @method('PATCH')
@@ -134,19 +156,29 @@
                                     </button>
                                 </form>
                             @elseif ($transaction->status == 'pending')
-                                <a href="{{ route('checkout.pay', $transaction->order_id) }}"
-                                    class="w-full inline-flex justify-center py-2 px-4 mb-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                    Bayar Sekarang
-                                </a>
-                                <form action="{{ route('transactions.cancel', $transaction) }}" method="POST">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit"
-                                        onclick="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini?')"
-                                        class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                        Batalkan Pesanan
-                                    </button>
-                                </form>
+                                @if($transaction->payment_method == 'midtrans')
+                                    <a href="{{ route('checkout.pay', $transaction->order_id) }}"
+                                        class="w-full inline-flex justify-center py-2 px-4 mb-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                        Bayar Sekarang
+                                    </a>
+                                @else
+                                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 my-3">
+                                        <div class="flex">
+                                            <div class="flex-shrink-0">
+                                                <i class="fas fa-clock text-yellow-500"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <p class="text-sm text-yellow-700">
+                                                    Pesanan COD Anda sedang menunggu konfirmasi admin.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                                <button type="button" onclick="openCancelModal()"
+                                    class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Batalkan Pesanan
+                                </button>
                             @endif
                         </div>
                     </div>
@@ -172,6 +204,70 @@
                 attribution: '© OpenStreetMap'
             }).addTo(map);
             var marker = L.marker([lat, lng]).addTo(map).bindPopup("<b>Lokasi Pengiriman</b>").openPopup();
+        </script>
+    @endpush
+
+    {{-- Cancel Order Modal --}}
+    <div id="cancelModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Batalkan Pesanan</h3>
+                <form action="{{ route('transactions.cancel', $transaction) }}" method="POST" id="cancelForm">
+                    @csrf
+                    @method('PATCH')
+                    <div class="mb-4">
+                        <label for="cancellation_reason" class="block text-sm font-medium text-gray-700 mb-2">
+                            Alasan Pembatalan <span class="text-red-500">*</span>
+                        </label>
+                        <textarea 
+                            id="cancellation_reason" 
+                            name="cancellation_reason" 
+                            rows="4" 
+                            required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                            placeholder="Contoh: Ingin ubah alamat pengiriman, Salah pesan, dll."></textarea>
+                        <p class="mt-1 text-xs text-gray-500">Maksimal 500 karakter</p>
+                        @error('cancellation_reason')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="button" onclick="closeCancelModal()"
+                            class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 text-sm font-medium rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                            Batal
+                        </button>
+                        <button type="submit"
+                            class="flex-1 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                            Batalkan Pesanan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @push('scripts')
+        <script>
+            function openCancelModal() {
+                document.getElementById('cancelModal').classList.remove('hidden');
+            }
+
+            function closeCancelModal() {
+                document.getElementById('cancelModal').classList.add('hidden');
+                document.getElementById('cancellation_reason').value = '';
+            }
+
+            // Close modal when clicking outside
+            document.getElementById('cancelModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeCancelModal();
+                }
+            });
+
+            // Show modal if there's validation error
+            @if($errors->has('cancellation_reason'))
+                openCancelModal();
+            @endif
         </script>
     @endpush
 </x-app-layout>

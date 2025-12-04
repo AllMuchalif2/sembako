@@ -40,7 +40,7 @@
 
                     <!-- Filter Form -->
                     <form method="GET" action="{{ route('admin.transactions.index') }}" class="mb-6">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
                             <div>
                                 <label for="order_id" class="block text-sm font-medium text-gray-700">Nama (Order ID)</label>
                                 <input type="text" name="order_id" id="order_id" value="{{ request('order_id') }}"
@@ -56,6 +56,14 @@
                                     <option value="dikirim" @selected(request('status') == 'dikirim')>Dikirim</option>
                                     <option value="selesai" @selected(request('status') == 'selesai')>Selesai</option>
                                     <option value="dibatalkan" @selected(request('status') == 'dibatalkan')>Dibatalkan</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="payment_method" class="block text-sm font-medium text-gray-700">Metode Pembayaran</label>
+                                <select name="payment_method" id="payment_method" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                    <option value="">Semua Metode</option>
+                                    <option value="midtrans" @selected(request('payment_method') == 'midtrans')>Midtrans</option>
+                                    <option value="cod" @selected(request('payment_method') == 'cod')>COD</option>
                                 </select>
                             </div>
                             <div>
@@ -86,6 +94,7 @@
                                     <th scope="col" class="px-6 py-3">Pelanggan</th>
                                     <th scope="col" class="px-6 py-3">Tanggal</th>
                                     <th scope="col" class="px-6 py-3">Total</th>
+                                    <th scope="col" class="px-6 py-3">Metode Pembayaran</th>
                                     {{-- <th scope="col" class="px-6 py-3">Status Pembayaran</th> --}}
                                     <th scope="col" class="px-6 py-3">Status Transaksi</th>
                                 </tr>
@@ -104,6 +113,13 @@
                                         <td class="px-6 py-4">{{ $transaction->created_at->format('d M Y H:i') }}</td>
                                         <td class="px-6 py-4">
                                             Rp{{ number_format($transaction->total_amount, 0, ',', '.') }}
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                                                @if($transaction->payment_method == 'cod') bg-green-100 text-green-800
+                                                @else bg-blue-100 text-blue-800 @endif">
+                                                {{ $transaction->payment_method == 'cod' ? 'COD' : 'Midtrans' }}
+                                            </span>
                                         </td>
                                         {{-- <td class="px-6 py-4">
                                             <span
@@ -128,7 +144,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="px-6 py-4 text-center">Tidak ada transaksi ditemukan.
+                                        <td colspan="7" class="px-6 py4 text-center">Tidak ada transaksi ditemukan.
                                         </td>
                                     </tr>
                                 @endforelse

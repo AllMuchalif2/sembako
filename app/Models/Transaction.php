@@ -11,6 +11,10 @@ class Transaction extends Model
 {
     use HasFactory;
 
+    // Payment method constants
+    const PAYMENT_METHOD_MIDTRANS = 'midtrans';
+    const PAYMENT_METHOD_COD = 'cod';
+
     protected $fillable = [
         'user_id',
         'order_id',
@@ -26,6 +30,7 @@ class Transaction extends Model
         'shipping_cost',
         'notes',
         'snap_token',
+        'payment_method',
         // 'payment_type'
     ];
 

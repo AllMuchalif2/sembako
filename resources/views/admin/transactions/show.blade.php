@@ -172,6 +172,13 @@
                             <p><strong>Email:</strong> {{ $transaction->user->email }}</p>
                             <p><strong>Nomer HP:</strong> {{ $transaction->user->phone }}</p>
                             <p><strong>Tanggal Pesan:</strong> {{ $transaction->created_at->format('d M Y, H:i') }}</p>
+                            <p><strong>Metode Pembayaran:</strong> 
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                                    @if($transaction->payment_method == 'cod') bg-green-100 text-green-800
+                                    @else bg-blue-100 text-blue-800 @endif">
+                                    {{ $transaction->payment_method == 'cod' ? 'COD (Bayar di Tempat)' : 'Midtrans (Online)' }}
+                                </span>
+                            </p>
                             {{-- <p><strong>Status Pembayaran:</strong> <span
                                     class="font-semibold">{{ ucfirst($transaction->payment_status) }}</span></p> --}}
                             {{-- <p><strong>Metode Pembayaran:</strong>
@@ -193,7 +200,30 @@
                                 </span>
                             </p>
 
-                            @if ($transaction->status == 'diproses')
+                            @if ($transaction->status == 'pending' && $transaction->payment_method == 'cod')
+                                <!-- COD Confirmation Button -->
+                                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-3">
+                                    <div class="flex">
+                                        <div class="flex-shrink-0">
+                                            <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm text-yellow-700">
+                                                Pesanan COD ini menunggu konfirmasi.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <form action="{{ route('admin.transactions.confirmCod', $transaction) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit"
+                                        class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                        <i class="fas fa-check mr-2"></i>
+                                        Konfirmasi Pesanan COD
+                                    </button>
+                                </form>
+                            @elseif ($transaction->status == 'diproses')
                                 <form action="{{ route('admin.transactions.updateStatus', $transaction) }}"
                                     method="POST">
                                     @csrf
@@ -205,16 +235,39 @@
                                     </button>
                                 </form>
                             @elseif($transaction->status == 'dikirim')
-                                <p class="text-sm text-gray-500 ">Menunggu konfirmasi penerimaan dari
+                                @if($transaction->payment_method == 'cod')
+                                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4">
+                                        <div class="flex">
+                                            <div class="flex-shrink-0">
+                                                <i class="fas fa-info-circle text-blue-500"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <p class="text-sm text-blue-700">
+                                                    Pastikan kurir menerima pembayaran tunai saat pengiriman.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                                <p class="text-sm text-gray-500 mt-2">Menunggu konfirmasi penerimaan dari
                                     pelanggan.</p>
                             @else
-                                <p class="text-sm text-gray-500 ">Tidak ada aksi yang bisa dilakukan
+                                <p class="text-sm text-gray-500">Tidak ada aksi yang bisa dilakukan
                                     untuk status ini.</p>
                             @endif                            @if (in_array($transaction->status, ['diproses', 'dikirim', 'selesai']))
                                 <a href="{{ route('admin.transactions.invoice', $transaction) }}" target="_blank"
                                     class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-2">
                                     Cetak Invoice
                                 </a>
+                            @endif
+
+                            {{-- Cancel Order Button --}}
+                            @if (in_array($transaction->status, ['pending', 'diproses']))
+                                <button type="button" onclick="openCancelModal()"
+                                    class="w-full inline-flex justify-center py-2 px-4 border border-red-300 shadow-sm text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 mt-3">
+                                    <i class="fas fa-times-circle mr-2"></i>
+                                    Batalkan Pesanan
+                                </button>
                             @endif
 
                         </div>
@@ -298,6 +351,71 @@
             // Fit bounds untuk menampilkan semua marker
             var group = L.featureGroup([storeMarker, deliveryMarker, radiusCircle]);
             map.fitBounds(group.getBounds().pad(0.1));
+            map.invalidateSize();
+        </script>
+    @endpush
+
+    {{-- Cancel Order Modal --}}
+    <div id="cancelModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Batalkan Pesanan</h3>
+                <form action="{{ route('admin.transactions.cancel', $transaction) }}" method="POST" id="cancelForm">
+                    @csrf
+                    @method('PATCH')
+                    <div class="mb-4">
+                        <label for="cancellation_reason" class="block text-sm font-medium text-gray-700 mb-2">
+                            Alasan Pembatalan <span class="text-red-500">*</span>
+                        </label>
+                        <textarea 
+                            id="cancellation_reason" 
+                            name="cancellation_reason" 
+                            rows="4" 
+                            required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                            placeholder="Contoh: Stok produk tidak tersedia, Permintaan customer, dll."></textarea>
+                        <p class="mt-1 text-xs text-gray-500">Maksimal 500 karakter</p>
+                        @error('cancellation_reason')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="button" onclick="closeCancelModal()"
+                            class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 text-sm font-medium rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                            Batal
+                        </button>
+                        <button type="submit"
+                            class="flex-1 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                            Batalkan Pesanan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @push('scripts')
+        <script>
+            function openCancelModal() {
+                document.getElementById('cancelModal').classList.remove('hidden');
+            }
+
+            function closeCancelModal() {
+                document.getElementById('cancelModal').classList.add('hidden');
+                document.getElementById('cancellation_reason').value = '';
+            }
+
+            // Close modal when clicking outside
+            document.getElementById('cancelModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeCancelModal();
+                }
+            });
+
+            // Show modal if there's validation error
+            @if($errors->has('cancellation_reason'))
+                openCancelModal();
+            @endif
         </script>
     @endpush
 </x-app-layout>
