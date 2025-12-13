@@ -45,7 +45,8 @@
                 <div class="p-6 text-gray-900">
 
 
-                    <form method="POST" action="{{ route('admin.store-settings.update') }}" class="space-y-6" id="store-settings-form">
+                    <form method="POST" action="{{ route('admin.store-settings.update') }}" class="space-y-6"
+                        id="store-settings-form">
                         @csrf
                         @method('PUT')
 
@@ -100,8 +101,7 @@
                                 <label class="block text-sm font-medium text-gray-700">
                                     Pilih Lokasi Toko di Peta
                                 </label>
-                                <button type="button" id="use-my-location-btn"
-                                    class="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
+                                <x-secondary-button type="button" id="use-my-location-btn" class="px-3 py-1.5 text-xs">
                                     <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -111,7 +111,7 @@
                                             d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                     </svg>
                                     Gunakan Lokasi Saya
-                                </button>
+                                </x-secondary-button>
                             </div>
                             <div id="store-map" class="border border-gray-300"></div>
                             <p class="mt-2 text-xs text-gray-500">
@@ -188,10 +188,9 @@
 
                         <!-- Submit Button -->
                         <div class="flex items-center justify-end">
-                            <button type="submit"
-                                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            <x-primary-button>
                                 Simpan Pengaturan
-                            </button>
+                            </x-primary-button>
                         </div>
                     </form>
                 </div>
@@ -239,8 +238,8 @@
             }).addTo(map);
 
             storeMarker.bindPopup(
-                "<b><i class='fas fa-map-marker-alt'></i> Lokasi Toko</b><br>Seret marker untuk mengubah lokasi")
-            .openPopup();
+                    "<b><i class='fas fa-map-marker-alt'></i> Lokasi Toko</b><br>Seret marker untuk mengubah lokasi")
+                .openPopup();
 
             // Fungsi untuk update input koordinat
             function updateCoordinates(lat, lng) {
@@ -358,7 +357,7 @@
             document.getElementById('store-settings-form').addEventListener('submit', function(e) {
                 const submitBtn = this.querySelector('button[type="submit"]');
                 const originalText = submitBtn.innerHTML;
-                
+
                 // Tampilkan loading
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = `

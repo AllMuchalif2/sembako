@@ -31,7 +31,7 @@
                         </li>
                     </ol>
                 </nav>
-                
+
 
             </div>
             <!-- Kontainer Tabel -->
@@ -42,14 +42,16 @@
                     <form method="GET" action="{{ route('admin.transactions.index') }}" class="mb-6">
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
                             <div>
-                                <label for="order_id" class="block text-sm font-medium text-gray-700">Nama (Order ID)</label>
+                                <label for="order_id" class="block text-sm font-medium text-gray-700">Nama (Order
+                                    ID)</label>
                                 <input type="text" name="order_id" id="order_id" value="{{ request('order_id') }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-1.5"
                                     placeholder="Cari berdasarkan Order ID">
                             </div>
                             <div>
                                 <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                                <select name="status" id="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                <select name="status" id="status"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-1.5">
                                     <option value="">Semua Status</option>
                                     <option value="pending" @selected(request('status') == 'pending')>Pending</option>
                                     <option value="diproses" @selected(request('status') == 'diproses')>Diproses</option>
@@ -59,28 +61,36 @@
                                 </select>
                             </div>
                             <div>
-                                <label for="payment_method" class="block text-sm font-medium text-gray-700">Metode Pembayaran</label>
-                                <select name="payment_method" id="payment_method" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                <label for="payment_method" class="block text-sm font-medium text-gray-700">Metode
+                                    Pembayaran</label>
+                                <select name="payment_method" id="payment_method"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-1.5">
                                     <option value="">Semua Metode</option>
                                     <option value="midtrans" @selected(request('payment_method') == 'midtrans')>Midtrans</option>
                                     <option value="cod" @selected(request('payment_method') == 'cod')>COD</option>
                                 </select>
                             </div>
                             <div>
-                                <label for="start_date" class="block text-sm font-medium text-gray-700">Tanggal Mulai</label>
-                                <input type="date" name="start_date" id="start_date" value="{{ request('start_date') }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                <label for="start_date" class="block text-sm font-medium text-gray-700">Tanggal
+                                    Mulai</label>
+                                <input type="date" name="start_date" id="start_date"
+                                    value="{{ request('start_date') }}"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-1.5">
                             </div>
                             <div>
-                                <label for="end_date" class="block text-sm font-medium text-gray-700">Tanggal Akhir</label>
+                                <label for="end_date" class="block text-sm font-medium text-gray-700">Tanggal
+                                    Akhir</label>
                                 <input type="date" name="end_date" id="end_date" value="{{ request('end_date') }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-1.5">
                             </div>
                             <div class="flex items-center space-x-2">
-                                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Filter</button>
-                                <a href="{{ route('admin.transactions.index') }}"
-                                    class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    Reset</a>
+                                <x-primary-button class="justify-center">
+                                    Filter
+                                </x-primary-button>
+                                <x-secondary-button href="{{ route('admin.transactions.index') }}"
+                                    class="justify-center">
+                                    Reset
+                                </x-secondary-button>
                             </div>
                         </div>
                     </form>
@@ -115,8 +125,9 @@
                                             Rp{{ number_format($transaction->total_amount, 0, ',', '.') }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                                @if($transaction->payment_method == 'cod') bg-green-100 text-green-800
+                                            <span
+                                                class="px-2 py-1 text-xs font-semibold rounded-full 
+                                                @if ($transaction->payment_method == 'cod') bg-green-100 text-green-800
                                                 @else bg-blue-100 text-blue-800 @endif">
                                                 {{ $transaction->payment_method == 'cod' ? 'COD' : 'Midtrans' }}
                                             </span>

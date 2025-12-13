@@ -66,8 +66,7 @@
 
                         <!-- Deskripsi -->
                         <div class="mb-6">
-                            <label for="description"
-                                class="block text-gray-700 text-sm font-bold mb-2">
+                            <label for="description" class="block text-gray-700 text-sm font-bold mb-2">
                                 Deskripsi (Opsional):
                             </label>
                             <textarea name="description" id="description" rows="4"
@@ -79,14 +78,12 @@
 
                         <!-- Tombol -->
                         <div class="flex items-center justify-end">
-                            <a href="{{ route('admin.categories.index') }}"
-                                class="text-sm font-semibold leading-6 text-gray-900 mr-4 px-3 hover:underline">
+                            <x-secondary-button href="{{ route('admin.categories.index') }}" class="mr-4">
                                 Batal
-                            </a>
-                            <button type="submit"
-                                class="rounded-md bg-blue-500  px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-600">
+                            </x-secondary-button>
+                            <x-primary-button>
                                 Simpan
-                            </button>
+                            </x-primary-button>
                         </div>
 
                     </form>

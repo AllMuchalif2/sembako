@@ -185,14 +185,12 @@
         </table>
 
         <div class="text-center mt-8 no-print">
-            <button onclick="window.print()"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            <x-primary-button onclick="window.print()" type="button">
                 Cetak Invoice
-            </button>
-            <button onclick="window.close()"
-                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded ml-2">
+            </x-primary-button>
+            <x-secondary-button onclick="window.close()" type="button" class="ml-2">
                 Tutup
-            </button>
+            </x-secondary-button>
         </div>
     </div>
 </body>

@@ -80,7 +80,10 @@
                                 <div class="flex mt-1 rounded-md shadow-sm">
                                     <span
                                         class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">Rp</span>
-                                    <input min="1000" type="number" name="price" id="price" value="{{ old('price') }}" class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 @error('price') border-red-500 @enderror" placeholder="10000" required>
+                                    <input min="1000" type="number" name="price" id="price"
+                                        value="{{ old('price') }}"
+                                        class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 @error('price') border-red-500 @enderror"
+                                        placeholder="10000" required>
                                 </div>
                                 @error('price')
                                     <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
@@ -90,7 +93,8 @@
                             <!-- Stok -->
                             <div>
                                 <label for="stock" class="block text-gray-700 text-sm font-bold mb-2">Stok:</label>
-                                <input min="1" type="number" name="stock" id="stock" value="{{ old('stock') }}"
+                                <input min="1" type="number" name="stock" id="stock"
+                                    value="{{ old('stock') }}"
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 @error('stock') border-red-500 @enderror"
                                     required>
                                 @error('stock')
@@ -130,10 +134,13 @@
                         </div>
 
                         <div class="flex items-center justify-end mt-6">
-                            <a href="{{ route('admin.products.index') }}"
-                                class="text-sm font-semibold leading-6 text-gray-900 mr-4 px-3">Batal</a>
-                            <button type="submit"
-                                class="rounded-md bg-blue-500  px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-600">Simpan</button>
+                            <x-secondary-button tag="a" href="{{ route('admin.products.index') }}"
+                                class="mr-4">
+                                Batal
+                            </x-secondary-button>
+                            <x-primary-button>
+                                Simpan
+                            </x-primary-button>
                         </div>
                     </form>
                 </div>

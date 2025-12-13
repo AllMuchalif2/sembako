@@ -76,14 +76,13 @@
                         </div>
 
                         <div class="flex items-center justify-end">
-                            <a href="{{ route('admin.categories.index') }}"
-                                class="text-sm font-semibold leading-6 text-gray-900 mr-4 px-3">
+                            <x-secondary-button tag="a" href="{{ route('admin.categories.index') }}"
+                                class="mr-4">
                                 Batal
-                            </a>
-                            <button type="submit"
-                                class="rounded-md bg-blue-500  px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-600">
+                            </x-secondary-button>
+                            <x-primary-button>
                                 Perbarui
-                            </button>
+                            </x-primary-button>
                         </div>
                     </form>
                 </div>

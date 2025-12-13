@@ -54,16 +54,10 @@
                         </li>
                     </ol>
                 </nav>
-                <a href="{{ route('admin.transactions.index') }}"
-                    class="inline-flex items-center px-4 py-2 bg-blue-500  border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700">
-                    <svg class="w-4 h-4 md:me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
-
-                    <span class="hidden md:inline"> Kembali ke Daftar Transaksi</span>
-                </a>
+                <x-secondary-button href="{{ route('admin.transactions.index') }}">
+                    <i class="fas fa-arrow-left"></i>
+                    <span class="ml-2 hidden md:inline"> Kembali ke Daftar Transaksi</span>
+                </x-secondary-button>
 
             </div>
 
@@ -76,7 +70,8 @@
                         <ul role="list" class="divide-y divide-gray-200">
                             @foreach ($transaction->items as $item)
                                 <li class="flex py-4">
-                                    <div class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                    <div
+                                        class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                         <img src="{{ $item->product->image ? asset('storage/' . $item->product->image) : 'https://via.placeholder.com/150' }}"
                                             alt="{{ $item->product_name }}"
                                             class="h-full w-full object-cover object-center">
@@ -85,7 +80,8 @@
                                         <div>
                                             <div class="flex justify-between text-base font-medium text-gray-900">
                                                 <h3>{{ $item->product_name }}</h3>
-                                                <p class="ml-4">Rp{{ number_format($item->subtotal, 0, ',', '.') }}</p>
+                                                <p class="ml-4">Rp{{ number_format($item->subtotal, 0, ',', '.') }}
+                                                </p>
                                             </div>
                                             <p class="mt-1 text-sm text-gray-500">
                                                 Rp{{ number_format($item->price, 0, ',', '.') }} x {{ $item->quantity }}
@@ -96,36 +92,43 @@
                             @endforeach
                         </ul>
                         <div class="border-t border-gray-200 pt-4 mt-4 text-sm">
-                             <dl class="space-y-2">
+                            <dl class="space-y-2">
                                 <div class="flex justify-between">
                                     <dt class="text-gray-600">Subtotal</dt>
-                                    <dd class="font-medium text-gray-900">Rp{{ number_format($transaction->total_amount + $transaction->discount_amount - ($transaction->shipping_cost ?? 0), 0, ',', '.') }}</dd>
+                                    <dd class="font-medium text-gray-900">
+                                        Rp{{ number_format($transaction->total_amount + $transaction->discount_amount - ($transaction->shipping_cost ?? 0), 0, ',', '.') }}
+                                    </dd>
                                 </div>
-                                @if($transaction->promo_code)
-                                <div class="flex justify-between">
-                                    <dt class="text-gray-600 flex items-center">
-                                        <span>Diskon</span>
-                                        <span class="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-                                            {{ $transaction->promo_code }}
-                                        </span>
-                                    </dt>
-                                    <dd class="font-medium text-green-600">-Rp{{ number_format($transaction->discount_amount, 0, ',', '.') }}</dd>
-                                </div>
-                                @endif
-                                @if($transaction->shipping_cost !== null)
-                                <div class="flex justify-between">
-                                    <dt class="text-gray-600 flex items-center">
-                                        <span>Ongkir</span>
-                                        @if($transaction->shipping_cost == 0)
-                                            <span class="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-                                                GRATIS
+                                @if ($transaction->promo_code)
+                                    <div class="flex justify-between">
+                                        <dt class="text-gray-600 flex items-center">
+                                            <span>Diskon</span>
+                                            <span
+                                                class="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                                                {{ $transaction->promo_code }}
                                             </span>
-                                        @endif
-                                    </dt>
-                                    <dd class="font-medium text-gray-900">Rp{{ number_format($transaction->shipping_cost, 0, ',', '.') }}</dd>
-                                </div>
+                                        </dt>
+                                        <dd class="font-medium text-green-600">
+                                            -Rp{{ number_format($transaction->discount_amount, 0, ',', '.') }}</dd>
+                                    </div>
                                 @endif
-                                <div class="flex justify-between border-t border-gray-200 pt-2 text-base font-bold text-gray-900">
+                                @if ($transaction->shipping_cost !== null)
+                                    <div class="flex justify-between">
+                                        <dt class="text-gray-600 flex items-center">
+                                            <span>Ongkir</span>
+                                            @if ($transaction->shipping_cost == 0)
+                                                <span
+                                                    class="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                                                    GRATIS
+                                                </span>
+                                            @endif
+                                        </dt>
+                                        <dd class="font-medium text-gray-900">
+                                            Rp{{ number_format($transaction->shipping_cost, 0, ',', '.') }}</dd>
+                                    </div>
+                                @endif
+                                <div
+                                    class="flex justify-between border-t border-gray-200 pt-2 text-base font-bold text-gray-900">
                                     <dt>Total</dt>
                                     <dd>Rp{{ number_format($transaction->total_amount, 0, ',', '.') }}</dd>
                                 </div>
@@ -139,13 +142,15 @@
                         <div class="space-y-3 text-sm text-gray-700">
                             <p><strong>Alamat Kirim:</strong> {{ $transaction->shipping_address }}</p>
                             @if ($transaction->distance_from_store)
-                                <p><strong>Jarak dari Toko:</strong> {{ number_format($transaction->distance_from_store / 1000, 2) }} km</p>
+                                <p><strong>Jarak dari Toko:</strong>
+                                    {{ number_format($transaction->distance_from_store / 1000, 2) }} km</p>
                             @endif
                             @if ($transaction->shipping_cost !== null)
                                 <p>
-                                    <strong>Ongkir:</strong> 
+                                    <strong>Ongkir:</strong>
                                     @if ($transaction->shipping_cost == 0)
-                                        <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                                        <span
+                                            class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
                                             GRATIS ONGKIR
                                         </span>
                                     @else
@@ -172,9 +177,10 @@
                             <p><strong>Email:</strong> {{ $transaction->user->email }}</p>
                             <p><strong>Nomer HP:</strong> {{ $transaction->user->phone }}</p>
                             <p><strong>Tanggal Pesan:</strong> {{ $transaction->created_at->format('d M Y, H:i') }}</p>
-                            <p><strong>Metode Pembayaran:</strong> 
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                    @if($transaction->payment_method == 'cod') bg-green-100 text-green-800
+                            <p><strong>Metode Pembayaran:</strong>
+                                <span
+                                    class="px-2 py-1 text-xs font-semibold rounded-full 
+                                    @if ($transaction->payment_method == 'cod') bg-green-100 text-green-800
                                     @else bg-blue-100 text-blue-800 @endif">
                                     {{ $transaction->payment_method == 'cod' ? 'COD (Bayar di Tempat)' : 'Midtrans (Online)' }}
                                 </span>
@@ -195,7 +201,7 @@
                                     class="font-bold text-base
                                     @if ($transaction->status == 'diproses') text-blue-600 
                                     @elseif($transaction->status == 'dikirim') text-purple-600 
-                                    @else text-gray-800  @endif">
+                                    @else text-gray-800 @endif">
                                     {{ ucfirst($transaction->status) }}
                                 </span>
                             </p>
@@ -214,14 +220,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <form action="{{ route('admin.transactions.confirmCod', $transaction) }}" method="POST">
+                                <form action="{{ route('admin.transactions.confirmCod', $transaction) }}"
+                                    method="POST">
                                     @csrf
                                     @method('PATCH')
-                                    <button type="submit"
-                                        class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                    <x-primary-button
+                                        class="w-full justify-center bg-green-600 hover:bg-green-700 focus:bg-green-700 active:bg-green-800">
                                         <i class="fas fa-check mr-2"></i>
                                         Konfirmasi Pesanan COD
-                                    </button>
+                                    </x-primary-button>
                                 </form>
                             @elseif ($transaction->status == 'diproses')
                                 <form action="{{ route('admin.transactions.updateStatus', $transaction) }}"
@@ -229,13 +236,12 @@
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="status" value="dikirim">
-                                    <button type="submit"
-                                        class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    <x-primary-button class="w-full justify-center">
                                         Ubah ke "Dikirim"
-                                    </button>
+                                    </x-primary-button>
                                 </form>
                             @elseif($transaction->status == 'dikirim')
-                                @if($transaction->payment_method == 'cod')
+                                @if ($transaction->payment_method == 'cod')
                                     <div class="bg-blue-50 border-l-4 border-blue-500 p-4">
                                         <div class="flex">
                                             <div class="flex-shrink-0">
@@ -254,21 +260,22 @@
                             @else
                                 <p class="text-sm text-gray-500">Tidak ada aksi yang bisa dilakukan
                                     untuk status ini.</p>
-                            @endif                            @if (in_array($transaction->status, ['diproses', 'dikirim', 'selesai']))
-                                <a href="{{ route('admin.transactions.invoice', $transaction) }}" target="_blank"
-                                    class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-2">
-                                    Cetak Invoice
-                                </a>
-                            @endif
+                                @endif @if (in_array($transaction->status, ['diproses', 'dikirim', 'selesai']))
+                                    <x-primary-button href="{{ route('admin.transactions.invoice', $transaction) }}"
+                                        target="_blank"
+                                        class="w-full justify-center mt-2 bg-green-600 hover:bg-green-700 focus:bg-green-700 active:bg-green-800">
+                                        Cetak Invoice
+                                    </x-primary-button>
+                                @endif
 
-                            {{-- Cancel Order Button --}}
-                            @if (in_array($transaction->status, ['pending', 'diproses']))
-                                <button type="button" onclick="openCancelModal()"
-                                    class="w-full inline-flex justify-center py-2 px-4 border border-red-300 shadow-sm text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 mt-3">
-                                    <i class="fas fa-times-circle mr-2"></i>
-                                    Batalkan Pesanan
-                                </button>
-                            @endif
+                                {{-- Cancel Order Button --}}
+                                @if (in_array($transaction->status, ['pending', 'diproses']))
+                                    <x-danger-button type="button" onclick="openCancelModal()"
+                                        class="w-full justify-center mt-3 text-red-700 bg-white hover:bg-red-50 focus:ring-red-500 border-red-300">
+                                        <i class="fas fa-times-circle mr-2"></i>
+                                        Batalkan Pesanan
+                                    </x-danger-button>
+                                @endif
 
                         </div>
                     </div>
@@ -279,21 +286,29 @@
 
     @push('scripts')
         {{-- Leaflet JS --}}
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
         <script>
             // Koordinat toko dari database
             const tokoLat = {{ $settings->store_latitude }};
             const tokoLng = {{ $settings->store_longitude }};
             const freeShippingRadius = {{ $settings->free_shipping_radius }};
-            
+
             // Koordinat pengiriman
             var deliveryLat = {{ $transaction->latitude ?? 0 }};
             var deliveryLng = {{ $transaction->longitude ?? 0 }};
-            
+
             // Inisialisasi peta
-            var map = L.map('map', { dragging: true, zoomControl: true, scrollWheelZoom: true }).setView([deliveryLat, deliveryLng], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
-            
+            var map = L.map('map', {
+                dragging: true,
+                zoomControl: true,
+                scrollWheelZoom: true
+            }).setView([deliveryLat, deliveryLng], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
             // Marker toko (merah)
             var storeIcon = L.icon({
                 iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
@@ -303,10 +318,12 @@
                 popupAnchor: [1, -34],
                 shadowSize: [41, 41]
             });
-            
-            var storeMarker = L.marker([tokoLat, tokoLng], {icon: storeIcon}).addTo(map);
+
+            var storeMarker = L.marker([tokoLat, tokoLng], {
+                icon: storeIcon
+            }).addTo(map);
             storeMarker.bindPopup("Lokasi Toko");
-            
+
             // Lingkaran zona gratis ongkir
             var radiusCircle = L.circle([tokoLat, tokoLng], {
                 color: '#10b981',
@@ -316,9 +333,9 @@
                 weight: 2,
                 dashArray: '5, 5'
             }).addTo(map);
-            
+
             radiusCircle.bindPopup(`<b>Zona Gratis Ongkir</b><br>Radius: ${freeShippingRadius/1000} km`);
-            
+
             // Marker pengiriman (biru)
             var deliveryIcon = L.icon({
                 iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
@@ -328,16 +345,18 @@
                 popupAnchor: [1, -34],
                 shadowSize: [41, 41]
             });
-            
-            var deliveryMarker = L.marker([deliveryLat, deliveryLng], {icon: deliveryIcon}).addTo(map);
-            
+
+            var deliveryMarker = L.marker([deliveryLat, deliveryLng], {
+                icon: deliveryIcon
+            }).addTo(map);
+
             // Hitung jarak
-            @if($transaction->distance_from_store)
+            @if ($transaction->distance_from_store)
                 var distance = {{ $transaction->distance_from_store }};
                 var distanceKm = (distance / 1000).toFixed(2);
                 var ongkir = {{ $transaction->shipping_cost ?? 0 }};
                 var isInZone = distance <= freeShippingRadius;
-                
+
                 deliveryMarker.bindPopup(
                     `<b><i class='fas fa-map-marker-alt'></i> Lokasi Pengiriman</b><br>` +
                     `Jarak: ${distanceKm} km<br>` +
@@ -347,7 +366,7 @@
             @else
                 deliveryMarker.bindPopup("<b><i class='fas fa-map-marker-alt'></i> Lokasi Pengiriman</b>").openPopup();
             @endif
-            
+
             // Fit bounds untuk menampilkan semua marker
             var group = L.featureGroup([storeMarker, deliveryMarker, radiusCircle]);
             map.fitBounds(group.getBounds().pad(0.1));
@@ -360,18 +379,15 @@
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3">
                 <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Batalkan Pesanan</h3>
-                <form action="{{ route('admin.transactions.cancel', $transaction) }}" method="POST" id="cancelForm">
+                <form action="{{ route('admin.transactions.cancel', $transaction) }}" method="POST"
+                    id="cancelForm">
                     @csrf
                     @method('PATCH')
                     <div class="mb-4">
                         <label for="cancellation_reason" class="block text-sm font-medium text-gray-700 mb-2">
                             Alasan Pembatalan <span class="text-red-500">*</span>
                         </label>
-                        <textarea 
-                            id="cancellation_reason" 
-                            name="cancellation_reason" 
-                            rows="4" 
-                            required
+                        <textarea id="cancellation_reason" name="cancellation_reason" rows="4" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
                             placeholder="Contoh: Stok produk tidak tersedia, Permintaan customer, dll."></textarea>
                         <p class="mt-1 text-xs text-gray-500">Maksimal 500 karakter</p>
@@ -380,14 +396,13 @@
                         @enderror
                     </div>
                     <div class="flex gap-3">
-                        <button type="button" onclick="closeCancelModal()"
-                            class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 text-sm font-medium rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                        <x-secondary-button type="button" onclick="closeCancelModal()"
+                            class="flex-1 justify-center">
                             Batal
-                        </button>
-                        <button type="submit"
-                            class="flex-1 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </x-secondary-button>
+                        <x-danger-button class="flex-1 justify-center">
                             Batalkan Pesanan
-                        </button>
+                        </x-danger-button>
                     </div>
                 </form>
             </div>
@@ -413,7 +428,7 @@
             });
 
             // Show modal if there's validation error
-            @if($errors->has('cancellation_reason'))
+            @if ($errors->has('cancellation_reason'))
                 openCancelModal();
             @endif
         </script>

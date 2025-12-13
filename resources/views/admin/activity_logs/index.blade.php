@@ -43,7 +43,7 @@
                                 <label for="causer_id" class="block text-sm font-medium text-gray-700">Oleh
                                     User</label>
                                 <select name="causer_id" id="causer_id"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-1.5">
                                     <option value="">Semua</option>
                                     @foreach ($admins as $admin)
                                         <option value="{{ $admin->id }}" @selected(request('causer_id') == $admin->id)>
@@ -81,24 +81,23 @@
                                     Mulai</label>
                                 <input type="date" name="start_date" id="start_date"
                                     value="{{ request('start_date') }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-1.5">
                             </div>
                             <div>
                                 <label for="end_date" class="block text-sm font-medium text-gray-700">Tanggal
                                     Akhir</label>
                                 <input type="date" name="end_date" id="end_date" value="{{ request('end_date') }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-1.5">
                             </div>
                             <div
                                 class="col-span-full sm:col-span-2 lg:col-span-1 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
-                                <button type="submit"
-                                    class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <x-primary-button class="justify-center">
                                     Filter
-                                </button>
-                                <a href="{{ route('admin.activity-logs.index') }}"
-                                    class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                </x-primary-button>
+                                <x-secondary-button href="{{ route('admin.activity-logs.index') }}"
+                                    class="justify-center">
                                     Reset
-                                </a>
+                                </x-secondary-button>
                             </div>
                         </div>
                     </form>
@@ -162,7 +161,7 @@
                                             @if ($activity->properties && $activity->properties->count() > 0)
                                                 <button @click="open = true"
                                                     class="inline-flex items-center px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold rounded-md transition ease-in-out duration-150">
-                                                    <i class="fa-solid fa-eye"></i> 
+                                                    <i class="fa-solid fa-eye"></i>
                                                 </button>
 
                                                 <!-- Modal -->
@@ -235,11 +234,10 @@
                                                             </div>
                                                             <div
                                                                 class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                                                                <button type="button"
-                                                                    class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                                                                    @click="open = false">
+                                                                <x-secondary-button @click="open = false"
+                                                                    class="w-full sm:w-auto justify-center sm:ml-3">
                                                                     Tutup
-                                                                </button>
+                                                                </x-secondary-button>
                                                             </div>
                                                         </div>
                                                     </div>

@@ -118,8 +118,7 @@
                         </div>
 
                         <!-- Gambar -->
-                        <div class="mt-6"
-                            x-data="{ previewUrl: '{{ $product->image ? asset('storage/' . $product->image) : '' }}' }">
+                        <div class="mt-6" x-data="{ previewUrl: '{{ $product->image ? asset('storage/' . $product->image) : '' }}' }">
                             <label for="image" class="block text-gray-700 text-sm font-bold mb-2">Gambar Produk
                                 (Opsional):</label>
                             <input type="file" name="image" id="image"
@@ -140,10 +139,13 @@
                         </div>
 
                         <div class="flex items-center justify-end mt-6">
-                            <a href="{{ route('admin.products.index') }}"
-                                class="text-sm font-semibold leading-6 text-gray-900 mr-4 px-3">Batal</a>
-                            <button type="submit"
-                                class="rounded-md bg-blue-500  px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-600">Perbarui</button>
+                            <x-secondary-button tag="a" href="{{ route('admin.products.index') }}"
+                                class="mr-4">
+                                Batal
+                            </x-secondary-button>
+                            <x-primary-button>
+                                Perbarui
+                            </x-primary-button>
                         </div>
                     </form>
                 </div>
