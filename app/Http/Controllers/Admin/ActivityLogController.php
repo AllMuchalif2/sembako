@@ -2,18 +2,42 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Spatie\Activitylog\Models\Activity;
 
 class ActivityLogController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $activities = Activity::with('causer', 'subject')
-            ->latest()
-            ->paginate(20);
+        $query = Activity::with('causer', 'subject');
 
-        return view('admin.activity_logs.index', compact('activities'));
+        if ($request->filled('causer_id')) {
+            $query->where('causer_id', $request->causer_id);
+        }
+
+        if ($request->filled('event')) {
+            $query->where('event', $request->event);
+        }
+
+        if ($request->filled('subject_type')) {
+            $query->where('subject_type', $request->subject_type);
+        }
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $activities = $query->latest()->paginate(20)->withQueryString();
+
+        // Get list of potential causers (Admins and Owners) for the filter dropdown
+        $admins = User::whereIn('role_id', [1, 2])->get();
+
+        return view('admin.activity_logs.index', compact('activities', 'admins'));
     }
 }

@@ -15,16 +15,27 @@ use Spatie\Activitylog\LogOptions;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, SoftDeletes, LogsActivity;
+    use HasFactory, Notifiable, SoftDeletes;
+    use LogsActivity {
+        shouldLogEvent as traitShouldLogEvent;
+    }
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logFillable()
             ->logOnlyDirty()
-            ->dontSubmitEmptyLogs()
-            // Only log if the USER being modified has role_id 1 (Owner) or 2 (Admin)
-            ->logIf(in_array($this->role_id, [1, 2]));
+            ->dontSubmitEmptyLogs();
+    }
+
+    protected function shouldLogEvent(string $eventName): bool
+    {
+        // Only log if the USER being modified has role_id 1 (Owner) or 2 (Admin)
+        if (!in_array($this->role_id, [1, 2])) {
+            return false;
+        }
+
+        return $this->traitShouldLogEvent($eventName);
     }
 
     /**

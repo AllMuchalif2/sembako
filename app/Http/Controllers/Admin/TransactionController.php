@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\StoreSetting;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class TransactionController extends Controller
 {
@@ -101,14 +102,14 @@ class TransactionController extends Controller
 
         // Restore product stock
         foreach ($transaction->items as $item) {
-            $product = \App\Models\Product::find($item->product_id);
+            $product = Product::find($item->product_id);
             if ($product) {
                 $product->increment('stock', $item->quantity);
             }
         }
 
         // Append cancellation reason to notes
-        $cancellationNote = "\n\n[DIBATALKAN OLEH ADMIN]\nTanggal: " . now()->format('d M Y H:i') . "\nAlasan: " . $request->cancellation_reason;
+        $cancellationNote = "\n\n[DIBATALKAN OLEH ADMIN]\nTanggal: " . now()->locale('id')->translatedFormat('d M Y H:i') . "\nAlasan: " . $request->cancellation_reason;
         $updatedNotes = $transaction->notes ? $transaction->notes . $cancellationNote : $cancellationNote;
 
         // Update transaction status and notes
