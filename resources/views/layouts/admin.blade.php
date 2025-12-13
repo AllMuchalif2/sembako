@@ -1,15 +1,11 @@
 <div x-show="sidebarOpen && window.innerWidth < 1024" @click="sidebarOpen = false"
-    x-transition:enter="transition-opacity ease-linear duration-300" 
-    x-transition:enter-start="opacity-0"
-    x-transition:enter-end="opacity-100" 
-    x-transition:leave="transition-opacity ease-linear duration-300"
-    x-transition:leave-start="opacity-100" 
-    x-transition:leave-end="opacity-0"
+    x-transition:enter="transition-opacity ease-linear duration-300" x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-300"
+    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
     class="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 lg:hidden">
 </div>
 
-<aside x-data="{ userMenuOpen: false }" 
-    :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+<aside x-data="{ userMenuOpen: false }" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
     class="fixed lg:static inset-y-0 left-0 z-50 bg-white border-r border-gray-100 min-h-screen w-64 transform transition-transform duration-300 ease-in-out flex flex-col">
 
     {{-- Logo --}}
@@ -57,8 +53,8 @@
     <nav class="flex-1 px-4 py-6 space-y-1">
         <a href="{{ route('admin.dashboard') }}"
             class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors 
-            {{ request()->routeIs('admin.dashboard') 
-                ? 'bg-gray-100 text-gray-900' 
+            {{ request()->routeIs('admin.dashboard')
+                ? 'bg-gray-100 text-gray-900'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
             <i class="fa-solid fa-home mr-3"></i>
             {{ __('Dashboard') }}
@@ -66,8 +62,8 @@
 
         <a href="{{ route('admin.categories.index') }}"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
-            {{ request()->routeIs('admin.categories.*') 
-                ? 'bg-gray-100 text-gray-900' 
+            {{ request()->routeIs('admin.categories.*')
+                ? 'bg-gray-100 text-gray-900'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
             <i class="fa-solid fa-tags mr-3"></i>
             {{ __('Kelola Kategori') }}
@@ -75,8 +71,8 @@
 
         <a href="{{ route('admin.products.index') }}"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
-            {{ request()->routeIs('admin.products.*') 
-                ? 'bg-gray-100 text-gray-900' 
+            {{ request()->routeIs('admin.products.*')
+                ? 'bg-gray-100 text-gray-900'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
             <i class="fa-solid fa-box mr-3"></i>
             {{ __('Kelola Produk') }}
@@ -84,8 +80,8 @@
 
         <a href="{{ route('admin.promos.index') }}"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
-            {{ request()->routeIs('admin.promos.*') 
-                ? 'bg-gray-100 text-gray-900' 
+            {{ request()->routeIs('admin.promos.*')
+                ? 'bg-gray-100 text-gray-900'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
             <i class="fa-solid fa-percent mr-3"></i>
             {{ __('Kelola Promo') }}
@@ -93,34 +89,42 @@
 
         <a href="{{ route('admin.transactions.index') }}"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
-            {{ request()->routeIs('admin.transactions.*') 
-                ? 'bg-gray-100 text-gray-900' 
+            {{ request()->routeIs('admin.transactions.*')
+                ? 'bg-gray-100 text-gray-900'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
             <i class="fa-solid fa-receipt mr-3"></i>
             {{ __('Riwayat Transaksi') }}
         </a>
 
-        @if (Auth::user()->role_id == '0') 
-        <a href="{{ route('admin.admins.index') }}"
-            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
-            {{ request()->routeIs('admin.admins.*') 
-                ? 'bg-gray-100 text-gray-900' 
+        @if (Auth::user()->role_id == '0' || Auth::user()->role_id == '1')
+            <a href="{{ route('admin.admins.index') }}"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
+            {{ request()->routeIs('admin.admins.*')
+                ? 'bg-gray-100 text-gray-900'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-            <i class="fa-solid fa-users-cog mr-3"></i>
-            {{ __('Kelola Admin') }}
-        </a>
-        <a href="{{ route('admin.store-settings.edit') }}"
-            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
-            {{ request()->routeIs('admin.store-settings.*') 
-                ? 'bg-gray-100 text-gray-900' 
+                <i class="fa-solid fa-users-cog mr-3"></i>
+                {{ __('Kelola Admin') }}
+            </a>
+            <a href="{{ route('admin.store-settings.edit') }}"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
+            {{ request()->routeIs('admin.store-settings.*')
+                ? 'bg-gray-100 text-gray-900'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-            <i class="fa-solid fa-cog mr-3"></i>
-            {{ __('Pengaturan Toko') }}
-        </a>
+                <i class="fa-solid fa-cog mr-3"></i>
+                {{ __('Pengaturan Toko') }}
+            </a>
+            <a href="{{ route('admin.activity-logs.index') }}"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
+            {{ request()->routeIs('admin.activity-logs.*')
+                ? 'bg-gray-100 text-gray-900'
+                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                <i class="fa-solid fa-clock-rotate-left mr-3"></i>
+                {{ __('Riwayat Aktivitas') }}
+            </a>
         @endif
 
 
-        
+
     </nav>
 
     {{-- Theme Toggle (Dark/Light) --}}

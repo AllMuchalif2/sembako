@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\StoreSettingController;
 use App\Http\Controllers\Admin\PromoController as AdminPromoController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionController;
+use App\Http\Controllers\Admin\ActivityLogController;
 
 // rute landing page 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -92,6 +93,9 @@ Route::middleware(['auth', 'role:owner'])->prefix('admin')->name('admin.')->grou
 
     // Admin Management
     Route::resource('admins', AdminController::class);
+
+    // Activity Logs
+    Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
 });
 
 // Rute callback Midtrans (tanpa auth/csrf untuk menerima notifikasi dari Midtrans)

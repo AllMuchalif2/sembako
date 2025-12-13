@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->softDeletes();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('order_id')->unique();
             $table->decimal('total_amount', 15, 2);
