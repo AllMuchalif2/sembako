@@ -75,7 +75,8 @@
                                                                 <i class="fas fa-minus text-xs"></i>
                                                             </button>
                                                         </form>
-                                                        <span class="w-12 text-center font-medium item-quantity">{{ $item['quantity'] }}</span>
+                                                        <span
+                                                            class="w-12 text-center font-medium item-quantity">{{ $item['quantity'] }}</span>
                                                         <form action="{{ route('cart.update', $id) }}" method="POST"
                                                             class="inline update-cart-form">
                                                             @csrf
@@ -98,7 +99,8 @@
                                                     Rp{{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                    <form action="{{ route('cart.remove', $id) }}" method="POST" class="remove-from-cart-form">
+                                                    <form action="{{ route('cart.remove', $id) }}" method="POST"
+                                                        class="remove-from-cart-form">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="text-red-600 hover:text-red-900">
@@ -115,7 +117,8 @@
                             <!-- Mobile View: Cards -->
                             <div class="md:hidden space-y-4">
                                 @foreach ($cartItems as $id => $item)
-                                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4" data-product-id="{{ $id }}">
+                                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4"
+                                        data-product-id="{{ $id }}">
                                         <!-- Product Info -->
                                         <div class="flex items-start space-x-4 mb-4">
                                             <div class="flex-shrink-0">
@@ -179,7 +182,8 @@
                                                         Rp{{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}
                                                     </p>
                                                 </div>
-                                                <form action="{{ route('cart.remove', $id) }}" method="POST" class="remove-from-cart-form">
+                                                <form action="{{ route('cart.remove', $id) }}" method="POST"
+                                                    class="remove-from-cart-form">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"

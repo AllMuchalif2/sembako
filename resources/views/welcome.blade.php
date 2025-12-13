@@ -4,10 +4,14 @@
         <div class="relative isolate px-6 pt-14 lg:px-8">
             <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
                 <div class="text-center">
-                    <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Sembako Online Terlengkap</h1>
-                    <p class="mt-6 text-lg leading-8 text-gray-600">Belanja kebutuhan pokok harian Anda dengan mudah, cepat, dan aman. Kualitas terjamin, harga bersahabat.</p>
+                    <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Sembako Online Terlengkap
+                    </h1>
+                    <p class="mt-6 text-lg leading-8 text-gray-600">Belanja kebutuhan pokok harian Anda dengan mudah,
+                        cepat, dan aman. Kualitas terjamin, harga bersahabat.</p>
                     <div class="mt-10 flex items-center justify-center gap-x-6" x-data>
-                        <a href="#produk" x-on:click.prevent="document.getElementById('produk').scrollIntoView({ behavior: 'smooth' })" class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Mulai Belanja</a>
+                        <x-primary-button href="#produk"
+                            x-on:click.prevent="document.getElementById('produk').scrollIntoView({ behavior: 'smooth' })">Mulai
+                            Belanja</x-primary-button>
                     </div>
                 </div>
             </div>
@@ -19,40 +23,43 @@
         <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
             <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl text-center">Produk Terbaru Kami</h2>
 
-            @if($products->isEmpty())
+            @if ($products->isEmpty())
                 <div class="mt-6 text-center text-gray-500">
                     <p>Saat ini belum ada produk yang tersedia.</p>
                 </div>
             @else
                 <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-                    @foreach ($products as $product) 
-                        <div class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg">
+                    @foreach ($products as $product)
+                        <div
+                            class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg">
                             <div class="aspect-square w-full bg-white flex items-center justify-center overflow-hidden">
-                                <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/300' }}" 
-                                     alt="{{ $product->name }}" 
-                                     class="h-full w-full object-contain object-center transition-opacity duration-300 group-hover:opacity-75">
+                                <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/300' }}"
+                                    alt="{{ $product->name }}"
+                                    class="h-full w-full object-contain object-center transition-opacity duration-300 group-hover:opacity-75">
                             </div>
                             <div class="flex flex-1 flex-col space-y-2 p-4">
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-900">
-                                        <a href="{{ route('product.show', $product) }}" class="show-product-modal-button" data-slug="{{ $product->slug }}">
+                                        <a href="{{ route('product.show', $product) }}"
+                                            class="show-product-modal-button" data-slug="{{ $product->slug }}">
                                             <span aria-hidden="true" class="absolute inset-0"></span>
                                             {{ $product->name }}
                                         </a>
                                     </h3>
                                     <p class="mt-1 text-sm text-gray-500">{{ $product->category->name }}</p>
                                 </div>
-                                <p class="text-sm font-medium text-gray-900">Rp{{ number_format($product->price, 0, ',', '.') }}</p>
-                            </div> 
+                                <p class="text-sm font-medium text-gray-900">
+                                    Rp{{ number_format($product->price, 0, ',', '.') }}</p>
+                            </div>
                         </div>
                     @endforeach
                 </div>
 
                 {{-- Tombol Lihat Semua --}}
                 <div class="mt-12 text-center">
-                    <a href="/products" class="rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50">
+                    <x-secondary-button href="/products">
                         Lihat Semua Produk
-                    </a>
+                    </x-secondary-button>
                 </div>
             @endif
         </div>
@@ -68,35 +75,45 @@
                 </p>
             </div>
 
-            @if(isset($promos) && $promos->isNotEmpty())
+            @if (isset($promos) && $promos->isNotEmpty())
                 <div class="mt-12 flex flex-wrap justify-center gap-6">
                     @foreach ($promos as $promo)
-                        <div x-data="{ code: '{{ $promo->code }}', tooltip: 'Salin Kode' }" class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
+                        <div x-data="{ code: '{{ $promo->code }}', tooltip: 'Salin Kode' }"
+                            class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
                             <div class="p-6 flex-grow flex flex-col">
                                 <div class="mb-4">
-                                    @if($promo->type == 'percentage')
-                                        <span class="inline-block bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">Diskon {{ $promo->value }}%</span>
+                                    @if ($promo->type == 'percentage')
+                                        <span
+                                            class="inline-block bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">Diskon
+                                            {{ $promo->value }}%</span>
                                     @else
-                                        <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">Potongan Rp{{ number_format($promo->value, 0, ',', '.') }}</span>
+                                        <span
+                                            class="inline-block bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">Potongan
+                                            Rp{{ number_format($promo->value, 0, ',', '.') }}</span>
                                     @endif
                                 </div>
                                 <h3 class="text-lg font-bold text-gray-900">{{ $promo->name }}</h3>
                                 <p class="mt-2 text-sm text-gray-600 flex-grow">{{ $promo->description }}</p>
                                 <div class="mt-4 space-y-2 text-xs text-gray-500">
-                                    @if($promo->min_purchase)
-                                        <p><i class="fa-solid fa-basket-shopping fa-fw mr-1"></i> Min. belanja Rp{{ number_format($promo->min_purchase, 0, ',', '.') }}</p>
+                                    @if ($promo->min_purchase)
+                                        <p><i class="fa-solid fa-basket-shopping fa-fw mr-1"></i> Min. belanja
+                                            Rp{{ number_format($promo->min_purchase, 0, ',', '.') }}</p>
                                     @endif
-                                    @if($promo->end_date)
-                                        <p><i class="fa-solid fa-calendar-xmark fa-fw mr-1"></i> Berlaku hingga {{ \Carbon\Carbon::parse($promo->end_date)->isoFormat('D MMMM YYYY') }}</p>
+                                    @if ($promo->end_date)
+                                        <p><i class="fa-solid fa-calendar-xmark fa-fw mr-1"></i> Berlaku hingga
+                                            {{ \Carbon\Carbon::parse($promo->end_date)->isoFormat('D MMMM YYYY') }}</p>
                                     @endif
                                 </div>
                             </div>
                             <div class="bg-gray-50 p-4 border-t border-gray-200">
-                                <div class="flex items-center justify-between rounded-md border-2 border-dashed border-gray-300 bg-white px-4 py-2">
-                                    <span class="text-lg font-bold text-gray-800 tracking-wider">{{ $promo->code }}</span>
-                                    <button x-on:click="navigator.clipboard.writeText(code); tooltip = 'Tersalin!'; setTimeout(() => tooltip = 'Salin Kode', 3000)" 
-                                            class="relative text-gray-500 hover:text-blue-600 transition-colors"
-                                            x-tooltip.top="tooltip">
+                                <div
+                                    class="flex items-center justify-between rounded-md border-2 border-dashed border-gray-300 bg-white px-4 py-2">
+                                    <span
+                                        class="text-lg font-bold text-gray-800 tracking-wider">{{ $promo->code }}</span>
+                                    <button
+                                        x-on:click="navigator.clipboard.writeText(code); tooltip = 'Tersalin!'; setTimeout(() => tooltip = 'Salin Kode', 3000)"
+                                        class="relative text-gray-500 hover:text-blue-600 transition-colors"
+                                        x-tooltip.top="tooltip">
                                         <i class="fa-regular fa-copy text-lg"></i>
                                     </button>
                                 </div>
@@ -113,7 +130,8 @@
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col items-center justify-center py-8">
                 <x-application-logo class="block h-10 w-auto fill-current text-gray-800" />
-                <p class="mt-4 text-center text-sm text-gray-500">&copy; {{ date('Y') }} {{ config('app.name', 'Sembako') }}. All rights reserved.</p>
+                <p class="mt-4 text-center text-sm text-gray-500">&copy; {{ date('Y') }}
+                    {{ config('app.name', 'Sembako') }}. All rights reserved.</p>
                 <div class="mt-4 flex space-x-6">
                     <a href="#" class="text-gray-400 hover:text-gray-500">
                         <span class="sr-only">Facebook</span>

@@ -15,8 +15,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Detail Pesanan: {{ $transaction->order_id }}
             </h2>
-            <a href="{{ route('transactions.index') }}"
-                class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+            <x-secondary-button href="{{ route('transactions.index') }}">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -24,9 +23,7 @@
                 </svg>
 
                 <span class="hidden sm:inline">Kembali ke Riwayat</span>
-                </svg>
-
-            </a>
+            </x-secondary-button>
         </div>
     </x-slot>
 
@@ -125,15 +122,16 @@
                             </p>
 
                             <p class="text-sm text-gray-600">Metode Pembayaran:
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                    @if($transaction->payment_method == 'cod') bg-green-100 text-green-800
+                                <span
+                                    class="px-2 py-1 text-xs font-semibold rounded-full 
+                                    @if ($transaction->payment_method == 'cod') bg-green-100 text-green-800
                                     @else bg-blue-100 text-blue-800 @endif">
                                     {{ $transaction->payment_method == 'cod' ? 'COD (Bayar di Tempat)' : 'Midtrans (Online)' }}
                                 </span>
                             </p>
 
                             @if ($transaction->status == 'dikirim')
-                                @if($transaction->payment_method == 'cod')
+                                @if ($transaction->payment_method == 'cod')
                                     <div class="bg-blue-50 border-l-4 border-blue-500 p-4 my-3">
                                         <div class="flex">
                                             <div class="flex-shrink-0">
@@ -141,7 +139,9 @@
                                             </div>
                                             <div class="ml-3">
                                                 <p class="text-sm text-blue-700">
-                                                    Siapkan uang tunai sejumlah <strong>Rp{{ number_format($transaction->total_amount, 0, ',', '.') }}</strong> untuk dibayarkan ke kurir.
+                                                    Siapkan uang tunai sejumlah
+                                                    <strong>Rp{{ number_format($transaction->total_amount, 0, ',', '.') }}</strong>
+                                                    untuk dibayarkan ke kurir.
                                                 </p>
                                             </div>
                                         </div>
@@ -150,17 +150,17 @@
                                 <form action="{{ route('transactions.complete', $transaction) }}" method="POST">
                                     @csrf
                                     @method('PATCH')
-                                    <button type="submit"
-                                        class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                    <x-primary-button type="submit"
+                                        class="w-full justify-center bg-green-600 hover:bg-green-700 focus:ring-green-500">
                                         Pesanan Sudah Diterima
-                                    </button>
+                                    </x-primary-button>
                                 </form>
                             @elseif ($transaction->status == 'pending')
-                                @if($transaction->payment_method == 'midtrans')
-                                    <a href="{{ route('checkout.pay', $transaction->order_id) }}"
-                                        class="w-full inline-flex justify-center py-2 px-4 mb-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                @if ($transaction->payment_method == 'midtrans')
+                                    <x-primary-button href="{{ route('checkout.pay', $transaction->order_id) }}"
+                                        class="w-full justify-center mb-2">
                                         Bayar Sekarang
-                                    </a>
+                                    </x-primary-button>
                                 @else
                                     <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 my-3">
                                         <div class="flex">
@@ -175,10 +175,10 @@
                                         </div>
                                     </div>
                                 @endif
-                                <button type="button" onclick="openCancelModal()"
-                                    class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                <x-secondary-button type="button" onclick="openCancelModal()"
+                                    class="w-full justify-center">
                                     Batalkan Pesanan
-                                </button>
+                                </x-secondary-button>
                             @endif
                         </div>
                     </div>
@@ -219,11 +219,7 @@
                         <label for="cancellation_reason" class="block text-sm font-medium text-gray-700 mb-2">
                             Alasan Pembatalan <span class="text-red-500">*</span>
                         </label>
-                        <textarea 
-                            id="cancellation_reason" 
-                            name="cancellation_reason" 
-                            rows="4" 
-                            required
+                        <textarea id="cancellation_reason" name="cancellation_reason" rows="4" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
                             placeholder="Contoh: Ingin ubah alamat pengiriman, Salah pesan, dll."></textarea>
                         <p class="mt-1 text-xs text-gray-500">Maksimal 500 karakter</p>
@@ -232,14 +228,12 @@
                         @enderror
                     </div>
                     <div class="flex gap-3">
-                        <button type="button" onclick="closeCancelModal()"
-                            class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 text-sm font-medium rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                        <x-secondary-button type="button" onclick="closeCancelModal()" class="flex-1 justify-center">
                             Batal
-                        </button>
-                        <button type="submit"
-                            class="flex-1 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </x-secondary-button>
+                        <x-danger-button type="submit" class="flex-1 justify-center">
                             Batalkan Pesanan
-                        </button>
+                        </x-danger-button>
                     </div>
                 </form>
             </div>
@@ -265,7 +259,7 @@
             });
 
             // Show modal if there's validation error
-            @if($errors->has('cancellation_reason'))
+            @if ($errors->has('cancellation_reason'))
                 openCancelModal();
             @endif
         </script>

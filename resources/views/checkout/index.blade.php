@@ -42,10 +42,9 @@
 
                         <!-- Tombol Gunakan Lokasi Saya -->
                         <div class="mt-4 mb-2">
-                            <button type="button" id="use-my-location-btn"
-                                class="w-full flex items-center justify-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            <x-secondary-button type="button" id="use-my-location-btn" class="w-full justify-center">
                                 Gunakan Lokasi Saya
-                            </button>
+                            </x-secondary-button>
                         </div>
 
                         <!-- Peta Leaflet -->
@@ -179,32 +178,39 @@
 
                                 <!-- Payment Method Selection -->
                                 <div class="mt-6 border-t border-gray-200 pt-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-3">Metode Pembayaran</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-3">Metode
+                                        Pembayaran</label>
                                     <div class="space-y-3">
                                         <!-- Midtrans Option -->
                                         <div class="relative flex items-start">
                                             <div class="flex items-center h-5">
-                                                <input id="payment-midtrans" name="payment_method" type="radio" value="midtrans"
-                                                    checked
+                                                <input id="payment-midtrans" name="payment_method" type="radio"
+                                                    value="midtrans" checked
                                                     class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300">
                                             </div>
                                             <div class="ml-3 text-sm">
-                                                <label for="payment-midtrans" class="font-medium text-gray-700 cursor-pointer">
-                                                    <i class="fas fa-credit-card text-blue-600"></i> Pembayaran Online (Midtrans)
+                                                <label for="payment-midtrans"
+                                                    class="font-medium text-gray-700 cursor-pointer">
+                                                    <i class="fas fa-credit-card text-blue-600"></i> Pembayaran Online
+                                                    (Midtrans)
                                                 </label>
-                                                <p class="text-gray-500 text-xs">Transfer Bank, E-Wallet, Kartu Kredit/Debit</p>
+                                                <p class="text-gray-500 text-xs">Transfer Bank, E-Wallet, Kartu
+                                                    Kredit/Debit</p>
                                             </div>
                                         </div>
 
                                         <!-- COD Option -->
                                         <div class="relative flex items-start">
                                             <div class="flex items-center h-5">
-                                                <input id="payment-cod" name="payment_method" type="radio" value="cod"
+                                                <input id="payment-cod" name="payment_method" type="radio"
+                                                    value="cod"
                                                     class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300">
                                             </div>
                                             <div class="ml-3 text-sm">
-                                                <label for="payment-cod" class="font-medium text-gray-700 cursor-pointer">
-                                                    <i class="fas fa-money-bill-wave text-green-600"></i> Bayar di Tempat (COD)
+                                                <label for="payment-cod"
+                                                    class="font-medium text-gray-700 cursor-pointer">
+                                                    <i class="fas fa-money-bill-wave text-green-600"></i> Bayar di
+                                                    Tempat (COD)
                                                 </label>
                                                 <p class="text-gray-500 text-xs">Bayar tunai saat barang diterima</p>
                                             </div>
@@ -213,10 +219,10 @@
                                 </div>
 
                                 <div class="mt-6">
-                                    <button type="submit" id="checkout-button"
-                                        class="w-full flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700">
+                                    <x-primary-button type="submit" id="checkout-button"
+                                        class="w-full justify-center px-6 py-3 text-base">
                                         <span id="checkout-button-text">Lanjutkan</span>
-                                    </button>
+                                    </x-primary-button>
                                 </div>
                             </div>
                         </div>
