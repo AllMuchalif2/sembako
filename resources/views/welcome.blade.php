@@ -143,7 +143,7 @@
                     </a>
                     <a href="#" class="text-gray-400 hover:text-gray-500">
                         <span class="sr-only">Twitter</span>
-                        <i class="fa-brands fa-twitter"></i>
+                        <i class="fa-brands fa-x-twitter"></i>
                     </a>
                 </div>
             </div>

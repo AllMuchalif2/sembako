@@ -8,7 +8,7 @@
 
     @php
         $routeName = Route::currentRouteName() ?? '';
-        
+
         $titleMap = [
             'login' => 'Masuk',
             'register' => 'Daftar',
@@ -16,17 +16,17 @@
         ];
 
         $pageTitle = 'Halaman';
-        
+
         foreach ($titleMap as $key => $value) {
             if (str_starts_with($routeName, $key)) {
                 $pageTitle = $value;
                 break;
             }
         }
-        
+
         if ($pageTitle === 'Halaman') {
-             $segments = explode('.', $routeName);
-             $pageTitle = ucwords(str_replace(['-', '_'], ' ', end($segments)));
+            $segments = explode('.', $routeName);
+            $pageTitle = ucwords(str_replace(['-', '_'], ' ', end($segments)));
         }
     @endphp
     <title>{{ $pageTitle }} | My Mart</title>
@@ -37,6 +37,11 @@
 
     <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
     <link rel="icon" href="{{ secure_asset('images/logo.png') }}" type="image/png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
