@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\StoreSettingController;
 use App\Http\Controllers\Admin\PromoController as AdminPromoController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionController;
 use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\ReportController;
 
 // rute landing page 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -82,6 +83,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Admin Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // Laporan
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/print', [ReportController::class, 'print'])->name('reports.print');
 });
 
 // rute owner (hanya owner yang bisa mengakses)
