@@ -105,8 +105,14 @@ async function handleUpdateCart(event) {
         );
         if (allProductRows.length > 0) {
             allProductRows.forEach((row) => {
-                row.querySelector(".item-quantity").textContent =
-                    data.item_quantity;
+                const quantityEl = row.querySelector(".item-quantity");
+                if (quantityEl) {
+                    if (quantityEl.tagName === "INPUT") {
+                        quantityEl.value = data.item_quantity;
+                    } else {
+                        quantityEl.textContent = data.item_quantity;
+                    }
+                }
                 row.querySelector(".item-subtotal").textContent =
                     data.item_subtotal_formatted;
 
@@ -115,17 +121,62 @@ async function handleUpdateCart(event) {
                     row.querySelector(".item-stock")?.textContent || "";
                 const stock = parseInt(stockText.replace(/\D/g, ""), 10) || 0;
 
-                row.querySelector(".btn-minus").disabled = currentQuantity <= 1;
-                row.querySelector(".btn-plus").disabled =
-                    currentQuantity >= stock;
-
+                // Handle Minus Form Swapping Logic
                 const minusForm = row
                     .querySelector(".btn-minus")
-                    .closest("form");
-                const plusForm = row.querySelector(".btn-plus").closest("form");
-                if (minusForm)
-                    minusForm.querySelector('input[name="quantity"]').value =
-                        currentQuantity - 1;
+                    ?.closest("form");
+                if (minusForm) {
+                    const methodInput = minusForm.querySelector(
+                        'input[name="_method"]'
+                    );
+                    const hiddenQtyInput = minusForm.querySelector(
+                        'input[name="quantity"]'
+                    );
+
+                    if (currentQuantity <= 1) {
+                        // Switch to Remove Mode for next click
+                        minusForm.action = row.dataset.removeUrl;
+                        if (methodInput) methodInput.value = "DELETE";
+                        // Ensure class matches for event delegation
+                        minusForm.classList.remove("update-cart-form");
+                        minusForm.classList.add("remove-from-cart-form");
+
+                        const btn = minusForm.querySelector("button");
+                        if (
+                            btn &&
+                            btn.classList.contains("hover:bg-gray-300")
+                        ) {
+                            btn.classList.replace(
+                                "hover:bg-gray-300",
+                                "hover:bg-red-200"
+                            );
+                        }
+                    } else {
+                        // Switch to Update Mode
+                        minusForm.action = row.dataset.updateUrl;
+                        if (methodInput) methodInput.value = "PATCH";
+                        if (hiddenQtyInput)
+                            hiddenQtyInput.value = currentQuantity - 1;
+
+                        minusForm.classList.remove("remove-from-cart-form");
+                        minusForm.classList.add("update-cart-form");
+
+                        const btn = minusForm.querySelector("button");
+                        if (btn && btn.classList.contains("hover:bg-red-200")) {
+                            btn.classList.replace(
+                                "hover:bg-red-200",
+                                "hover:bg-gray-300"
+                            );
+                        }
+                    }
+                }
+
+                const plusButton = row.querySelector(".btn-plus");
+                if (plusButton) plusButton.disabled = currentQuantity >= stock;
+
+                const plusForm = row
+                    .querySelector(".btn-plus")
+                    ?.closest("form");
                 if (plusForm)
                     plusForm.querySelector('input[name="quantity"]').value =
                         currentQuantity + 1;
@@ -147,20 +198,7 @@ async function handleUpdateCart(event) {
             clickedButton.innerHTML = originalButtonContent;
         }
 
-        const finalQuantity = parseInt(
-            productRow.querySelector(".item-quantity").textContent,
-            10
-        );
-        const stockText =
-            productRow.querySelector(".item-stock")?.textContent || "";
-        const stock = parseInt(stockText.replace(/\D/g, ""), 10);
-
-        if (minusButton) {
-            minusButton.disabled = finalQuantity <= 1;
-        }
-        if (plusButton) {
-            plusButton.disabled = finalQuantity >= stock;
-        }
+        // Remove the finally block stock logic that could override the input value reader
     }
 }
 
