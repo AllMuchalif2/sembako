@@ -14,7 +14,11 @@ class ActivityLogController extends Controller
         $query = Activity::with('causer', 'subject');
 
         if ($request->filled('causer_id')) {
-            $query->where('causer_id', $request->causer_id);
+            if ($request->causer_id === 'null') {
+                $query->whereNull('causer_id');
+            } else {
+                $query->where('causer_id', $request->causer_id);
+            }
         }
 
         if ($request->filled('event')) {
@@ -33,7 +37,7 @@ class ActivityLogController extends Controller
             $query->whereDate('created_at', '<=', $request->end_date);
         }
 
-        $activities = $query->latest()->paginate(20)->withQueryString();
+        $activities = $query->latest()->paginate(10)->withQueryString();
 
         // Get list of potential causers (Admins and Owners) for the filter dropdown
         $admins = User::whereIn('role_id', [1, 2])->get();

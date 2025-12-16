@@ -23,6 +23,8 @@
             'profile' => 'Profil',
             'cart' => 'Keranjang',
             'checkout' => 'Checkout',
+            'products' => 'Produk',
+            'transactions' => 'Transaksi',
         ];
 
         $pageTitle = 'Halaman'; // Default
@@ -46,7 +48,9 @@
         }
 
         $fullTitle = $pageTitle;
-        if (request()->routeIs('admin.*')) {
+        if ($routeName === 'landing') {
+            $fullTitle = 'My Mart';
+        } elseif (request()->routeIs('admin.*')) {
             $fullTitle .= ' | Admin MyMart';
         } else {
             $fullTitle .= ' | My Mart';

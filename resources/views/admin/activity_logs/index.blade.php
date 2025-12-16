@@ -26,7 +26,8 @@
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                         stroke-width="2" d="m1 9 4-4-4-4" />
                                 </svg>
-                                <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2">Activity Logs</span>
+                                <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2">Riwayat
+                                    Aktivitas</span>
                             </div>
                         </li>
                     </ol>
@@ -45,6 +46,7 @@
                                 <select name="causer_id" id="causer_id"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-1.5">
                                     <option value="">Semua</option>
+                                    <option value="null" @selected(request('causer_id') == 'null')>System</option>
                                     @foreach ($admins as $admin)
                                         <option value="{{ $admin->id }}" @selected(request('causer_id') == $admin->id)>
                                             {{ $admin->name }} ({{ $admin->role->name ?? '-' }})
