@@ -25,7 +25,36 @@
                 </ol>
             </nav>
 
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+            <div x-data="{
+                loading: false,
+                analysisResult: '',
+                analyze() {
+                    this.loading = true;
+                    this.analysisResult = '';
+            
+                    // Ambil parameter dari URL untuk filter saat ini
+                    const urlParams = new URLSearchParams(window.location.search);
+            
+                    fetch('{{ route('admin.reports.analyze') }}?' + urlParams.toString(), {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            this.analysisResult = data.analysis;
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            this.analysisResult = 'Terjadi kesalahan saat melakukan analisa.';
+                        })
+                        .finally(() => {
+                            this.loading = false;
+                        });
+                }
+            }" class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
 
                 {{-- Filter Form --}}
                 <form action="{{ route('admin.reports.index') }}" method="GET" class="mb-8">
@@ -57,16 +86,42 @@
                                 </x-secondary-button>
                             </div>
 
-                            {{-- Print Button --}}
-                            <div class="md:col-span-3 text-right md:text-right">
+
+                            {{-- Action Buttons --}}
+                            <div class="md:col-span-3 text-right md:text-right flex flex-col space-y-2">
                                 <a href="{{ route('admin.reports.print', request()->all()) }}" target="_blank"
-                                    class="inline-flex justify-center items-center px-8 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150 w-full shadow-sm">
+                                    class="inline-flex justify-center items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 transition w-full shadow-sm">
                                     <i class="fa-solid fa-print mr-2"></i> {{ __('Cetak PDF') }}
                                 </a>
+
+                                <button type="button" @click="analyze" :disabled="loading"
+                                    class="inline-flex justify-center items-center px-4 py-2 bg-purple-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700 transition w-full shadow-sm disabled:opacity-50">
+                                    <template x-if="!loading">
+                                        <span><i class="fa-solid fa-robot mr-2"></i> {{ __('Analisa AI') }}</span>
+                                    </template>
+                                    <template x-if="loading">
+                                        <span><i class="fa-solid fa-spinner fa-spin mr-2"></i> Analisa...</span>
+                                    </template>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </form>
+
+                {{-- AI Result Section --}}
+                <div x-show="analysisResult" x-transition
+                    class="mb-6 p-6 bg-purple-50 rounded-lg border border-purple-100 shadow-sm">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <i class="fa-solid fa-wand-magic-sparkles text-purple-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-medium text-purple-900">Analisa Cerdas AI</h3>
+                            <div class="mt-2 text-purple-800 text-sm whitespace-pre-line leading-relaxed"
+                                x-text="analysisResult"></div>
+                        </div>
+                    </div>
+                </div>
 
                 {{-- Total Revenue --}}
                 <div

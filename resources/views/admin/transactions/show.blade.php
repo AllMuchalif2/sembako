@@ -271,7 +271,7 @@
                                 {{-- Cancel Order Button --}}
                                 @if (in_array($transaction->status, ['pending', 'diproses']))
                                     <x-danger-button type="button" onclick="openCancelModal()"
-                                        class="w-full justify-center mt-3 text-red-700 bg-white hover:bg-red-50 focus:ring-red-500 border-red-300">
+                                        class="w-full justify-center mt-3 text-red-700 bg-red-600 hover:bg-red-50 focus:ring-red-500 border-red-300">
                                         <i class="fas fa-times-circle mr-2"></i>
                                         Batalkan Pesanan
                                     </x-danger-button>

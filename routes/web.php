@@ -3,21 +3,22 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\PromoController;
+use App\Http\Controllers\AiChatController;
 use App\Http\Controllers\LandingController;
-use App\Http\Controllers\ProfileController;
 
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\StoreSettingController;
 use App\Http\Controllers\Admin\PromoController as AdminPromoController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionController;
-use App\Http\Controllers\Admin\ActivityLogController;
-use App\Http\Controllers\Admin\ReportController;
 
 // rute landing page 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -86,6 +87,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Laporan
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::post('/reports/analyze', [ReportController::class, 'analyze'])->name('reports.analyze'); // New Route
     Route::get('/reports/print', [ReportController::class, 'print'])->name('reports.print');
 });
 
@@ -105,6 +107,9 @@ Route::middleware(['auth', 'role:owner'])->prefix('admin')->name('admin.')->grou
 
 // Rute callback Midtrans (tanpa auth/csrf untuk menerima notifikasi dari Midtrans)
 Route::post('/midtrans/callback', [CheckoutController::class, 'callback'])->name('midtrans.callback');
+
+// AI Chatbot Route
+Route::post('/ai/chat', [AiChatController::class, 'handleChat'])->name('ai.chat');
 
 require __DIR__ . '/auth.php';
 
