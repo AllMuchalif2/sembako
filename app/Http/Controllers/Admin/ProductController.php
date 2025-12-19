@@ -145,4 +145,15 @@ class ProductController extends Controller
         $product->delete();
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil dihapus.');
     }
+
+    public function restock(Request $request, Product $product)
+    {
+        $request->validate([
+            'stock' => 'required|integer|min:1',
+        ]);
+
+        $product->increment('stock', $request->stock);
+
+        return redirect()->back()->with('success', 'Stok berhasil ditambahkan.');
+    }
 }

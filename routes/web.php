@@ -5,27 +5,28 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\AiChatController;
 use App\Http\Controllers\LandingController;
-
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\TransactionController;
+
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ReportController;
-use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\StoreSettingController;
 use App\Http\Controllers\Admin\PromoController as AdminPromoController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionController;
 
 // rute landing page 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 // rute produk
-Route::get('/products', [LandingController::class, 'products'])->name('products.index');
-Route::get('/products/{product:slug}', [LandingController::class, 'show'])->name('product.show');
+Route::get('/products', [ProductController::class, 'products'])->name('products.index');
+Route::get('/products/{product:slug}', [ProductController::class, 'show'])->name('product.show');
 
 // rute keranjang belanja
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -69,7 +70,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Manajemen Kategori, Produk, Promo
     Route::resource('categories', CategoryController::class);
-    Route::resource('products', ProductController::class);
+    Route::patch('/products/{product}/restock', [AdminProductController::class, 'restock'])->name('products.restock');
+    Route::resource('products', AdminProductController::class);
     Route::resource('promos', AdminPromoController::class);
 
     // Manajemen Transaksi

@@ -37,7 +37,7 @@
                 </a>
             </div>
 
-            
+
 
             <!-- Kontainer Tabel -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
@@ -88,6 +88,11 @@
                                         <td class="py-3 px-4 whitespace-nowrap">{{ $product->stock }}</td>
                                         <td class="py-3 px-4 whitespace-nowrap">
                                             <div class="flex items-center space-x-2">
+                                                <button type="button" title="Restock Produk"
+                                                    class="inline-flex items-center justify-center w-8 h-8 bg-purple-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-600 restock-button"
+                                                    x-on:click.prevent="$dispatch('open-modal', 'restock-product-modal'); $dispatch('set-restock-action', { url: '{{ route('admin.products.restock', $product) }}', name: '{{ $product->name }}' })">
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </button>
                                                 <button type="button" title="Lihat Product"
                                                     class="inline-flex items-center justify-center w-8 h-8 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-600 show-product-button"
                                                     data-slug="{{ $product->slug }}">
@@ -164,6 +169,40 @@
                     {{ __('Tutup') }}
                 </x-secondary-button>
             </div>
+        </div>
+    </x-modal>
+
+    <!-- Restock Product Modal -->
+    <x-modal name="restock-product-modal" :show="false" focusable>
+        <div class="p-6" x-data="{ actionUrl: '', productName: '' }"
+            @set-restock-action.window="actionUrl = $event.detail.url; productName = $event.detail.name">
+            <h2 class="text-lg font-medium text-gray-900">
+                Restock Produk: <span x-text="productName"></span>
+            </h2>
+
+            <form :action="actionUrl" method="POST" class="mt-6">
+                @csrf
+                @method('PATCH')
+
+                <div>
+                    <x-input-label for="restock_qty" value="Jumlah Tambahan Stok" />
+                    <x-text-input id="restock_qty" name="stock" type="number" min="1"
+                        class="mt-1 block w-full" placeholder="Contoh: 10" required autofocus />
+                    <p class="mt-2 text-sm text-gray-500">
+                        Masukkan jumlah stok yang baru masuk. Stok saat ini akan ditambah dengan jumlah ini.
+                    </p>
+                </div>
+
+                <div class="mt-6 flex justify-end">
+                    <x-secondary-button x-on:click="$dispatch('close')">
+                        {{ __('Batal') }}
+                    </x-secondary-button>
+
+                    <x-primary-button class="ml-3">
+                        {{ __('Tambah Stok') }}
+                    </x-primary-button>
+                </div>
+            </form>
         </div>
     </x-modal>
 </x-app-layout>

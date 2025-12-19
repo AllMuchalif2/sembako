@@ -146,8 +146,7 @@
                             <!-- Mobile View: Cards -->
                             <div class="md:hidden space-y-4">
                                 @foreach ($cartItems as $id => $item)
-                                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4"
-                                        data-product-id="{{ $id }}"
+                                    <div class="bg-white p-4" data-product-id="{{ $id }}"
                                         data-update-url="{{ route('cart.update', $id) }}"
                                         data-remove-url="{{ route('cart.remove', $id) }}">
                                         <!-- Product Info -->
