@@ -133,6 +133,9 @@ async function handleUpdateCart(event) {
                         'input[name="quantity"]'
                     );
 
+                    const btn = minusForm.querySelector("button");
+                    if (btn) btn.disabled = false; // Re-enable button
+
                     if (currentQuantity <= 1) {
                         // Switch to Remove Mode for next click
                         minusForm.action = row.dataset.removeUrl;
@@ -141,7 +144,6 @@ async function handleUpdateCart(event) {
                         minusForm.classList.remove("update-cart-form");
                         minusForm.classList.add("remove-from-cart-form");
 
-                        const btn = minusForm.querySelector("button");
                         if (
                             btn &&
                             btn.classList.contains("hover:bg-gray-300")
@@ -161,7 +163,6 @@ async function handleUpdateCart(event) {
                         minusForm.classList.remove("remove-from-cart-form");
                         minusForm.classList.add("update-cart-form");
 
-                        const btn = minusForm.querySelector("button");
                         if (btn && btn.classList.contains("hover:bg-red-200")) {
                             btn.classList.replace(
                                 "hover:bg-red-200",

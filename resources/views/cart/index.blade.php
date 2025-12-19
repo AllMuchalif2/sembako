@@ -172,92 +172,91 @@
                                         </div>
 
                                         <!-- Quantity Controls and Price -->
-                                        <div class="flex items-center justify-between">
+                                        <!-- Quantity Controls and Price -->
+                                        <div class="flex items-center justify-between mt-4">
                                             <!-- Quantity Controls -->
                                             <div class="flex items-center space-x-3">
-                                                <!-- Quantity Controls -->
-                                                <div class="flex items-center space-x-3">
-                                                    @if ($item['quantity'] > 1)
-                                                        <form action="{{ route('cart.update', $id) }}" method="POST"
-                                                            class="inline update-cart-form btn-minus-form">
-                                                            @csrf
-                                                            @method('PATCH')
-                                                            <input type="hidden" name="quantity"
-                                                                value="{{ $item['quantity'] - 1 }}">
-                                                            <button type="submit"
-                                                                class="w-9 h-9 rounded-md bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors btn-minus">
-                                                                <i class="fas fa-minus text-sm text-gray-600"></i>
-                                                            </button>
-                                                        </form>
-                                                    @else
-                                                        <form action="{{ route('cart.remove', $id) }}" method="POST"
-                                                            class="inline remove-from-cart-form btn-minus-form">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <input type="hidden" name="quantity" value="0">
-                                                            <button type="submit"
-                                                                class="w-9 h-9 rounded-md bg-gray-100 hover:bg-red-200 flex items-center justify-center transition-colors btn-minus">
-                                                                <i class="fas fa-minus text-sm text-gray-600"></i>
-                                                            </button>
-                                                        </form>
-                                                    @endif
-
+                                                @if ($item['quantity'] > 1)
                                                     <form action="{{ route('cart.update', $id) }}" method="POST"
-                                                        class="inline update-cart-form">
-                                                        @csrf
-                                                        @method('PATCH')
-                                                        <input type="number" name="quantity"
-                                                            value="{{ $item['quantity'] }}" min="1"
-                                                            max="{{ $item['stock'] ?? '' }}"
-                                                            class="w-16 text-center font-medium border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 mx-2 p-1 text-sm remove-arrow item-quantity"
-                                                            oninput="if(this.max && parseInt(this.value) > parseInt(this.max)) this.value = this.max;"
-                                                            onchange="this.form.requestSubmit()">
-                                                    </form>
-
-                                                    <form action="{{ route('cart.update', $id) }}" method="POST"
-                                                        class="inline update-cart-form">
+                                                        class="inline update-cart-form btn-minus-form">
                                                         @csrf
                                                         @method('PATCH')
                                                         <input type="hidden" name="quantity"
-                                                            value="{{ $item['quantity'] + 1 }}">
+                                                            value="{{ $item['quantity'] - 1 }}">
                                                         <button type="submit"
-                                                            class="w-9 h-9 rounded-md bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors btn-plus {{ $item['quantity'] >= ($item['stock'] ?? 1) ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                                            {{ $item['quantity'] >= ($item['stock'] ?? 1) ? 'disabled' : '' }}>
-                                                            <i class="fas fa-plus text-sm text-gray-600"></i>
+                                                            class="w-9 h-9 rounded-md bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors btn-minus">
+                                                            <i class="fas fa-minus text-sm text-gray-600"></i>
                                                         </button>
                                                     </form>
-                                                </div>
-
-                                                <!-- Subtotal and Delete -->
-                                                <div class="flex items-center space-x-3 ">
-                                                    <div class="text-right">
-                                                        <p class="text-xs text-gray-500">Subtotal</p>
-                                                        <p class="text-sm font-bold text-gray-900 item-subtotal">
-                                                            Rp{{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}
-                                                        </p>
-                                                    </div>
+                                                @else
                                                     <form action="{{ route('cart.remove', $id) }}" method="POST"
-                                                        class="remove-from-cart-form">
+                                                        class="inline remove-from-cart-form btn-minus-form">
                                                         @csrf
                                                         @method('DELETE')
+                                                        <input type="hidden" name="quantity" value="0">
                                                         <button type="submit"
-                                                            class="w-9 h-9 rounded-md bg-red-50 hover:bg-red-100 flex items-center justify-center transition-colors">
-                                                            <i class="fas fa-trash-alt text-sm text-red-600"></i>
+                                                            class="w-9 h-9 rounded-md bg-gray-100 hover:bg-red-200 flex items-center justify-center transition-colors btn-minus">
+                                                            <i class="fas fa-minus text-sm text-gray-600"></i>
                                                         </button>
                                                     </form>
-                                                </div>
+                                                @endif
+
+                                                <form action="{{ route('cart.update', $id) }}" method="POST"
+                                                    class="inline update-cart-form">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <input type="number" name="quantity"
+                                                        value="{{ $item['quantity'] }}" min="1"
+                                                        max="{{ $item['stock'] ?? '' }}"
+                                                        class="w-16 text-center font-medium border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 p-1 text-sm remove-arrow item-quantity"
+                                                        oninput="if(this.max && parseInt(this.value) > parseInt(this.max)) this.value = this.max;"
+                                                        onchange="this.form.requestSubmit()">
+                                                </form>
+
+                                                <form action="{{ route('cart.update', $id) }}" method="POST"
+                                                    class="inline update-cart-form">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <input type="hidden" name="quantity"
+                                                        value="{{ $item['quantity'] + 1 }}">
+                                                    <button type="submit"
+                                                        class="w-9 h-9 rounded-md bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors btn-plus {{ $item['quantity'] >= ($item['stock'] ?? 1) ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                        {{ $item['quantity'] >= ($item['stock'] ?? 1) ? 'disabled' : '' }}>
+                                                        <i class="fas fa-plus text-sm text-gray-600"></i>
+                                                    </button>
+                                                </form>
                                             </div>
 
-                                            <!-- Stock Warning (if quantity near stock limit) -->
-                                            @if (isset($item['stock']) && $item['quantity'] >= $item['stock'])
-                                                <div class="mt-3 p-2 bg-yellow-50 rounded-md">
-                                                    <p class="text-xs text-yellow-700 flex items-center">
-                                                        <i class="fas fa-exclamation-triangle mr-1"></i>
-                                                        Stok terbatas
+                                            <!-- Subtotal and Delete -->
+                                            <div class="flex items-center space-x-3">
+                                                <div class="text-right">
+                                                    <p class="text-xs text-gray-500">Subtotal</p>
+                                                    <p class="text-sm font-bold text-gray-900 item-subtotal">
+                                                        Rp{{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}
                                                     </p>
                                                 </div>
-                                            @endif
+                                                <form action="{{ route('cart.remove', $id) }}" method="POST"
+                                                    class="remove-from-cart-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="w-9 h-9 rounded-md bg-red-50 hover:bg-red-100 flex items-center justify-center transition-colors">
+                                                        <i class="fas fa-trash-alt text-sm text-red-600"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </div>
+
+                                        <!-- Stock Warning (if quantity near stock limit) -->
+                                        @if (isset($item['stock']) && $item['quantity'] >= $item['stock'])
+                                            <div class="mt-3 p-2 bg-yellow-50 rounded-md">
+                                                <p class="text-xs text-yellow-700 flex items-center">
+                                                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                                                    Stok terbatas
+                                                </p>
+                                            </div>
+                                        @endif
+                                    </div>
                                 @endforeach
                             </div>
                         </div>
