@@ -75,6 +75,17 @@
             display: none !important;
         }
     </style>
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
+    <link rel="manifest" href="{{ asset('/pwa-manifest.php') }}">
+
+    <script>
+        if (!navigator.serviceWorker.controller) {
+            navigator.serviceWorker.register("/serviceworker.php").then(function(reg) {
+                console.log("Service worker has been registered for scope: " + reg.scope);
+            });
+        }
+    </script>
 </head>
 
 <body class="font-sans antialiased bg-gray-100 text-gray-900">

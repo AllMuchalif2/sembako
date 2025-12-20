@@ -22,6 +22,108 @@ use App\Http\Controllers\Admin\PromoController as AdminPromoController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionController;
 
+// PWA Routes - Serve via PHP to bypass InfinityFree static file restrictions
+Route::get('/manifest.json', function () {
+    $manifest = [
+        "name" => "My - Mart",
+        "short_name" => "MyMart",
+        "start_url" => "/",
+        "background_color" => "#ffffff",
+        "description" => "Aplikasi belanja sembako murah dan terpercaya.",
+        "display" => "standalone",
+        "theme_color" => "#ffffff",
+        "icons" => [
+            [
+                "src" => "images/logo.png",
+                "sizes" => "512x512",
+                "type" => "image/png",
+                "purpose" => "any maskable"
+            ]
+        ],
+        "screenshots" => [
+            [
+                "src" => "images/desktop.png",
+                "sizes" => "1920x1080",
+                "type" => "image/png",
+                "form_factor" => "wide",
+                "label" => "Tampilan Desktop MyMart"
+            ],
+            [
+                "src" => "images/mobile.png",
+                "sizes" => "1080x1920",
+                "type" => "image/png",
+                "form_factor" => "narrow",
+                "label" => "Tampilan Mobile MyMart"
+            ]
+        ]
+    ];
+    return response()->json($manifest);
+});
+
+Route::get('/sw.js', function () {
+    $script = <<<'JS'
+const preLoad = function () {
+    return caches.open("offline").then(function (cache) {
+        return cache.addAll(filesToCache);
+    });
+};
+
+self.addEventListener("install", function (event) {
+    event.waitUntil(preLoad());
+});
+
+const filesToCache = [
+    '/',
+    '/offline.html'
+];
+
+const checkResponse = function (request) {
+    return new Promise(function (fulfill, reject) {
+        fetch(request).then(function (response) {
+            if (response.status !== 404) {
+                fulfill(response);
+            } else {
+                reject();
+            }
+        }, reject);
+    });
+};
+
+const addToCache = function (request) {
+    if (!request.url.startsWith('http')) {
+        return Promise.resolve();
+    }
+    return caches.open("offline").then(function (cache) {
+        return fetch(request).then(function (response) {
+            return cache.put(request, response);
+        });
+    });
+};
+
+const returnFromCache = function (request) {
+    return caches.open("offline").then(function (cache) {
+        return cache.match(request).then(function (matching) {
+            if (!matching || matching.status === 404) {
+                return cache.match("offline.html");
+            } else {
+                return matching;
+            }
+        });
+    });
+};
+
+self.addEventListener("fetch", function (event) {
+    event.respondWith(checkResponse(event.request).catch(function () {
+        return returnFromCache(event.request);
+    }));
+    if(!event.request.url.startsWith('http')){
+        event.waitUntil(addToCache(event.request));
+    }
+});
+JS;
+    return response($script)->header('Content-Type', 'application/javascript');
+});
+
 // rute landing page 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 

@@ -44,6 +44,18 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
+    <link rel="manifest" href="{{ asset('/pwa-manifest.php') }}">
+
+    <script>
+        if (!navigator.serviceWorker.controller) {
+            navigator.serviceWorker.register("/serviceworker.php").then(function(reg) {
+                console.log("Service worker has been registered for scope: " + reg.scope);
+            });
+        }
+    </script>
 </head>
 
 <body class="font-sans text-gray-900 antialiased">
