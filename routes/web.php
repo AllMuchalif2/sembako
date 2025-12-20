@@ -8,6 +8,7 @@ use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\TransactionController;
 
@@ -45,7 +46,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
     Route::get('/checkout/cod-success/{order_id}', [CheckoutController::class, 'codSuccess'])->name('checkout.cod-success');
-    Route::get('/checkout/pay/{order_id}', [CheckoutController::class, 'pay'])->name('checkout.pay');
+
+    // rute pembayaran
+    Route::get('/payment/{order_id}', [PaymentController::class, 'pay'])->name('payment.pay');
 
     // rute transaksi pelanggan
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
@@ -108,7 +111,7 @@ Route::middleware(['auth', 'role:owner'])->prefix('admin')->name('admin.')->grou
 });
 
 // Rute callback Midtrans (tanpa auth/csrf untuk menerima notifikasi dari Midtrans)
-Route::post('/midtrans/callback', [CheckoutController::class, 'callback'])->name('midtrans.callback');
+Route::post('/midtrans/callback', [PaymentController::class, 'callback'])->name('midtrans.callback');
 
 // AI Chatbot Route
 Route::post('/ai/chat', [AiChatController::class, 'handleChat'])->name('ai.chat');

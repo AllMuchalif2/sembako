@@ -157,7 +157,7 @@
                                 </form>
                             @elseif ($transaction->status == 'pending')
                                 @if ($transaction->payment_method == 'midtrans')
-                                    <x-primary-button href="{{ route('checkout.pay', $transaction->order_id) }}"
+                                    <x-primary-button href="{{ route('payment.pay', $transaction->order_id) }}"
                                         class="w-full justify-center mb-2">
                                         Bayar Sekarang
                                     </x-primary-button>
