@@ -12,6 +12,7 @@
 ### Database
 
 -   MySQL — Sistem manajemen basis data untuk seluruh fitur.
+-   Spatie Activity Log — Mencatat aktivitas pengguna (Admin & Owner) untuk audit trail.
 
 ---
 
@@ -37,27 +38,6 @@
 ### Testing
 
 -   PHPUnit — Framework pengujian yang digunakan oleh Laravel.
-
----
-
-## Deployment
-
-Tutorial lengkap untuk hosting aplikasi ini:
-
--   **[Railway Deployment (Free Tier)](RAILWAY_DEPLOYMENT.md)** — Panduan deploy ke Railway dengan MySQL database dan konfigurasi Midtrans.
-
-### File Deployment
-
--   `Dockerfile` — Konfigurasi Docker untuk containerization
--   `Procfile` — Railway startup command
--   `railway.json` — Railway deployment configuration
--   `nixpacks.toml` — Build configuration untuk Nixpacks
--   `.env.railway` — Template environment variables untuk Railway
-
-### Dokumentasi Lainnya
-
--   **[Fitur Zona Radius](FITUR_ZONA_RADIUS.md)** — Dokumentasi fitur radius gratis ongkir dan zona pengiriman
--   **[Store Settings](STORE_SETTINGS_README.md)** — Panduan pengaturan toko untuk owner
 
 ---
 
@@ -119,7 +99,7 @@ Tutorial lengkap untuk hosting aplikasi ini:
 ### Alur Menampilkan Katalog Produk
 
 -   **Rute**: GET /products
--   **Controller**: `LandingController@products`
+-   **Controller**: `ProductController@index`
 -   **Model**: `Product`, `Category`
 -   **View**: `products/index.blade.php`
 -   **Database**: products (read + filter/sort), categories (read)
@@ -127,7 +107,7 @@ Tutorial lengkap untuk hosting aplikasi ini:
 ### Alur Menampilkan Modal Produk (Quick View)
 
 -   **Rute**: GET /products/{product:slug}
--   **Controller**: `LandingController@show`
+-   **Controller**: `ProductController@show`
 -   **Model**: `Product`
 -   **JavaScript**: `resources/js/app.js`
 -   **View Komponen**: `components/modal.blade.php`
@@ -179,7 +159,7 @@ Tutorial lengkap untuk hosting aplikasi ini:
     -   POST /checkout
     -   POST /midtrans/callback
     -   GET /checkout/success
--   **Controller**: `CheckoutController@process`, `callback`, `success`
+-   **Controller**: `CheckoutController@process`, `PaymentController@callback`, `CheckoutController@success`
 -   **Config**: `config/midtrans.php`
 -   **View**
     -   `checkout/payment.blade.php`
@@ -203,7 +183,7 @@ Tutorial lengkap untuk hosting aplikasi ini:
 -   **Rute**
     -   GET /checkout/pay/{order_id}
 -   **Middleware**: auth
--   **Controller**: `CheckoutController@pay`
+-   **Controller**: `PaymentController@pay`
 -   **View**: `checkout/payment.blade.php`
 -   **Database**
     -   transactions (update snap_token baru)
@@ -273,12 +253,17 @@ Tutorial lengkap untuk hosting aplikasi ini:
 
 ### Admin: CRUD Produk
 
--   **Rute**: RESOURCE /admin/products
+-   **Rute**: 
+    - RESOURCE /admin/products
+    - PATCH /admin/products/{product}/restock
+
 -   **Middleware**: auth, role:admin
 -   **Controller**: `Admin\ProductController`
 -   **Model**: `Product`
 -   **View**: index/create/edit
 -   **Database**: products (CRUD)
+-   **Fitur Ekstra**:
+    -   Restock Produk (Update stok tambahan)
 
 ### Admin: CRUD Promo
 
@@ -315,6 +300,18 @@ Tutorial lengkap untuk hosting aplikasi ini:
 -   **View**: `profile/edit.blade.php`
 -   **Database**: users (read & update)
 
+### Admin: Laporan & Analisis AI
+
+-   **Rute**
+    -   GET /admin/reports
+    -   POST /admin/reports/analyze (AI Insight)
+    -   GET /admin/reports/print
+-   **Controller**: `Admin\ReportController`
+-   **Fitur**:
+    -   Filter laporan berdasarkan tanggal
+    -   Cetak PDF
+    -   Analisis ringkas pendapatan menggunakan AI (Groq API)
+
 ---
 
 ## 6. Alur Owner (Super Admin)
@@ -348,3 +345,23 @@ Tutorial lengkap untuk hosting aplikasi ini:
     -   Tambah admin baru
     -   Edit data admin
     -   Hapus admin (dengan proteksi tidak bisa hapus diri sendiri)
+
+### Owner: Log Aktivitas
+
+-   **Rute**: GET /admin/activity-logs
+-   **Middleware**: auth, role:owner
+-   **Controller**: `Admin\ActivityLogController`
+-   **View**: `admin/activity-logs/index.blade.php`
+-   **Database**: activity_log (read)
+-   **Fitur**: Melihat riwayat aksi create, update, delete yang dilakukan user.
+
+---
+
+## 7. Fitur AI & Chatbot
+
+### Chatbot Pelanggan (Groq AI)
+
+-   **Rute**: POST /ai/chat
+-   **Controller**: `AiChatController@handleChat`
+-   **Teknologi**: Groq API (LLM)
+-   **Fungsi**: Menjawab pertanyaan pelanggan secara otomatis terkait produk atau layanan.
