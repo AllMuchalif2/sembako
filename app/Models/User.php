@@ -50,6 +50,7 @@ class User extends Authenticatable
         'address',
         'role_id',
         'password',
+        'status',
     ];
 
     /**
@@ -72,6 +73,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'status' => 'boolean',
         ];
     }
     protected static function booted(): void

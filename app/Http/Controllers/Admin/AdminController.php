@@ -129,4 +129,44 @@ class AdminController extends Controller
 
         return redirect()->route('admin.admins.index')->with('success', 'Admin berhasil dihapus.');
     }
+
+    /**
+     * Toggle admin status (active/inactive)
+     */
+    public function toggleStatus(User $admin)
+    {
+        if (!$admin->hasRole('admin')) {
+            abort(404);
+        }
+
+        // Prevent self-deactivation
+        if ($admin->id === auth()->id()) {
+            return back()->with('error', 'Anda tidak dapat menonaktifkan akun Anda sendiri.');
+        }
+
+        $admin->status = !$admin->status;
+        $admin->save();
+
+        $statusText = $admin->status ? 'diaktifkan' : 'dinonaktifkan';
+        return back()->with('success', "Admin berhasil {$statusText}.");
+    }
+
+    /**
+     * Reset admin password
+     */
+    public function resetPassword(Request $request, User $admin)
+    {
+        if (!$admin->hasRole('admin')) {
+            abort(404);
+        }
+
+        $request->validate([
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $admin->password = Hash::make($request->password);
+        $admin->save();
+
+        return back()->with('success', 'Password admin berhasil direset.');
+    }
 }

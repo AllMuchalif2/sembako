@@ -43,7 +43,8 @@
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <form method="POST" action="{{ route('admin.admins.store') }}" class="space-y-6">
+                    <form method="POST" action="{{ route('admin.admins.store') }}" class="space-y-6"
+                        x-data="{ showPassword: false }">
                         @csrf
 
                         <!-- Name -->
@@ -80,18 +81,35 @@
                         </div>
 
                         <!-- Password -->
-                        <div>
+                        <div class="mt-4">
                             <x-input-label for="password" :value="__('Password')" />
-                            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password"
-                                required autocomplete="new-password" />
+
+                            <div class="relative">
+                                <x-text-input id="password" class="block mt-1 w-full pr-10" ::type="showPassword ? 'text' : 'password'"
+                                    name="password" required autocomplete="new-password" />
+                                <button type="button" @click="showPassword = !showPassword"
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 hover:text-gray-800">
+                                    <i class="fa-solid" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                </button>
+                            </div>
+
                             <x-input-error :messages="$errors->get('password')" class="mt-2" />
                         </div>
 
                         <!-- Confirm Password -->
-                        <div>
-                            <x-input-label for="password_confirmation" :value="__('Konfirmasi Password')" />
-                            <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password"
-                                name="password_confirmation" required autocomplete="new-password" />
+                        <div class="mt-4">
+                            <x-input-label for="password_confirmation" :value="__('Ketik Ulang Kata Sandi')" />
+
+                            <div class="relative">
+                                <x-text-input id="password_confirmation" class="block mt-1 w-full pr-10"
+                                    ::type="showPassword ? 'text' : 'password'" name="password_confirmation" required
+                                    autocomplete="new-password" />
+                                <button type="button" @click="showPassword = !showPassword"
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 hover:text-gray-800">
+                                    <i class="fa-solid" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                </button>
+                            </div>
+
                             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                         </div>
 

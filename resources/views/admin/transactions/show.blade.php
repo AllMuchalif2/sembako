@@ -232,11 +232,11 @@
                                 </form>
                             @elseif ($transaction->status == 'diproses')
                                 <form action="{{ route('admin.transactions.updateStatus', $transaction) }}"
-                                    method="POST">
+                                    method="POST" id="statusForm">
                                     @csrf
                                     @method('PATCH')
                                     <input type="hidden" name="status" value="dikirim">
-                                    <x-primary-button class="w-full justify-center">
+                                    <x-primary-button type="submit" class="w-full justify-center">
                                         Ubah ke "Dikirim"
                                     </x-primary-button>
                                 </form>

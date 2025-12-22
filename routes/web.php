@@ -207,6 +207,8 @@ Route::middleware(['auth', 'role:owner'])->prefix('admin')->name('admin.')->grou
 
     // Admin Management
     Route::resource('admins', AdminController::class);
+    Route::post('admins/{admin}/toggle-status', [AdminController::class, 'toggleStatus'])->name('admins.toggleStatus');
+    Route::post('admins/{admin}/reset-password', [AdminController::class, 'resetPassword'])->name('admins.resetPassword');
 
     // Activity Logs
     Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');

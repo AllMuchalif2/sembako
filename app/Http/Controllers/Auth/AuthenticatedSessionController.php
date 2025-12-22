@@ -35,6 +35,17 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
         $user = $request->user();
 
+        // Check if admin/owner is inactive
+        if (($user->role_id === 1 || $user->role_id === 2) && !$user->status) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            
+            return back()->withErrors([
+                'email' => 'Akun Anda telah dinonaktifkan. Silakan hubungi administrator.',
+            ])->onlyInput('email');
+        }
+
         if ($user->role_id === 1 || $user->role_id === 2) { // 1 = Owner, 2 = Admin
             return redirect()->route('admin.dashboard');
         }

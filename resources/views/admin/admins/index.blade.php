@@ -51,12 +51,14 @@
                                     <th class="py-3 px-4 uppercase font-semibold text-gray-600 text-left">Nama</th>
                                     <th class="py-3 px-4 uppercase font-semibold text-gray-600 text-left">Email</th>
                                     <th class="py-3 px-4 uppercase font-semibold text-gray-600 text-left">No. HP</th>
+                                    <th class="py-3 px-4 uppercase font-semibold text-gray-600 text-left">Status</th>
                                     <th class="py-3 px-4 uppercase font-semibold text-gray-600 text-left w-2">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="text-gray-700">
                                 @foreach ($admins as $admin)
-                                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                                    <tr
+                                        class="border-b border-gray-200 hover:bg-gray-50 {{ !$admin->status ? 'opacity-60' : '' }}">
                                         <td class="py-3 px-4 text-center">
                                             {{ $loop->iteration + ($admins->currentPage() - 1) * $admins->perPage() }}
                                         </td>
@@ -64,7 +66,35 @@
                                         <td class="py-3 px-4 whitespace-nowrap">{{ $admin->email }}</td>
                                         <td class="py-3 px-4 whitespace-nowrap">{{ $admin->phone ?? '-' }}</td>
                                         <td class="py-3 px-4 whitespace-nowrap">
+                                            @if ($admin->status)
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    <i class="fa-solid fa-circle-check mr-1"></i>
+                                                    Aktif
+                                                </span>
+                                            @else
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                    <i class="fa-solid fa-circle-xmark mr-1"></i>
+                                                    Nonaktif
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="py-3 px-4 whitespace-nowrap">
                                             <div class="flex items-center space-x-2">
+                                                @if ($admin->id !== auth()->id())
+                                                    <form action="{{ route('admin.admins.toggleStatus', $admin) }}"
+                                                        method="POST" class="inline">
+                                                        @csrf
+                                                        <button type="submit"
+                                                            title="{{ $admin->status ? 'Nonaktifkan Admin' : 'Aktifkan Admin' }}"
+                                                            class="inline-flex items-center justify-center w-8 h-8 {{ $admin->status ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600' }} border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest">
+                                                            <i
+                                                                class="fa-solid {{ $admin->status ? 'fa-power-off' : 'fa-check' }}"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
+
                                                 <a href="{{ route('admin.admins.edit', $admin) }}" title="Edit Admin"
                                                     class="inline-flex items-center justify-center w-8 h-8 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600">
                                                     <i class="fa-solid fa-pen-to-square"></i>
