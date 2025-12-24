@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->text('description')->nullable();
             $table->string('image');
             $table->decimal('price', 15, 2);
+            $table->decimal('buy_price', 15, 2);
             $table->integer('stock');
             $table->softDeletes();
             $table->timestamps();

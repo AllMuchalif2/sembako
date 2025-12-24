@@ -146,6 +146,37 @@
                     </div>
                 </div>
 
+                {{-- Total Profit & Margin --}}
+
+                <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                    <div class="p-4 bg-green-50 rounded-lg border border-green-100">
+
+                        <span class="text-green-800 font-semibold">Total Keuntungan:</span>
+
+                        <p class="text-2xl font-bold text-green-700 mt-2">
+
+                            Rp {{ number_format($totalProfit, 0, ',', '.') }}
+
+                        </p>
+
+                    </div>
+
+                    <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
+
+                        <span class="text-blue-800 font-semibold">Margin Keuntungan:</span>
+
+                        <p class="text-2xl font-bold text-blue-700 mt-2">
+
+                            {{ number_format($marginPercentage, 1) }}%
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
                 {{-- Table --}}
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -169,6 +200,14 @@
                                 </th>
                                 <th scope="col"
                                     class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Keuntungan
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Margin
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Total
                                 </th>
                             </tr>
@@ -189,13 +228,37 @@
                                         {{ $transaction->user->name ?? 'User Terhapus' }}
                                     </td>
                                     <td
+                                        class="px-6 py-4 whitespace-nowrap text-sm text-green-700 text-right font-semibold">
+                                        @php
+                                            $transactionProfit = 0;
+                                            foreach ($transaction->items as $item) {
+                                                if ($item->product && $item->product->buy_price) {
+                                                    $transactionProfit +=
+                                                        ($item->price - $item->product->buy_price) * $item->quantity;
+                                                }
+                                            }
+                                        @endphp
+                                        Rp {{ number_format($transactionProfit, 0, ',', '.') }}
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 whitespace-nowrap text-sm text-blue-700 text-right font-semibold">
+                                        @php
+                                            $transactionCost = $transaction->total_amount - $transactionProfit;
+                                            $transactionMargin =
+                                                $transactionCost > 0
+                                                    ? ($transactionProfit / $transactionCost) * 100
+                                                    : 0;
+                                        @endphp
+                                        {{ number_format($transactionMargin, 1) }}%
+                                    </td>
+                                    <td
                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right font-semibold">
                                         Rp {{ number_format($transaction->total_amount, 0, ',', '.') }}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                                    <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
                                         Tidak ada transaksi selesai ditemukan.
                                     </td>
                                 </tr>
@@ -206,6 +269,14 @@
                                 <td colspan="4"
                                     class="px-6 py-3 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">
                                     Total
+                                </td>
+                                <td
+                                    class="px-6 py-3 text-right text-xs font-bold text-green-700 uppercase tracking-wider">
+                                    Rp {{ number_format($totalProfit, 0, ',', '.') }}
+                                </td>
+                                <td
+                                    class="px-6 py-3 text-right text-xs font-bold text-blue-700 uppercase tracking-wider">
+                                    {{ number_format($marginPercentage, 1) }}%
                                 </td>
                                 <td
                                     class="px-6 py-3 text-right text-xs font-bold text-gray-900 uppercase tracking-wider">

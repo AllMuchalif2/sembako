@@ -13,6 +13,17 @@ class TransactionController extends Controller
 
     public function index(Request $request)
     {
+        $validator = \Validator::make($request->all(), [
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+        ], [
+            'end_date.after_or_equal' => 'Tanggal akhir harus lebih besar atau sama dengan tanggal mulai.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->with('error', $validator->errors()->first());
+        }
+
         $query = Transaction::with('user');
 
         if ($request->filled('order_id')) {

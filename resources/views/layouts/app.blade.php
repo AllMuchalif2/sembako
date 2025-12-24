@@ -94,7 +94,7 @@
         {{-- Layout Admin dengan Sidebar Kustom --}}
         <div x-data="{
             sidebarOpen: window.innerWidth >= 1024,
-            product: { name: '', description: '', price: 0, stock: 0, image: '', category: { name: '' } },
+            product: { name: '', description: '', price: 0, buy_price: 0, stock: 0, image: '', category: { name: '' } },
             category: { name: '', description: '' },
         
             init() {

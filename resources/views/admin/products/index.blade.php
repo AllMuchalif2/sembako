@@ -62,7 +62,10 @@
                                         Harga</th>
                                     <th
                                         class="py-3 px-4 uppercase font-semibold text-sm text-gray-600 text-left w-auto">
-                                        Stock</th>
+                                        Stock</th>                                    <th
+                                        class="py-3 px-4 uppercase font-semibold text-sm text-gray-600 text-left w-auto">
+                                        Margin</th>
+
 
                                     <th class="py-3 px-4 uppercase font-semibold text-sm text-gray-600 text-left w-2">
                                         Aksi
@@ -86,6 +89,16 @@
                                         <td class="py-3 px-4 whitespace-nowrap">
                                             Rp{{ number_format($product->price, 0, ',', '.') }}</td>
                                         <td class="py-3 px-4 whitespace-nowrap">{{ $product->stock }}</td>
+                                        <td class="py-3 px-4 whitespace-nowrap">
+                                            @if($product->buy_price)
+                                                @php
+                                                    $margin = (($product->price - $product->buy_price) / $product->buy_price) * 100;
+                                                @endphp
+                                                <span class="text-green-600 font-semibold">{{ number_format($margin, 1) }}%</span>
+                                            @else
+                                                <span class="text-gray-400">-</span>
+                                            @endif
+                                        </td>
                                         <td class="py-3 px-4 whitespace-nowrap">
                                             <div class="flex items-center space-x-2">
                                                 <button type="button" title="Restock Produk"
@@ -153,7 +166,18 @@
                     <x-input-label value="Harga" />
                     <p class="mt-1 text-sm text-gray-700"
                         x-text="`Rp${new Intl.NumberFormat('id-ID').format(product.price)}`"></p>
+                </div>                <div>
+                    <x-input-label value="Harga Beli" />
+                    <p class="mt-1 text-sm text-gray-700"
+                        x-text="product.buy_price ? `Rp${new Intl.NumberFormat('id-ID').format(product.buy_price)}` : '-'"></p>
                 </div>
+                <div>
+                    <x-input-label value="Margin Keuntungan" />
+                    <p class="mt-1 text-sm font-semibold"
+                        x-text="product.buy_price ? `${(((product.price - product.buy_price) / product.buy_price) * 100).toFixed(1)}%` : '-'"
+                        :class="product.buy_price ? 'text-green-600' : 'text-gray-400'"></p>
+                </div>
+
                 <div>
                     <x-input-label value="Stok" />
                     <p class="mt-1 text-sm text-gray-700" x-text="product.stock"></p>

@@ -27,6 +27,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Beras putih bulir panjang, bersih, dan pulen. Kemasan karung 5kg.',
                 'image' => 'products/1.jpg',
                 'price' => 70000.00,
+                'buy_price' => 55000.00,
                 'stock' => 100,
             ],
             [
@@ -36,6 +37,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Beras merah kaya serat, cocok untuk diet sehat.',
                 'image' => 'products/2.jpg',
                 'price' => 25000.00,
+                'buy_price' => 18000.00,
                 'stock' => 100,
             ],
             [
@@ -45,6 +47,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Tepung gandum putih halus untuk berbagai keperluan baking.',
                 'image' => 'products/3.jpg',
                 'price' => 12000.00,
+                'buy_price' => 9000.00,
                 'stock' => 100,
             ],
             [
@@ -54,6 +57,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Tepung pati jagung halus untuk pengental masakan.',
                 'image' => 'products/4.jpg',
                 'price' => 8500.00,
+                'buy_price' => 6500.00,
                 'stock' => 100,
             ],
             [
@@ -63,6 +67,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Gandum oat utuh yang cepat saji untuk sarapan sehat.',
                 'image' => 'products/5.jpg',
                 'price' => 30000.00,
+                'buy_price' => 23000.00,
                 'stock' => 100,
             ],
             [
@@ -72,6 +77,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Kacang hijau kupas bersih, cocok untuk bubur atau isian kue.',
                 'image' => 'products/6.jpg',
                 'price' => 18000.00,
+                'buy_price' => 14000.00,
                 'stock' => 100,
             ],
 
@@ -83,6 +89,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Minyak goreng kelapa sawit jernih dalam kemasan botol.',
                 'image' => 'products/7.jpg',
                 'price' => 19000.00,
+                'buy_price' => 15000.00,
                 'stock' => 100,
             ],
             [
@@ -92,6 +99,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Gula tebu kristal putih murni, manis alami.',
                 'image' => 'products/8.jpg',
                 'price' => 16000.00,
+                'buy_price' => 12500.00,
                 'stock' => 100,
             ],
             [
@@ -101,6 +109,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Garam laut alami beryodium dengan tekstur halus.',
                 'image' => 'products/9.jpg',
                 'price' => 5000.00,
+                'buy_price' => 3500.00,
                 'stock' => 100,
             ],
             [
@@ -110,6 +119,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Bubuk lada hitam asli dengan aroma kuat dan pedas.',
                 'image' => 'products/10.jpg',
                 'price' => 15000.00,
+                'buy_price' => 11000.00,
                 'stock' => 100,
             ],
             [
@@ -119,6 +129,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Minyak zaitun murni untuk dressing salad atau menumis.',
                 'image' => 'products/11.jpg',
                 'price' => 45000.00,
+                'buy_price' => 35000.00,
                 'stock' => 100,
             ],
             [
@@ -128,6 +139,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Madu hutan asli dalam kemasan toples kaca.',
                 'image' => 'products/12.jpg',
                 'price' => 55000.00,
+                'buy_price' => 42000.00,
                 'stock' => 100,
             ],
 
@@ -139,6 +151,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Mie telur kering keriting, cocok untuk mie goreng atau rebus.',
                 'image' => 'products/13.jpg',
                 'price' => 6000.00,
+                'buy_price' => 4500.00,
                 'stock' => 100,
             ],
             [
@@ -148,6 +161,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Pasta Italia jenis spaghetti dari gandum durum.',
                 'image' => 'products/14.jpg',
                 'price' => 18000.00,
+                'buy_price' => 14000.00,
                 'stock' => 100,
             ],
             [
@@ -157,6 +171,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Ikan sarden besar dalam saus tomat kental, siap santap.',
                 'image' => 'products/15.jpg',
                 'price' => 22000.00,
+                'buy_price' => 17000.00,
                 'stock' => 100,
             ],
             [
@@ -166,6 +181,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Telur ayam negeri segar dalam kemasan tray karton.',
                 'image' => 'products/16.jpg',
                 'price' => 55000.00,
+                'buy_price' => 45000.00,
                 'stock' => 100,
             ],
             [
@@ -175,6 +191,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Roti tawar sehat dari biji gandum utuh kaya serat.',
                 'image' => 'products/17.jpg',
                 'price' => 20000.00,
+                'buy_price' => 15000.00,
                 'stock' => 100,
             ],
             [
@@ -184,6 +201,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Camilan keripik kentang tipis dan renyah dengan garam laut.',
                 'image' => 'products/18.jpg',
                 'price' => 12000.00,
+                'buy_price' => 9000.00,
                 'stock' => 100,
             ],
 
@@ -195,6 +213,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Kopi bubuk arabika murni dengan aroma yang kaya.',
                 'image' => 'products/19.jpg',
                 'price' => 35000.00,
+                'buy_price' => 27000.00,
                 'stock' => 100,
             ],
             [
@@ -204,6 +223,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Teh hitam celup klasik, nikmat disajikan panas atau dingin.',
                 'image' => 'products/20.jpg',
                 'price' => 15000.00,
+                'buy_price' => 11000.00,
                 'stock' => 100,
             ],
             [
@@ -213,6 +233,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Susu sapi segar pasteurisasi, kaya kalsium.',
                 'image' => 'products/21.jpg',
                 'price' => 22000.00,
+                'buy_price' => 17000.00,
                 'stock' => 100,
             ],
             [
@@ -222,6 +243,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Air mineral pegunungan alami dalam kemasan praktis.',
                 'image' => 'products/22.jpg',
                 'price' => 30000.00,
+                'buy_price' => 24000.00,
                 'stock' => 100,
             ],
             [
@@ -231,6 +253,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Jus buah jeruk asli tanpa tambahan gula.',
                 'image' => 'products/23.jpg',
                 'price' => 28000.00,
+                'buy_price' => 22000.00,
                 'stock' => 100,
             ],
             [
@@ -240,6 +263,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Susu nabati dari kacang almond, tanpa pemanis.',
                 'image' => 'products/24.jpg',
                 'price' => 45000.00,
+                'buy_price' => 35000.00,
                 'stock' => 100,
             ],
 
@@ -251,6 +275,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Paket sabun mandi batang, lembut di kulit dengan wangi netral.',
                 'image' => 'products/25.jpg',
                 'price' => 15000.00,
+                'buy_price' => 11000.00,
                 'stock' => 100,
             ],
             [
@@ -260,6 +285,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Sabun cuci pakaian cair konsentrat, ampuh bersihkan noda.',
                 'image' => 'products/26.jpg',
                 'price' => 25000.00,
+                'buy_price' => 19000.00,
                 'stock' => 100,
             ],
             [
@@ -269,6 +295,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Sabun cuci piring dengan ekstrak jeruk nipis penghilang lemak.',
                 'image' => 'products/27.jpg',
                 'price' => 15000.00,
+                'buy_price' => 11000.00,
                 'stock' => 100,
             ],
             [
@@ -278,6 +305,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Shampoo perawatan rambut praktis untuk sehari-hari.',
                 'image' => 'products/28.jpg',
                 'price' => 30000.00,
+                'buy_price' => 23000.00,
                 'stock' => 100,
             ],
             [
@@ -287,6 +315,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Sikat gigi ramah lingkungan dengan gagang bambu.',
                 'image' => 'products/29.jpg',
                 'price' => 20000.00,
+                'buy_price' => 15000.00,
                 'stock' => 100,
             ],
             [
@@ -296,6 +325,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Tisu toilet 3 lapis yang lembut dan kuat.',
                 'image' => 'products/30.jpg',
                 'price' => 25000.00,
+                'buy_price' => 19000.00,
                 'stock' => 100,
             ],
         ];

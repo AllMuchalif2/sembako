@@ -11,7 +11,18 @@ class ReportController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Transaction::with('user')
+        $validator = \Validator::make($request->all(), [
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+        ], [
+            'end_date.after_or_equal' => 'Tanggal selesai harus lebih besar atau sama dengan tanggal mulai.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->with('error', $validator->errors()->first());
+        }
+
+        $query = Transaction::with(['user', 'items.product'])
             ->where('status', 'selesai');
 
         if ($request->filled('start_date')) {
@@ -27,13 +38,39 @@ class ReportController extends Controller
 
         $transactions = $query->latest()->get(); // Get all for report without pagination usually, or paginate if needed. Let's get all for now for accurate total in list? Or paginate and show total of *filtered* data? Use get() for reports usually creates a clearer picture.
 
-        return view('admin.reports.index', compact('transactions', 'totalRevenue'));
+        // Calculate total profit
+        $totalProfit = 0;
+        foreach ($transactions as $transaction) {
+            foreach ($transaction->items as $item) {
+                if ($item->product && $item->product->buy_price) {
+                    $profit = ($item->price - $item->product->buy_price) * $item->quantity;
+                    $totalProfit += $profit;
+                }
+            }
+        }
+
+        // Calculate margin percentage
+        $totalCost = $totalRevenue - $totalProfit;
+        $marginPercentage = $totalCost > 0 ? ($totalProfit / $totalCost) * 100 : 0;
+
+        return view('admin.reports.index', compact('transactions', 'totalRevenue', 'totalProfit', 'marginPercentage'));
     }
 
 
     public function print(Request $request)
     {
-        $query = Transaction::with('user')
+        $validator = \Validator::make($request->all(), [
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+        ], [
+            'end_date.after_or_equal' => 'Tanggal selesai harus lebih besar atau sama dengan tanggal mulai.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->with('error', $validator->errors()->first());
+        }
+
+        $query = Transaction::with(['user', 'items.product'])
             ->where('status', 'selesai');
 
         if ($request->filled('start_date')) {
@@ -47,11 +84,37 @@ class ReportController extends Controller
         $totalRevenue = $query->sum('total_amount');
         $transactions = $query->latest()->get();
 
-        return view('admin.reports.print', compact('transactions', 'totalRevenue'));
+        // Calculate total profit
+        $totalProfit = 0;
+        foreach ($transactions as $transaction) {
+            foreach ($transaction->items as $item) {
+                if ($item->product && $item->product->buy_price) {
+                    $profit = ($item->price - $item->product->buy_price) * $item->quantity;
+                    $totalProfit += $profit;
+                }
+            }
+        }
+
+        // Calculate margin percentage
+        $totalCost = $totalRevenue - $totalProfit;
+        $marginPercentage = $totalCost > 0 ? ($totalProfit / $totalCost) * 100 : 0;
+
+        return view('admin.reports.print', compact('transactions', 'totalRevenue', 'totalProfit', 'marginPercentage'));
     }
 
     public function analyze(Request $request, GroqService $groq)
     {
+        $validator = \Validator::make($request->all(), [
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+        ], [
+            'end_date.after_or_equal' => 'Tanggal selesai harus lebih besar atau sama dengan tanggal mulai.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->with('error', $validator->errors()->first());
+        }
+
         // 1. Ambil Data (sama logic dengan index/print)
         $query = Transaction::with(['items.product']) // Load items & product for simpler analysis
             ->where('status', 'selesai');

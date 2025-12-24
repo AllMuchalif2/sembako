@@ -76,7 +76,8 @@
 
                             <!-- Harga -->
                             <div>
-                                <label for="price" class="block text-gray-700 text-sm font-bold mb-2">Harga:</label>
+                                <label for="price" class="block text-gray-700 text-sm font-bold mb-2">Harga
+                                    Jual:</label>
                                 <div class="flex mt-1 rounded-md shadow-sm">
                                     <span
                                         class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">Rp</span>
@@ -88,6 +89,31 @@
                                 @error('price')
                                     <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
                                 @enderror
+                            </div>
+
+                            <!-- Harga Beli -->
+
+                            <div>
+
+                                <label for="buy_price" class="block text-gray-700 text-sm font-bold mb-2">Harga
+                                    Beli:</label>
+
+                                <div class="flex mt-1 rounded-md shadow-sm">
+
+                                    <span
+                                        class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">Rp</span>
+
+                                    <input min="0" type="number" name="buy_price" id="buy_price"
+                                        value="{{ old('buy_price') }}"
+                                        class="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 @error('buy_price') border-red-500 @enderror"
+                                        placeholder="7500">
+
+                                </div>
+
+                                @error('buy_price')
+                                    <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                                @enderror
+
                             </div>
 
                             <!-- Stok -->

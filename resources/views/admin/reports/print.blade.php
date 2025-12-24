@@ -103,14 +103,47 @@
         <p><strong>Total Pendapatan:</strong> Rp {{ number_format($totalRevenue, 0, ',', '.') }}</p>
     </div>
 
+    {{-- Total Profit & Margin --}}
+
+    <div class="mb-6 grid grid-cols-2 gap-4">
+
+        <div class="p-4 bg-green-50 rounded-lg border border-green-100">
+
+            <span class="text-green-800 font-semibold">Total Keuntungan:</span>
+
+            <p class="text-xl font-bold text-green-700 mt-2">
+
+                Rp {{ number_format($totalProfit, 0, ',', '.') }}
+
+            </p>
+
+        </div>
+
+        <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
+
+            <span class="text-blue-800 font-semibold">Margin Keuntungan:</span>
+
+            <p class="text-xl font-bold text-blue-700 mt-2">
+
+                {{ number_format($marginPercentage, 1) }}%
+
+            </p>
+
+        </div>
+
+    </div>
+
+
     <table>
         <thead>
             <tr>
                 <th style="width: 5%;">No</th>
-                <th style="width: 20%;">Tanggal</th>
-                <th style="width: 25%;">ID Pesanan</th>
-                <th style="width: 25%;">Pelanggan</th>
-                <th style="width: 25%;">Total</th>
+                <th style="width: 15%;">Tanggal</th>
+                <th style="width: 20%;">ID Pesanan</th>
+                <th style="width: 20%;">Pelanggan</th>
+                <th style="width: 15%;">Keuntungan</th>
+                <th style="width: 10%;">Margin</th>
+                <th style="width: 15%;">Total</th>
             </tr>
         </thead>
         <tbody>
@@ -120,17 +153,38 @@
                     <td>{{ $transaction->created_at->locale('id')->translatedFormat('d/m/Y H:i') }}</td>
                     <td>{{ $transaction->order_id }}</td>
                     <td>{{ $transaction->user->name ?? 'User Terhapus' }}</td>
+                    <td class="text-right">
+                        @php
+                            $transactionProfit = 0;
+                            foreach ($transaction->items as $item) {
+                                if ($item->product && $item->product->buy_price) {
+                                    $transactionProfit += ($item->price - $item->product->buy_price) * $item->quantity;
+                                }
+                            }
+                        @endphp
+                        Rp {{ number_format($transactionProfit, 0, ',', '.') }}
+                    </td>
+                    <td class="text-right">
+                        @php
+                            $transactionCost = $transaction->total_amount - $transactionProfit;
+                            $transactionMargin =
+                                $transactionCost > 0 ? ($transactionProfit / $transactionCost) * 100 : 0;
+                        @endphp
+                        {{ number_format($transactionMargin, 1) }}%
+                    </td>
                     <td class="text-right">Rp {{ number_format($transaction->total_amount, 0, ',', '.') }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="text-center">Tidak ada data transaksi.</td>
+                    <td colspan="7" class="text-center">Tidak ada data transaksi.</td>
                 </tr>
             @endforelse
         </tbody>
         <tfoot>
             <tr class="total-row">
                 <td colspan="4" class="text-right">Total</td>
+                <td class="text-right">Rp {{ number_format($totalProfit, 0, ',', '.') }}</td>
+                <td class="text-right">{{ number_format($marginPercentage, 1) }}%</td>
                 <td class="text-right">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</td>
             </tr>
         </tfoot>

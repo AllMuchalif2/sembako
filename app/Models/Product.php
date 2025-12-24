@@ -19,7 +19,7 @@ class Product extends Model
             ->dontSubmitEmptyLogs();
     }
     //
-    protected $fillable = ['name', 'slug', 'category_id', 'description', 'price', 'stock', 'image'];
+    protected $fillable = ['name', 'slug', 'category_id', 'description', 'price', 'buy_price', 'stock', 'image'];
 
     public function getRouteKeyName()
     {
