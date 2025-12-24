@@ -53,6 +53,6 @@ class ActivityLogController extends Controller
         // Get list of potential causers (Admins and Owners) for the filter dropdown
         $admins = User::whereIn('role_id', [1, 2])->get();
 
-        return view('admin.activity_logs.index', compact('activities', 'admins'));
+        return view('admin.activity-logs.index', compact('activities', 'admins'));
     }
 }
