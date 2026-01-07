@@ -75,8 +75,10 @@ class TransactionController extends Controller
         }
 
         $transaction->load(['user', 'items.product']);
+        $settings = StoreSetting::getSettings();
+        $admin = auth()->user();
 
-        return view('admin.transactions.invoice', compact('transaction'));
+        return view('admin.transactions.invoice', compact('transaction', 'settings', 'admin'));
     }
 
     public function confirmCodOrder(Transaction $transaction)

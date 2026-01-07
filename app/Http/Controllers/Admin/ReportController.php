@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Transaction;
+use App\Models\StoreSetting;
 use Illuminate\Http\Request;
 use App\Services\GroqService;
 use App\Http\Controllers\Controller;
@@ -99,7 +100,11 @@ class ReportController extends Controller
         $totalCost = $totalRevenue - $totalProfit;
         $marginPercentage = $totalCost > 0 ? ($totalProfit / $totalCost) * 100 : 0;
 
-        return view('admin.reports.print', compact('transactions', 'totalRevenue', 'totalProfit', 'marginPercentage'));
+        // Get store settings and admin
+        $settings = StoreSetting::getSettings();
+        $admin = auth()->user();
+
+        return view('admin.reports.print', compact('transactions', 'totalRevenue', 'totalProfit', 'marginPercentage', 'settings', 'admin'));
     }
 
     public function analyze(Request $request, GroqService $groq)

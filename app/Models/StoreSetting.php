@@ -11,6 +11,7 @@ class StoreSetting extends Model
 
     protected $fillable = [
         'store_name',
+        'store_address',
         'store_latitude',
         'store_longitude',
         'free_shipping_radius',
@@ -35,6 +36,7 @@ class StoreSetting extends Model
             ['id' => 1],
             [
                 'store_name' => 'Toko Sembako',
+                'store_address' => null,
                 'store_latitude' => -6.200000,
                 'store_longitude' => 106.816666,
                 'free_shipping_radius' => 10000,

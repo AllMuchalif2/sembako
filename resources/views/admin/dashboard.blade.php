@@ -8,32 +8,22 @@
     <div class="py-12 bg-gray-100">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            {{-- <!-- Welcome Banner -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-medium text-gray-900">{{ __('Selamat Datang Kembali, Admin!') }}</h3>
-                    <p class="mt-1 text-sm text-gray-600">
-                        {{ __('Berikut adalah ringkasan aktivitas toko Anda hari ini.') }}
-                    </p>
-                </div>
-            </div> --}}
-
-            <!-- Grid for Stats -->
+            <!-- Grid for 4 Main Stats -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <!-- Stat Card 1: Total Pesanan -->
+                <!-- Card 1: Total Pendapatan -->
                 <a href="{{ route('admin.transactions.index') }}"
                     class="block transform transition duration-300 hover:scale-105 hover:shadow-lg">
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full">
                         <div class="p-6">
                             <div class="flex items-center">
                                 <div
-                                    class="flex-shrink-0 bg-blue-500 rounded-md h-12 w-12 flex items-center justify-center">
-                                    <i class="fa-solid fa-box-open text-white text-xl"></i>
+                                    class="flex-shrink-0 bg-purple-500 rounded-md h-12 w-12 flex items-center justify-center">
+                                    <i class="fa-solid fa-wallet text-white text-xl"></i>
                                 </div>
                                 <div class="ml-4">
-                                    <h4 class="text-sm font-medium text-gray-500">Total Pesanan Baru</h4>
+                                    <h4 class="text-sm font-medium text-gray-500">Total Pendapatan</h4>
                                     <p class="mt-1 text-2xl font-semibold text-gray-900">
-                                        {{ $newOrders }}
+                                        Rp {{ number_format($totalRevenue, 0, ',', '.') }}
                                     </p>
                                 </div>
                             </div>
@@ -41,7 +31,7 @@
                     </div>
                 </a>
 
-                <!-- Stat Card 2: Pendapatan -->
+                <!-- Card 2: Pendapatan Hari Ini -->
                 <a href="{{ route('admin.transactions.index') }}"
                     class="block transform transition duration-300 hover:scale-105 hover:shadow-lg">
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full">
@@ -62,20 +52,20 @@
                     </div>
                 </a>
 
-                <!-- Stat Card 3: Jumlah Pelanggan -->
-                <a href="#"
-                    class="block transform transition duration-300 hover:scale-105 hover:shadow-lg cursor-default">
+                <!-- Card 3: Total Pesanan Baru -->
+                <a href="{{ route('admin.transactions.index') }}"
+                    class="block transform transition duration-300 hover:scale-105 hover:shadow-lg">
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full">
                         <div class="p-6">
                             <div class="flex items-center">
                                 <div
-                                    class="flex-shrink-0 bg-yellow-500 rounded-md h-12 w-12 flex items-center justify-center">
-                                    <i class="fa-solid fa-users text-white text-xl"></i>
+                                    class="flex-shrink-0 bg-blue-500 rounded-md h-12 w-12 flex items-center justify-center">
+                                    <i class="fa-solid fa-box-open text-white text-xl"></i>
                                 </div>
                                 <div class="ml-4">
-                                    <h4 class="text-sm font-medium text-gray-500">Pelanggan Terdaftar</h4>
+                                    <h4 class="text-sm font-medium text-gray-500">Total Pesanan Baru</h4>
                                     <p class="mt-1 text-2xl font-semibold text-gray-900">
-                                        {{ $totalCustomers }}
+                                        {{ $newOrders }}
                                     </p>
                                 </div>
                             </div>
@@ -83,7 +73,7 @@
                     </div>
                 </a>
 
-                <!-- Stat Card 4: Stok Menipis -->
+                <!-- Card 4: Stok Menipis -->
                 <a href="{{ route('admin.products.index') }}"
                     class="block transform transition duration-300 hover:scale-105 hover:shadow-lg">
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full">
@@ -103,91 +93,27 @@
                         </div>
                     </div>
                 </a>
-
-                <!-- Stat Card 5: Total Produk -->
-                <a href="{{ route('admin.products.index') }}"
-                    class="block transform transition duration-300 hover:scale-105 hover:shadow-lg">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full">
-                        <div class="p-6">
-                            <div class="flex items-center">
-                                <div
-                                    class="flex-shrink-0 bg-indigo-500 rounded-md h-12 w-12 flex items-center justify-center">
-                                    <i class="fa-solid fa-boxes-stacked text-white text-xl"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <h4 class="text-sm font-medium text-gray-500">Total Produk</h4>
-                                    <p class="mt-1 text-2xl font-semibold text-gray-900">
-                                        {{ $totalProducts }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Stat Card 6: Promo Aktif -->
-                <a href="{{ route('admin.promos.index') }}"
-                    class="block transform transition duration-300 hover:scale-105 hover:shadow-lg">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full">
-                        <div class="p-6">
-                            <div class="flex items-center">
-                                <div
-                                    class="flex-shrink-0 bg-pink-500 rounded-md h-12 w-12 flex items-center justify-center">
-                                    <i class="fa-solid fa-tags text-white text-xl"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <h4 class="text-sm font-medium text-gray-500">Promo Aktif</h4>
-                                    <p class="mt-1 text-2xl font-semibold text-gray-900">
-                                        {{ $activePromos }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Stat Card 7: Transaksi Selesai -->
-                <a href="{{ route('admin.transactions.index') }}"
-                    class="block transform transition duration-300 hover:scale-105 hover:shadow-lg">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full">
-                        <div class="p-6">
-                            <div class="flex items-center">
-                                <div
-                                    class="flex-shrink-0 bg-teal-500 rounded-md h-12 w-12 flex items-center justify-center">
-                                    <i class="fa-solid fa-check-circle text-white text-xl"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <h4 class="text-sm font-medium text-gray-500">Transaksi Selesai</h4>
-                                    <p class="mt-1 text-2xl font-semibold text-gray-900">
-                                        {{ $completedTransactions }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Stat Card 8: Total Pendapatan -->
-                <a href="{{ route('admin.transactions.index') }}"
-                    class="block transform transition duration-300 hover:scale-105 hover:shadow-lg">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full">
-                        <div class="p-6">
-                            <div class="flex items-center">
-                                <div
-                                    class="flex-shrink-0 bg-purple-500 rounded-md h-12 w-12 flex items-center justify-center">
-                                    <i class="fa-solid fa-wallet text-white text-xl"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <h4 class="text-sm font-medium text-gray-500">Total Pendapatan</h4>
-                                    <p class="mt-1 text-2xl font-semibold text-gray-900">
-                                        Rp {{ number_format($totalRevenue, 0, ',', '.') }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
             </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Chart 1: Pendapatan 7 Hari Terakhir -->
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Pendapatan 7 Hari Terakhir</h3>
+                        <canvas id="revenueChart" height="100"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Top 5 Produk Terlaris -->
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Top 5 Produk Terlaris</h3>
+                        <canvas id="topProductsChart" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+
 
             <!-- Grid for Recent Transactions and Low Stock Products -->
             <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -255,4 +181,100 @@
             </div>
         </div>
     </div>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <script>
+        // Initialize all charts when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Chart 1: Revenue Chart (Line)
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: @json($revenueLabels),
+                    datasets: [{
+                        label: 'Pendapatan (Rp)',
+                        data: @json($revenueData),
+                        borderColor: 'rgb(147, 51, 234)',
+                        backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Rp ' + context.parsed.y.toLocaleString('id-ID');
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp ' + (value / 1000) + 'k';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Top Products Chart (Bar)
+            const topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
+            new Chart(topProductsCtx, {
+                type: 'bar',
+                data: {
+                    labels: @json($topProductLabels),
+                    datasets: [{
+                        label: 'Terjual',
+                        data: @json($topProductData),
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(251, 191, 36, 0.8)',
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(139, 92, 246, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgb(59, 130, 246)',
+                            'rgb(16, 185, 129)',
+                            'rgb(251, 191, 36)',
+                            'rgb(239, 68, 68)',
+                            'rgb(139, 92, 246)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </x-app-layout>

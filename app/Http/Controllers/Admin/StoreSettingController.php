@@ -20,6 +20,7 @@ class StoreSettingController extends Controller
     {
         $validated = $request->validate([
             'store_name' => 'required|string|max:255',
+            'store_address' => 'nullable|string',
             'store_latitude' => 'required|numeric|between:-90,90',
             'store_longitude' => 'required|numeric|between:-180,180',
             'free_shipping_radius' => 'required|integer|min:0',

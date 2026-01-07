@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('store_settings', function (Blueprint $table) {
             $table->id();
             $table->string('store_name')->default('Toko Sembako');
+            $table->text('store_address')->nullable();
             $table->decimal('store_latitude', 10, 8)->default(-6.200000);
             $table->decimal('store_longitude', 11, 8)->default(106.816666);
             $table->integer('free_shipping_radius')->default(10000)->comment('Radius gratis ongkir dalam meter');

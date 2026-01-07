@@ -102,7 +102,16 @@
                 ? 'bg-gray-100 text-gray-900'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
             <i class="fa-solid fa-file-invoice-dollar mr-3"></i>
-            {{ __('Laporan Transaksi') }}
+            {{ __('Laporan Pendapatan') }}
+        </a>
+
+        <a href="{{ route('admin.product-reports.index') }}"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
+            {{ request()->routeIs('admin.product-reports.*')
+                ? 'bg-gray-100 text-gray-900'
+                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+            <i class="fa-solid fa-chart-pie mr-3"></i>
+            {{ __('Laporan Penjualan') }}
         </a>
 
         @if (Auth::user()->role_id == '0' || Auth::user()->role_id == '1')

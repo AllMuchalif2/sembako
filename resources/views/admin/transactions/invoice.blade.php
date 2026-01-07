@@ -9,6 +9,12 @@
     <link rel="icon" href="{{ secure_asset('images/logo.png') }}" type="image/png">
     @vite(['resources/css/app.css'])
     <style>
+        /* Pengaturan ukuran kertas untuk print */
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+
         @media print {
             body {
                 -webkit-print-color-adjust: exact;
@@ -17,6 +23,14 @@
 
             .no-print {
                 display: none !important;
+            }
+
+            /* Optimasi untuk print */
+            .invoice-box {
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                padding: 0;
             }
         }
 
@@ -99,8 +113,16 @@
                     <table>
                         <tr>
                             <td class="title">
-                                {{-- {{ config('app.name', 'Sembako') }} --}}
                                 <img src="{{ asset('images/logo.png') }}" style="width:100%; max-width:100px;">
+                                <div style="font-size: 18px; font-weight: bold; margin-top: 10px; color: #333;">
+                                    {{ $settings->store_name }}
+                                </div>
+                                @if ($settings->store_address)
+                                    <div
+                                        style="font-size: 12px; font-weight: normal; color: #666; margin-top: 5px; line-height: 1.4;">
+                                        {{ $settings->store_address }}
+                                    </div>
+                                @endif
                             </td>
                             <td>
                                 Invoice #: {{ $transaction->order_id }}<br>
@@ -183,6 +205,15 @@
                 </td>
             </tr>
         </table>
+
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #666;">
+            <p style="margin: 5px 0;">
+                <strong>Dicetak oleh:</strong> {{ $admin->name }}
+            </p>
+            <p style="margin: 5px 0;">
+                <strong>Tanggal cetak:</strong> {{ now()->locale('id')->translatedFormat('d F Y, H:i') }} WIB
+            </p>
+        </div>
 
         <div class="text-center mt-8 no-print">
             <x-primary-button onclick="window.print()" type="button">

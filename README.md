@@ -1,367 +1,258 @@
-## Tech Stack — MyMart Sembako App
+# 🛒 MyMart - Aplikasi Sembako Online
+
+Aplikasi e-commerce sembako modern dengan fitur lengkap untuk manajemen toko online.
+
+## 📋 Deskripsi
+
+MyMart adalah aplikasi e-commerce berbasis web yang dirancang khusus untuk toko sembako. Aplikasi ini dilengkapi dengan sistem manajemen produk, transaksi, promo, pembayaran terintegrasi dengan Midtrans, analisis AI menggunakan Groq, dan fitur Progressive Web App (PWA) untuk pengalaman mobile yang optimal.
 
 ---
+
+## ✨ Fitur Utama
+
+### 👥 Untuk Pelanggan
+
+-   🏪 **Katalog Produk** - Browse produk dengan filter kategori dan pencarian
+-   🛒 **Keranjang Belanja** - Manajemen keranjang dengan AJAX real-time
+-   🎁 **Sistem Promo** - Kode promo dengan validasi otomatis
+-   💳 **Multi Payment** - Midtrans (berbagai metode) dan Cash on Delivery (COD)
+-   📍 **Lokasi Checkout** - Integrasi peta Leaflet untuk pilih lokasi pengiriman
+-   📦 **Tracking Pesanan** - Pantau status pesanan real-time
+-   💬 **AI Chatbot** - Customer service otomatis dengan Groq AI
+-   📱 **PWA Support** - Install sebagai aplikasi mobile
+
+### 👨‍💼 Untuk Admin
+
+-   📊 **Dashboard Analytics** - 4 metric cards (Total Pendapatan, Pendapatan Hari Ini, Pesanan Baru, Stok Menipis) + 2 grafik analitik (Pendapatan 7 Hari, Top 5 Produk Terlaris)
+-   📦 **Manajemen Produk** - CRUD produk dengan fitur restock
+-   🏷️ **Manajemen Kategori** - Organisasi produk berdasarkan kategori
+-   🎫 **Manajemen Promo** - Buat dan kelola kode promo
+-   💰 **Manajemen Transaksi** - Update status, konfirmasi COD, cetak invoice
+-   📈 **Laporan Pendapatan** - Filter laporan berdasarkan tanggal dengan analisis AI
+-   📊 **Laporan Produk** - Laporan produk terlaris dengan filter tanggal
+-   🖨️ **Cetak PDF** - Generate laporan dalam format PDF (hitam putih)
+
+### 🔐 Untuk Owner (Super Admin)
+
+-   ⚙️ **Pengaturan Toko** - Konfigurasi nama, lokasi, ongkir, radius gratis ongkir
+-   👥 **Manajemen Admin** - CRUD admin, toggle status, reset password
+-   📜 **Activity Logs** - Audit trail semua aktivitas admin menggunakan Spatie Activity Log
+
+---
+
+## 🚀 Instalasi
+
+### Prasyarat
+
+-   PHP >= 8.2
+-   Composer
+-   Node.js & npm
+-   MySQL/MariaDB
+-   Web Server (Apache/Nginx) atau Laravel Valet/Laragon
+
+### Langkah Instalasi
+
+1. **Clone Repository**
+
+    ```bash
+    git clone <repository-url>
+    cd my-mart
+    ```
+
+2. **Install Dependencies**
+
+    ```bash
+    composer install
+    npm install
+    ```
+
+3. **Konfigurasi Environment**
+
+    ```bash
+    cp .env.example .env
+    php artisan key:generate
+    ```
+
+4. **Konfigurasi Database**
+
+    Edit file `.env` dan sesuaikan konfigurasi database:
+
+    ```env
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=sembako
+    DB_USERNAME=root
+    DB_PASSWORD=
+    ```
+
+5. **Konfigurasi API Keys**
+
+    Tambahkan API keys di file `.env`:
+
+    ```env
+    # Midtrans Payment Gateway
+    MIDTRANS_MERCHANT_ID=your_merchant_id
+    MIDTRANS_CLIENT_KEY=your_client_key
+    MIDTRANS_SERVER_KEY=your_server_key
+    MIDTRANS_IS_PRODUCTION=false
+
+    # Groq AI (untuk chatbot & analisis)
+    GROQ_API_KEY=your_groq_api_key
+    ```
+
+    **Cara mendapatkan API Keys:**
+
+    - **Midtrans**: Daftar di [https://dashboard.midtrans.com](https://dashboard.midtrans.com)
+    - **Groq AI**: Daftar di [https://console.groq.com](https://console.groq.com)
+
+6. **Migrasi Database & Seeding**
+
+    ```bash
+    php artisan migrate --seed
+    ```
+
+    Seeder akan membuat:
+
+    - 2 Role: Admin & Customer
+    - User Owner default (email: `owner@mymart.com`, password: `password`)
+    - User Admin default (email: `admin@mymart.com`, password: `password`)
+    - Kategori produk sample
+    - Produk sample
+    - Promo sample
+    - Store settings default
+
+7. **Build Assets**
+
+    ```bash
+    npm run build
+    ```
+
+8. **Jalankan Aplikasi**
+
+    **Untuk Development:**
+
+    ```bash
+    composer run dev
+    ```
+
+    Perintah ini akan menjalankan:
+
+    - Laravel development server (http://localhost:8000)
+    - Queue worker
+    - Vite dev server
+
+    **Atau jalankan manual:**
+
+    ```bash
+    php artisan serve
+    php artisan queue:work
+    npm run dev
+    ```
+
+9. **Akses Aplikasi**
+    - **Frontend**: http://localhost:8000
+    - **Admin Panel**: http://localhost:8000/admin/dashboard
+    - **Login Owner**: owner@mymart.com / password
+    - **Login Admin**: admin@mymart.com / password
+
+---
+
+## 🛠️ Tech Stack
 
 ### Backend
 
--   Laravel — Framework PHP berbasis MVC.
--   Laravel Breeze — Starter kit autentikasi menggunakan Blade dan route auth standar.
-
----
+-   **Laravel 12.x** - Framework PHP berbasis MVC
+-   **Laravel Breeze** - Starter kit autentikasi
+-   **Spatie Activity Log** - Audit trail untuk aktivitas admin/owner
+-   **Midtrans PHP SDK** - Payment gateway integration
 
 ### Database
 
--   MySQL — Sistem manajemen basis data untuk seluruh fitur.
--   Spatie Activity Log — Mencatat aktivitas pengguna (Admin & Owner) untuk audit trail.
-
----
+-   **MySQL** - Sistem manajemen basis data
+-   **Laravel Migrations** - Version control untuk database schema
 
 ### Frontend & UI
 
--   Tailwind CSS — Framework CSS utility-first untuk styling.
--   AlpineJS — Framework JavaScript minimalis untuk interaktivitas UI.
--   Axios — Library untuk HTTP requests (AJAX).
--   Simple-DataTables — Plugin tabel interaktif (search, sort, pagination) di halaman admin.
--   Leaflet.js — Library peta untuk fitur lokasi checkout (latitude dan longitude).
--   Tippy.js — Library untuk tooltip interaktif.
-
----
+-   **Tailwind CSS 3.x** - Framework CSS utility-first
+-   **AlpineJS** - Framework JavaScript minimalis untuk interaktivitas
+-   **Axios** - HTTP client untuk AJAX requests
+-   **Chart.js 4.x** - Library visualisasi data untuk grafik dashboard
+-   **Simple-DataTables** - Plugin tabel interaktif (search, sort, pagination)
+-   **Leaflet.js** - Library peta untuk fitur lokasi checkout
+-   **Tippy.js** - Library tooltip interaktif
 
 ### Build Tools
 
--   Vite — Bundler modern untuk compiling asset (JS & CSS).
--   npm — Package manager untuk dependency frontend.
--   Composer — Package manager untuk dependency PHP/Laravel.
+-   **Vite** - Modern bundler untuk asset compilation
+-   **npm** - Package manager untuk dependencies frontend
+-   **Composer** - Package manager untuk dependencies PHP
+
+### AI & External Services
+
+-   **Groq API** - Large Language Model untuk chatbot & analisis laporan
+-   **Midtrans** - Payment gateway (Credit Card, E-Wallet, Bank Transfer, dll)
+
+### PWA (Progressive Web App)
+
+-   **Laravel PWA** - Package untuk manifest.json dan service worker
+-   **Service Worker** - Offline support dan caching
 
 ---
 
-### Testing
+## 📁 Struktur Database
 
--   PHPUnit — Framework pengujian yang digunakan oleh Laravel.
+### Tabel Utama
 
----
+| Tabel               | Deskripsi                                    |
+| ------------------- | -------------------------------------------- |
+| `users`             | Data pengguna (customer, admin, owner)       |
+| `roles`             | Role pengguna (1=Owner, 2=Customer, 3=Admin) |
+| `categories`        | Kategori produk                              |
+| `products`          | Data produk sembako                          |
+| `transactions`      | Data transaksi pembelian                     |
+| `transaction_items` | Detail item dalam transaksi                  |
+| `promos`            | Kode promo dan diskon                        |
+| `promo_usages`      | Riwayat penggunaan promo                     |
+| `store_settings`    | Konfigurasi toko (nama, lokasi, ongkir, dll) |
+| `activity_log`      | Log aktivitas admin/owner (Spatie)           |
+| `sessions`          | Session management                           |
+| `cache`             | Application cache                            |
+| `jobs`              | Queue jobs                                   |
 
-# Dokumentasi Alur Fungsional Aplikasi
+### Relasi Penting
 
-## 1. Alur Autentikasi (Auth)
-
-### Alur Login Pengguna
-
--   **Rute**
-    -   GET /login
-    -   POST /login
--   **Middleware**: guest
--   **Controller**: `app/Http/Controllers/Auth/AuthenticatedSessionController.php`
-    -   Metode: `create()`, `store()`
--   **Request**: `app/Http/Requests/Auth/LoginRequest.php`
--   **Model**: `app/Models/User.php`
--   **View**: `resources/views/auth/login.blade.php`
--   **Database**: `users` (email, password)
-
-### Alur "Ingat Saya" (Remember Me)
-
--   **Terkait**: Alur Login
--   **View**: `resources/views/auth/login.blade.php` (input `remember`)
--   **Database**: `users` (remember_token)
-
-### Alur Registrasi Pengguna
-
--   **Rute**
-    -   GET /register
-    -   POST /register
--   **Middleware**: guest
--   **Controller**: `app/Http/Controllers/Auth/RegisteredUserController.php`
-    -   Metode: `create()`, `store()`
--   **Model**: `app/Models/User.php` (booted: role_id = 2)
--   **View**: `resources/views/auth/register.blade.php`
--   **Database**: `users` (name, email, password, role_id)
-
-### Alur Logout Pengguna
-
--   **Rute**: POST /logout
--   **Middleware**: auth
--   **Controller**: `AuthenticatedSessionController@destroy`
--   **View**: dipicu dari `resources/views/layouts/navigation.blade.php`
--   **Database**: tidak ada (session)
+-   `users` → `roles` (belongsTo)
+-   `products` → `categories` (belongsTo)
+-   `transactions` → `users` (belongsTo)
+-   `transactions` → `promos` (belongsTo, nullable)
+-   `transaction_items` → `transactions` (belongsTo)
+-   `transaction_items` → `products` (belongsTo)
+-   `promo_usages` → `promos` (belongsTo)
+-   `promo_usages` → `users` (belongsTo)
 
 ---
 
-## 2. Alur Publik & Katalog
+## 📖 Dokumentasi
 
-### Alur Menampilkan Halaman Utama (Homepage)
+Untuk dokumentasi lengkap alur fungsional aplikasi, silakan lihat:
 
--   **Rute**: GET /
--   **Controller**: `LandingController@index`
--   **Model**: `Product`, `Promo`
--   **View**: `welcome.blade.php`
--   **Database**: products (read), promos (read where status = active)
+👉 **[docs.md](docs.md)** - Dokumentasi Alur Fungsional Lengkap
 
-### Alur Menampilkan Katalog Produk
+Dokumentasi mencakup:
 
--   **Rute**: GET /products
--   **Controller**: `ProductController@index`
--   **Model**: `Product`, `Category`
--   **View**: `products/index.blade.php`
--   **Database**: products (read + filter/sort), categories (read)
-
-### Alur Menampilkan Modal Produk (Quick View)
-
--   **Rute**: GET /products/{product:slug}
--   **Controller**: `ProductController@show`
--   **Model**: `Product`
--   **JavaScript**: `resources/js/app.js`
--   **View Komponen**: `components/modal.blade.php`
--   **Database**: products (read), categories (via load)
+-   Alur Autentikasi (Login, Register, Logout)
+-   Alur Publik & Katalog Produk
+-   Alur Keranjang & Transaksi
+-   Alur Dashboard & Fitur Admin
+-   Alur Owner (Super Admin)
+-   Fitur AI & Chatbot
+-   Progressive Web App (PWA)
 
 ---
 
-## 3. Alur Keranjang & Transaksi (User)
+<div align="center">
 
-### Alur Manajemen Keranjang
+**⭐ Jangan lupa berikan star jika project ini bermanfaat! ⭐**
 
--   **Rute**
-    -   POST /cart/add
-    -   PATCH /cart/update/{id}
-    -   DELETE /cart/remove/{id}
-    -   GET /cart/summary
--   **Controller**: `CartController`
-    -   Metode: `add`, `update`, `remove`, `summary`
--   **JavaScript**: `resources/js/cart.js`
--   **Model**: `Product`
--   **View**: `cart/index.blade.php`
--   **Database**: tidak ada (session)
-
-### Alur Checkout (Termasuk Peta & Promo)
-
--   **Rute**
-    -   POST /promo/apply
-    -   POST /promo/remove
-    -   GET /checkout
-    -   POST /checkout
--   **Middleware**: auth
--   **Controller**
-    -   `PromoController`: `apply`, `remove`
-    -   `CheckoutController`: `index`, `process`
--   **Model**
-    -   `Promo`, `Transaction`, `TransactionItem`, `Product`, `PromoUsage`
--   **View**: `checkout/index.blade.php`
--   **JavaScript**: integrasi Leaflet (lat, long)
--   **Database**
-    -   promos (read, update times_used)
-    -   promo_usages (write)
-    -   transactions (write)
-    -   transaction_items (write)
-    -   products (update stock)
-
-### Alur Pembayaran Midtrans
-
--   **Rute**
-    -   POST /checkout
-    -   POST /midtrans/callback
-    -   GET /checkout/success
--   **Controller**: `CheckoutController@process`, `PaymentController@callback`, `CheckoutController@success`
--   **Config**: `config/midtrans.php`
--   **View**
-    -   `checkout/payment.blade.php`
-    -   `checkout/success.blade.php`
--   **Database**
-    -   transactions (update snap_token, status, payment_status)
-    -   products (restore stock jika gagal)
-
-### Alur Pembayaran COD (Cash on Delivery)
-
--   **Rute**
-    -   POST /checkout (dengan payment_method = cod)
-    -   GET /checkout/cod-success/{order_id}
--   **Controller**: `CheckoutController@process`, `codSuccess`
--   **View**: `checkout/cod-success.blade.php`
--   **Database**
-    -   transactions (create dengan payment_method = cod, payment_status = unpaid)
-
-### Alur Retry Payment (Bayar Ulang)
-
--   **Rute**
-    -   GET /checkout/pay/{order_id}
--   **Middleware**: auth
--   **Controller**: `PaymentController@pay`
--   **View**: `checkout/payment.blade.php`
--   **Database**
-    -   transactions (update snap_token baru)
-
----
-
-## 4. Alur Pengguna (Customer)
-
-### Alur Dasbor Pengguna
-
--   **Rute**: GET /dashboard
--   **Middleware**: auth
--   **Controller**: `CustomerController@dashboard`
--   **Model**: `Transaction`
--   **View**: `customer/dashboard.blade.php`
--   **Database**: transactions (read by user_id)
-
-### Alur Profil Pengguna
-
--   **Rute**
-    -   GET /profile
-    -   PATCH /profile
-    -   DELETE /profile
-    -   PUT /password
--   **Middleware**: auth
--   **Controller**
-    -   `ProfileController`: `edit`, `update`, `destroy`
-    -   `PasswordController@update`
--   **Request**: `ProfileUpdateRequest`
--   **View**: `profile/edit.blade.php`
--   **Database**: users (update & delete)
-
-### Alur Riwayat Transaksi Pengguna
-
--   **Rute**
-    -   GET /transactions
-    -   GET /transactions/{transaction}
-    -   PATCH /transactions/{transaction}/complete
-    -   PATCH /transactions/{transaction}/cancel
--   **Middleware**: auth
--   **Controller**: `TransactionController`
--   **Model**: `Transaction`
--   **View**: `transactions/index.blade.php`, `transactions/show.blade.php`
--   **Database**: transactions (read, update status, append notes)
-
----
-
-## 5. Alur Admin
-
-### Alur Dasbor Admin
-
--   **Rute**: GET /admin/dashboard
--   **Middleware**: auth, role:admin
--   **Controller**: `Admin\DashboardController@index`
--   **Model**: `User`, `Transaction`, `Product`
--   **View**: `admin/dashboard.blade.php`
--   **Database**: users, transactions, products (read)
-
-### Admin: CRUD Kategori
-
--   **Rute**: RESOURCE /admin/categories
--   **Middleware**: auth, role:admin
--   **Controller**: `Admin\CategoryController`
--   **Model**: `Category`
--   **View**: index/create/edit
--   **Database**: categories (CRUD)
-
-### Admin: CRUD Produk
-
--   **Rute**: 
-    - RESOURCE /admin/products
-    - PATCH /admin/products/{product}/restock
-
--   **Middleware**: auth, role:admin
--   **Controller**: `Admin\ProductController`
--   **Model**: `Product`
--   **View**: index/create/edit
--   **Database**: products (CRUD)
--   **Fitur Ekstra**:
-    -   Restock Produk (Update stok tambahan)
-
-### Admin: CRUD Promo
-
--   **Rute**: RESOURCE /admin/promos
--   **Middleware**: auth, role:admin
--   **Controller**: `Admin\PromoController`
--   **Model**: `Promo`
--   **View**: index/create/edit
--   **Database**: promos (CRUD)
-
-### Admin: Manajemen Transaksi
-
--   **Rute**
-    -   GET /admin/transactions
-    -   GET /admin/transactions/{transaction}
-    -   PATCH /admin/transactions/{transaction}/status
-    -   PATCH /admin/transactions/{transaction}/cancel
-    -   PATCH /admin/transactions/{transaction}/confirm-cod
-    -   GET /admin/transactions/{transaction}/invoice
--   **Middleware**: auth, role:admin
--   **Controller**: `Admin\TransactionController`
--   **Model**: `Transaction`
--   **View**: index/show/invoice
--   **Database**: transactions (read & update)
-
-### Admin: Profil Admin
-
--   **Rute**
-    -   GET /admin/profile
-    -   PATCH /admin/profile
--   **Middleware**: auth, role:admin
--   **Controller**: `ProfileController`
--   **Model**: `User`
--   **View**: `profile/edit.blade.php`
--   **Database**: users (read & update)
-
-### Admin: Laporan & Analisis AI
-
--   **Rute**
-    -   GET /admin/reports
-    -   POST /admin/reports/analyze (AI Insight)
-    -   GET /admin/reports/print
--   **Controller**: `Admin\ReportController`
--   **Fitur**:
-    -   Filter laporan berdasarkan tanggal
-    -   Cetak PDF
-    -   Analisis ringkas pendapatan menggunakan AI (Groq API)
-
----
-
-## 6. Alur Owner (Super Admin)
-
-### Alur Pengaturan Toko (Store Settings)
-
--   **Rute**
-    -   GET /admin/store-settings
-    -   PUT /admin/store-settings
--   **Middleware**: auth, role:owner
--   **Controller**: `Admin\StoreSettingController`
--   **Model**: `StoreSetting`
--   **View**: `admin/store-settings/edit.blade.php`
--   **Database**: store_settings (update)
--   **Fitur**:
-    -   Nama toko
-    -   Koordinat toko (latitude, longitude)
-    -   Radius gratis ongkir
-    -   Jarak maksimal pengiriman
-    -   Biaya pengiriman
-
-### Owner: CRUD Admin
-
--   **Rute**: RESOURCE /admin/admins
--   **Middleware**: auth, role:owner
--   **Controller**: `Admin\AdminController`
--   **Model**: `User`, `Role`
--   **View**: index/create/edit
--   **Database**: users (CRUD untuk role admin)
--   **Fitur**:
-    -   Tambah admin baru
-    -   Edit data admin
-    -   Hapus admin (dengan proteksi tidak bisa hapus diri sendiri)
-
-### Owner: Log Aktivitas
-
--   **Rute**: GET /admin/activity-logs
--   **Middleware**: auth, role:owner
--   **Controller**: `Admin\ActivityLogController`
--   **View**: `admin/activity-logs/index.blade.php`
--   **Database**: activity_log (read)
--   **Fitur**: Melihat riwayat aksi create, update, delete yang dilakukan user.
-
----
-
-## 7. Fitur AI & Chatbot
-
-### Chatbot Pelanggan (Groq AI)
-
--   **Rute**: POST /ai/chat
--   **Controller**: `AiChatController@handleChat`
--   **Teknologi**: Groq API (LLM)
--   **Fungsi**: Menjawab pertanyaan pelanggan secara otomatis terkait produk atau layanan.
+</div>

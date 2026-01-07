@@ -14,6 +14,7 @@ use App\Http\Controllers\TransactionController;
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\ProductReportController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ActivityLogController;
@@ -192,10 +193,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
-    // Laporan
+    // Laporan Transaksi
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-    Route::post('/reports/analyze', [ReportController::class, 'analyze'])->name('reports.analyze'); // New Route
+    Route::post('/reports/analyze', [ReportController::class, 'analyze'])->name('reports.analyze');
     Route::get('/reports/print', [ReportController::class, 'print'])->name('reports.print');
+
+    // Laporan Produk
+    Route::get('/product-reports', [ProductReportController::class, 'index'])->name('product-reports.index');
+    Route::get('/product-reports/print', [ProductReportController::class, 'print'])->name('product-reports.print');
 });
 
 // rute owner (hanya owner yang bisa mengakses)
