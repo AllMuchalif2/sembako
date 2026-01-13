@@ -17,6 +17,9 @@ class StoreSetting extends Model
         'free_shipping_radius',
         'max_delivery_distance',
         'shipping_cost',
+        'social_media_instagram',
+        'social_media_tiktok',
+        'social_media_whatsapp',
     ];
 
     protected $casts = [

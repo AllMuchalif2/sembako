@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jan 06, 2026 at 03:55 AM
+-- Generation Time: Jan 13, 2026 at 08:35 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.3.23
 
@@ -223,7 +223,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (10, '2025_11_12_134210_create_promo_usages_table', 1),
 (11, '2025_11_25_122704_create_store_settings_table', 1),
 (12, '2025_12_04_060800_add_foreign_keys_to_users_table', 1),
-(13, '2025_12_13_135132_create_activity_log_table', 1);
+(13, '2025_12_13_135132_create_activity_log_table', 1),
+(14, '2026_01_13_083318_add_social_media_to_store_settings_table', 2);
 
 -- --------------------------------------------------------
 
@@ -324,7 +325,7 @@ CREATE TABLE `promos` (
 --
 
 INSERT INTO `promos` (`id`, `code`, `description`, `type`, `value`, `max_discount`, `min_purchase`, `start_date`, `end_date`, `usage_limit`, `times_used`, `limit_per_user`, `status`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(2, 'mymart', 'Diskon pembelian pertama di My Mart', 'percentage', 10.00, 20000.00, 50000.00, '2024-01-01', '2026-12-31', 100, 0, 1, 'active', NULL, '2026-01-06 02:37:09', '2026-01-06 03:13:42');
+(2, 'mymart', 'Diskon pembelian pertama di My Mart', 'percentage', 10.00, 20000.00, 50000.00, '2024-01-01', '2026-12-31', 100, 0, 1, 'active', NULL, '2026-01-06 02:37:09', '2026-01-13 01:59:42');
 
 -- --------------------------------------------------------
 
@@ -384,9 +385,10 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('38X8zeIBCwq5B6IHI844TiLUrw5uZ3mIw7ceY5Cp', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiOWRBckpHN0NYZzJpcWZQbUpZcXg2RXZScjU3ZndkZFM1YTZmTXNhWSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzM6Imh0dHBzOi8vbXktbWFydC5jYXJlL2NhcnQvc3VtbWFyeSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6MzoidXJsIjthOjE6e3M6MTQ6InByZXZpb3VzX3Zpc2l0IjtzOjI1OiJodHRwczovL215LW1hcnQuY2FyZS9jYXJ0Ijt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Mzt9', 1767667366),
-('5aJY8BbnuERZfQi6C74xmDSxiHEu2JZHM6jWhXeV', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiRElMMTJjeUNEV0FIRkNFeEY5dHNyUW9rMVo5bWJHU08wN0Z1aTBwcyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzM6Imh0dHBzOi8vbXktbWFydC5jYXJlL2NhcnQvc3VtbWFyeSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6MzoidXJsIjthOjE6e3M6MTQ6InByZXZpb3VzX3Zpc2l0IjtzOjIxOiJodHRwczovL215LW1hcnQuY2FyZS8iO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTozO30=', 1767668827),
-('RXOLAMMWc31GeD7fghZsTzTfEtpIPiKOlYOFocc9', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiWGxsTmVJbFJpNm1kb2Z5SGZVazlNMUFJTWdjZ0lUZWJhMXdRY040TyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzM6Imh0dHBzOi8vbXktbWFydC5jYXJlL2NhcnQvc3VtbWFyeSI7fXM6MzoidXJsIjthOjE6e3M6MTQ6InByZXZpb3VzX3Zpc2l0IjtzOjIxOiJodHRwczovL215LW1hcnQuY2FyZS8iO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=', 1767671647);
+('2kFVYtjo6wziGjC357fQKT1FPXbEhDSi6BkC6fbU', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoia0RHY1dtUEtneUVUbUNJclFLRWxQVkx3c2lRZ0VCS2ZLdlU5U2tUTCI7czozOiJ1cmwiO2E6Mjp7czo4OiJpbnRlbmRlZCI7czozNjoiaHR0cHM6Ly9teS1tYXJ0LmNhcmUvYWRtaW4vZGFzaGJvYXJkIjtzOjE0OiJwcmV2aW91c192aXNpdCI7czozNjoiaHR0cHM6Ly9teS1tYXJ0LmNhcmUvYWRtaW4vZGFzaGJvYXJkIjt9czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzM6Imh0dHBzOi8vbXktbWFydC5jYXJlL2NhcnQvc3VtbWFyeSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1768264531),
+('erLxBk13izvha5RYdjyvYoyLPaeXVPyYXfjCLpXv', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiNWlaUnBzMjhTSVJwdWdxM0UwMTV3UHpVWlgwYUZPRnVaM1NlcG0xRyI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czo0ODoiaHR0cHM6Ly9teS1tYXJ0LmNhcmUvYWRtaW4vcHJvZHVjdC1yZXBvcnRzL3ByaW50Ijt9czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDg6Imh0dHBzOi8vbXktbWFydC5jYXJlL2FkbWluL3Byb2R1Y3QtcmVwb3J0cy9wcmludCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1768293331),
+('HFtL3nN4Ui4AS2CiMTFeBBLzdC2rrz0JuUO62kVb', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTo2OntzOjY6Il90b2tlbiI7czo0MDoiYzRCbkk3ODR0WTNnY2htNXNjQXlRSXkzb2RnQ0ZDa1NwSXFsWjRiUyI7czozOiJ1cmwiO2E6MTp7czoxNDoicHJldmlvdXNfdmlzaXQiO3M6MjE6Imh0dHBzOi8vbXktbWFydC5jYXJlLyI7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjMzOiJodHRwczovL215LW1hcnQuY2FyZS9jYXJ0L3N1bW1hcnkiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO3M6NDoiY2FydCI7YToxOntpOjI7YTo2OntzOjQ6Im5hbWUiO3M6MjM6IkJlcmFzIE1lcmFoIE9yZ2FuaWsgMWtnIjtzOjg6InF1YW50aXR5IjtzOjE6IjEiO3M6NToicHJpY2UiO3M6ODoiMjUwMDAuMDAiO3M6NToiaW1hZ2UiO3M6MTQ6InByb2R1Y3RzLzIuanBnIjtzOjQ6InNsdWciO3M6MjM6ImJlcmFzLW1lcmFoLW9yZ2FuaWstMWtnIjtzOjU6InN0b2NrIjtpOjEwMDt9fX0=', 1768270305),
+('rl5ocFceHFkMaBKGMAEj5kYUj83gv99yHcb2sL7Z', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiQ3FadEdVMnRNNFVCR2xWWVBkRUJ3TzhoelhKRlFTaXg5RVlGNTVmcCI7czozOiJ1cmwiO2E6Mjp7czo4OiJpbnRlbmRlZCI7czo2NDoiaHR0cHM6Ly9teS1tYXJ0LmNhcmUvYWRtaW4vc3RvY2stcmVwb3J0cz9jYXRlZ29yeV9pZD0mc3RhdHVzPWFsbCI7czoxNDoicHJldmlvdXNfdmlzaXQiO3M6NjQ6Imh0dHBzOi8vbXktbWFydC5jYXJlL2FkbWluL3N0b2NrLXJlcG9ydHM/Y2F0ZWdvcnlfaWQ9JnN0YXR1cz1hbGwiO31zOjk6Il9wcmV2aW91cyI7YToxOntzOjM6InVybCI7czozMzoiaHR0cHM6Ly9teS1tYXJ0LmNhcmUvY2FydC9zdW1tYXJ5Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1768293333);
 
 -- --------------------------------------------------------
 
@@ -403,6 +405,9 @@ CREATE TABLE `store_settings` (
   `free_shipping_radius` int NOT NULL DEFAULT '10000' COMMENT 'Radius gratis ongkir dalam meter',
   `max_delivery_distance` int NOT NULL DEFAULT '50000' COMMENT 'Jarak maksimal pengiriman dalam meter',
   `shipping_cost` int NOT NULL DEFAULT '5000' COMMENT 'Biaya ongkir di luar zona gratis',
+  `social_media_instagram` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `social_media_tiktok` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `social_media_whatsapp` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -411,8 +416,8 @@ CREATE TABLE `store_settings` (
 -- Dumping data for table `store_settings`
 --
 
-INSERT INTO `store_settings` (`id`, `store_name`, `store_address`, `store_latitude`, `store_longitude`, `free_shipping_radius`, `max_delivery_distance`, `shipping_cost`, `created_at`, `updated_at`) VALUES
-(1, 'My Mart', 'ini alamat toko', -6.87499575, 109.66500781, 5000, 10000, 5000, '2026-01-06 02:37:08', '2026-01-06 03:14:10');
+INSERT INTO `store_settings` (`id`, `store_name`, `store_address`, `store_latitude`, `store_longitude`, `free_shipping_radius`, `max_delivery_distance`, `shipping_cost`, `social_media_instagram`, `social_media_tiktok`, `social_media_whatsapp`, `created_at`, `updated_at`) VALUES
+(1, 'My Mart', 'ini alamat toko', -6.87499575, 109.66500781, 5000, 10000, 5000, 'https://www.instagram.com/allmuchalif2/', NULL, '62123456789', '2026-01-06 02:37:08', '2026-01-13 01:34:40');
 
 -- --------------------------------------------------------
 
@@ -671,7 +676,7 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `products`

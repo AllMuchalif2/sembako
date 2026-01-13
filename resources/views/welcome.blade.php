@@ -133,18 +133,29 @@
                 <p class="mt-4 text-center text-sm text-gray-500">&copy; {{ date('Y') }}
                     {{ config('app.name', 'Sembako') }}. All rights reserved.</p>
                 <div class="mt-4 flex space-x-6">
-                    <a href="#" class="text-gray-400 hover:text-gray-500">
-                        <span class="sr-only">Facebook</span>
-                        <i class="fa-brands fa-facebook-f"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-gray-500">
-                        <span class="sr-only">Instagram</span>
-                        <i class="fa-brands fa-instagram"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-gray-500">
-                        <span class="sr-only">Twitter</span>
-                        <i class="fa-brands fa-x-twitter"></i>
-                    </a>
+                    @if ($settings->social_media_instagram)
+                        <a href="{{ $settings->social_media_instagram }}" target="_blank" rel="noopener noreferrer"
+                            class="text-gray-400 hover:text-pink-600 transition-colors">
+                            <span class="sr-only">Instagram</span>
+                            <i class="fa-brands fa-instagram text-xl"></i>
+                        </a>
+                    @endif
+
+                    @if ($settings->social_media_tiktok)
+                        <a href="{{ $settings->social_media_tiktok }}" target="_blank" rel="noopener noreferrer"
+                            class="text-gray-400 hover:text-gray-900 transition-colors">
+                            <span class="sr-only">TikTok</span>
+                            <i class="fa-brands fa-tiktok text-xl"></i>
+                        </a>
+                    @endif
+
+                    @if ($settings->social_media_whatsapp)
+                        <a href="https://wa.me/{{ $settings->social_media_whatsapp }}" target="_blank"
+                            rel="noopener noreferrer" class="text-gray-400 hover:text-green-600 transition-colors">
+                            <span class="sr-only">WhatsApp</span>
+                            <i class="fa-brands fa-whatsapp text-xl"></i>
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>

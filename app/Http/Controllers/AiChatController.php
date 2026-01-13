@@ -7,6 +7,7 @@ use App\Services\GroqService;
 
 use App\Models\Product;
 use App\Models\Promo;
+use App\Models\StoreSetting;
 
 class AiChatController extends Controller
 {
@@ -36,7 +37,21 @@ class AiChatController extends Controller
                 return "- KODE PROMO: {$p->code} ({$benefit} - {$p->description})";
             })->join("\n");
 
-        $contextData = "DAFTAR PRODUK KAMI SAAT INI:\n$products\n\nDAFTAR PROMO:\n$promos";
+        // Ambil store settings untuk social media
+        $settings = StoreSetting::getSettings();
+        $socialMedia = [];
+        if ($settings->social_media_instagram) {
+            $socialMedia[] = "Instagram: {$settings->social_media_instagram}";
+        }
+        if ($settings->social_media_tiktok) {
+            $socialMedia[] = "TikTok: {$settings->social_media_tiktok}";
+        }
+        if ($settings->social_media_whatsapp) {
+            $socialMedia[] = "WhatsApp: https://wa.me/{$settings->social_media_whatsapp}";
+        }
+        $socialMediaText = !empty($socialMedia) ? "\n\nSOCIAL MEDIA KAMI:\n" . implode("\n", $socialMedia) : "";
+
+        $contextData = "DAFTAR PRODUK KAMI SAAT INI:\n$products\n\nDAFTAR PROMO:\n$promos$socialMediaText";
 
         // 2. System Prompt yang Dipertajam
         $systemPrompt = "Kamu adalah ASISTEN TOKO 'My Mart'. 
@@ -46,7 +61,8 @@ Aturan Penting:
 1. JAWABAN HARUS PENDEK, PADAT, DAN TO THE POINT. Maksimal 2-3 kalimat.
 2. JANGAN mengarang harga atau stok. Gunakan HANYA data yang diberikan. 
 3. Jika produk tidak ada di daftar, katakan 'Maaf, produk tersebut sedang kosong/tidak tersedia'.
-4. Bahasa: Indonesia santai, ramah, tapi tidak bertele-tele.
+4. Jika ditanya kontak/social media, berikan link yang tersedia.
+5. Bahasa: Indonesia santai, ramah, tapi tidak bertele-tele.
 
 $contextData";
 

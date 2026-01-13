@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Laporan Pendapatan') }}
+            {{ __('Laporan Keuangan') }}
         </h2>
     </x-slot>
 
@@ -19,7 +19,7 @@
                     <li>
                         <div class="flex items-center">
                             <i class="fa-solid fa-chevron-right text-gray-400 mx-1 text-xs"></i>
-                            <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2">Laporan Pendapatan</span>
+                            <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2">Laporan Keuangan</span>
                         </div>
                     </li>
                 </ol>

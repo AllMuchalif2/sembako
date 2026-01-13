@@ -20,6 +20,9 @@ return new class extends Migration
             $table->integer('free_shipping_radius')->default(10000)->comment('Radius gratis ongkir dalam meter');
             $table->integer('max_delivery_distance')->default(50000)->comment('Jarak maksimal pengiriman dalam meter');
             $table->integer('shipping_cost')->default(5000)->comment('Biaya ongkir di luar zona gratis');
+            $table->string('social_media_instagram')->nullable();
+            $table->string('social_media_tiktok')->nullable();
+            $table->string('social_media_whatsapp')->nullable();
             $table->timestamps();
         });
     }

@@ -183,6 +183,62 @@
                             </div>
                         </div>
 
+                        <!-- Social Media Section -->
+                        <div class="border-t border-gray-200 pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">
+                                <i class="fa-brands fa-instagram mr-2"></i>Social Media
+                            </h3>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <!-- Instagram -->
+                                <div>
+                                    <label for="social_media_instagram"
+                                        class="block text-sm font-medium text-gray-700">
+                                        <i class="fa-brands fa-instagram mr-1 text-pink-600"></i>Instagram
+                                    </label>
+                                    <input type="url" name="social_media_instagram" id="social_media_instagram"
+                                        value="{{ old('social_media_instagram', $settings->social_media_instagram) }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('social_media_instagram') border-red-500 @enderror"
+                                        placeholder="https://instagram.com/username">
+                                    @error('social_media_instagram')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                    <p class="mt-1 text-xs text-gray-500">URL lengkap profil Instagram</p>
+                                </div>
+
+                                <!-- TikTok -->
+                                <div>
+                                    <label for="social_media_tiktok" class="block text-sm font-medium text-gray-700">
+                                        <i class="fa-brands fa-tiktok mr-1"></i>TikTok
+                                    </label>
+                                    <input type="url" name="social_media_tiktok" id="social_media_tiktok"
+                                        value="{{ old('social_media_tiktok', $settings->social_media_tiktok) }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('social_media_tiktok') border-red-500 @enderror"
+                                        placeholder="https://tiktok.com/@username">
+                                    @error('social_media_tiktok')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                    <p class="mt-1 text-xs text-gray-500">URL lengkap profil TikTok</p>
+                                </div>
+
+                                <!-- WhatsApp -->
+                                <div>
+                                    <label for="social_media_whatsapp"
+                                        class="block text-sm font-medium text-gray-700">
+                                        <i class="fa-brands fa-whatsapp mr-1 text-green-600"></i>WhatsApp
+                                    </label>
+                                    <input type="text" name="social_media_whatsapp" id="social_media_whatsapp"
+                                        value="{{ old('social_media_whatsapp', $settings->social_media_whatsapp) }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('social_media_whatsapp') border-red-500 @enderror"
+                                        placeholder="628123456789">
+                                    @error('social_media_whatsapp')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                    <p class="mt-1 text-xs text-gray-500">Nomor WA (format: 628xxx tanpa +)</p>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Info Box -->
                         <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
                             <h3 class="text-sm font-semibold text-blue-800 mb-2"><i class="fas fa-info-circle"></i>

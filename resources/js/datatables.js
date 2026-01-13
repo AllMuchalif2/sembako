@@ -7,6 +7,13 @@ export function initDataTables() {
         { selector: "#productsTb" },
         { selector: "#promosTb" },
         { selector: "#adminsTb" },
+        {
+            selector: "#stockTable",
+            columns: [
+                { select: 0, sortable: false }, // No column tidak bisa di-sort
+                { select: 3, sort: "asc" }, // Default sort by Stok column (ascending)
+            ],
+        },
     ];
 
     // Konfigurasi bahasa Indonesia
@@ -18,16 +25,23 @@ export function initDataTables() {
         noResults: "Tidak ada hasil yang cocok dengan pencarian Anda",
     };
 
-    tablesToInit.forEach(tableInfo => {
+    tablesToInit.forEach((tableInfo) => {
         const tableElement = document.querySelector(tableInfo.selector);
         if (tableElement) {
-            new DataTable(tableElement, {
+            const config = {
                 labels: indonesianLabels,
                 perPage: 10,
                 perPageSelect: [5, 10, 15, 20, 25],
                 searchable: true,
                 sortable: true,
-            });
+            };
+
+            // Tambahkan konfigurasi columns jika ada
+            if (tableInfo.columns) {
+                config.columns = tableInfo.columns;
+            }
+
+            new DataTable(tableElement, config);
         }
     });
 }

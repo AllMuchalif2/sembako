@@ -26,6 +26,9 @@ class StoreSettingController extends Controller
             'free_shipping_radius' => 'required|integer|min:0',
             'max_delivery_distance' => 'required|integer|min:0',
             'shipping_cost' => 'required|integer|min:0',
+            'social_media_instagram' => 'nullable|url|max:255',
+            'social_media_tiktok' => 'nullable|url|max:255',
+            'social_media_whatsapp' => 'nullable|string|regex:/^62[0-9]{9,13}$/|max:15',
         ]);
 
         $settings = StoreSetting::getSettings();

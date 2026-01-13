@@ -15,6 +15,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ProductReportController;
+use App\Http\Controllers\Admin\StockReportController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ActivityLogController;
@@ -201,6 +202,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Laporan Produk
     Route::get('/product-reports', [ProductReportController::class, 'index'])->name('product-reports.index');
     Route::get('/product-reports/print', [ProductReportController::class, 'print'])->name('product-reports.print');
+
+    // Laporan Stok
+    Route::get('/stock-reports', [StockReportController::class, 'index'])->name('stock-reports.index');
+    Route::get('/stock-reports/print', [StockReportController::class, 'print'])->name('stock-reports.print');
+    Route::post('/stock-reports/analyze', [StockReportController::class, 'analyze'])->name('stock-reports.analyze');
 });
 
 // rute owner (hanya owner yang bisa mengakses)

@@ -5,7 +5,17 @@
     class="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 lg:hidden">
 </div>
 
-<aside x-data="{ userMenuOpen: false }" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+<aside x-data="{
+    userMenuOpen: false,
+    openMenus: JSON.parse(localStorage.getItem('openMenus') || '{}'),
+    toggleMenu(menu) {
+        this.openMenus[menu] = !this.openMenus[menu];
+        localStorage.setItem('openMenus', JSON.stringify(this.openMenus));
+    },
+    isOpen(menu) {
+        return this.openMenus[menu] !== false;
+    }
+}" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
     class="fixed lg:static inset-y-0 left-0 z-50 bg-white border-r border-gray-100 min-h-screen w-64 transform transition-transform duration-300 ease-in-out flex flex-col">
 
     {{-- Logo --}}
@@ -50,99 +60,163 @@
     </div>
 
     {{-- Navigasi --}}
-    <nav class="flex-1 px-4 py-6 space-y-1">
+    <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+        {{-- Dashboard (Single Item) --}}
         <a href="{{ route('admin.dashboard') }}"
-            class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors 
-            {{ request()->routeIs('admin.dashboard')
-                ? 'bg-gray-100 text-gray-900'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+            class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors 
+    {{ request()->routeIs('admin.dashboard')
+        ? 'bg-gray-100 text-gray-900'
+        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
             <i class="fa-solid fa-home mr-3"></i>
             {{ __('Dashboard') }}
         </a>
 
-        <a href="{{ route('admin.categories.index') }}"
-            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
+        {{-- Manajemen Produk (Collapsible Group) --}}
+        <div>
+            <button @click="toggleMenu('produk')" type="button"
+                class="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium rounded-lg transition-colors
+        {{ request()->routeIs('admin.categories.*') ||
+        request()->routeIs('admin.products.*') ||
+        request()->routeIs('admin.promos.*')
+            ? 'text-gray-900 bg-gray-50'
+            : 'text-gray-700 hover:bg-gray-50' }}">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-box mr-3"></i>
+                    <span>Manajemen Produk</span>
+                </div>
+                <i class="fa-solid transition-transform duration-200"
+                    :class="isOpen('produk') ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+            </button>
+
+            <div x-show="isOpen('produk')" x-collapse class="mt-1 space-y-1">
+                <a href="{{ route('admin.categories.index') }}"
+                    class="flex items-center pl-11 pr-4 py-2 text-sm rounded-lg transition-colors
             {{ request()->routeIs('admin.categories.*')
-                ? 'bg-gray-100 text-gray-900'
+                ? 'bg-gray-100 text-gray-900 font-medium'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-            <i class="fa-solid fa-tags mr-3"></i>
-            {{ __('Kelola Kategori') }}
-        </a>
-
-        <a href="{{ route('admin.products.index') }}"
-            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
+                    <i class="fa-solid fa-tags mr-3 text-xs"></i>
+                    {{ __('Kelola Kategori') }}
+                </a>
+                <a href="{{ route('admin.products.index') }}"
+                    class="flex items-center pl-11 pr-4 py-2 text-sm rounded-lg transition-colors
             {{ request()->routeIs('admin.products.*')
-                ? 'bg-gray-100 text-gray-900'
+                ? 'bg-gray-100 text-gray-900 font-medium'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-            <i class="fa-solid fa-box mr-3"></i>
-            {{ __('Kelola Produk') }}
-        </a>
-
-        <a href="{{ route('admin.promos.index') }}"
-            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
+                    <i class="fa-solid fa-cube mr-3 text-xs"></i>
+                    {{ __('Kelola Produk') }}
+                </a>
+                <a href="{{ route('admin.promos.index') }}"
+                    class="flex items-center pl-11 pr-4 py-2 text-sm rounded-lg transition-colors
             {{ request()->routeIs('admin.promos.*')
-                ? 'bg-gray-100 text-gray-900'
+                ? 'bg-gray-100 text-gray-900 font-medium'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-            <i class="fa-solid fa-percent mr-3"></i>
-            {{ __('Kelola Promo') }}
-        </a>
+                    <i class="fa-solid fa-percent mr-3 text-xs"></i>
+                    {{ __('Kelola Promo') }}
+                </a>
+            </div>
+        </div>
 
+        {{-- Transaksi (Single Item) --}}
         <a href="{{ route('admin.transactions.index') }}"
-            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
-            {{ request()->routeIs('admin.transactions.*')
-                ? 'bg-gray-100 text-gray-900'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+            class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors 
+    {{ request()->routeIs('admin.transactions.*')
+        ? 'bg-gray-100 text-gray-900'
+        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
             <i class="fa-solid fa-receipt mr-3"></i>
             {{ __('Riwayat Transaksi') }}
         </a>
 
-        <a href="{{ route('admin.reports.index') }}"
-            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
+        {{-- Laporan (Collapsible Group) --}}
+        <div>
+            <button @click="toggleMenu('laporan')" type="button"
+                class="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium rounded-lg transition-colors
+        {{ request()->routeIs('admin.reports.*') ||
+        request()->routeIs('admin.product-reports.*') ||
+        request()->routeIs('admin.stock-reports.*')
+            ? 'text-gray-900 bg-gray-50'
+            : 'text-gray-700 hover:bg-gray-50' }}">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-chart-line mr-3"></i>
+                    <span>Laporan</span>
+                </div>
+                <i class="fa-solid transition-transform duration-200"
+                    :class="isOpen('laporan') ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+            </button>
+
+            <div x-show="isOpen('laporan')" x-collapse class="mt-1 space-y-1">
+                <a href="{{ route('admin.reports.index') }}"
+                    class="flex items-center pl-11 pr-4 py-2 text-sm rounded-lg transition-colors
             {{ request()->routeIs('admin.reports.*')
-                ? 'bg-gray-100 text-gray-900'
+                ? 'bg-gray-100 text-gray-900 font-medium'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-            <i class="fa-solid fa-file-invoice-dollar mr-3"></i>
-            {{ __('Laporan Pendapatan') }}
-        </a>
-
-        <a href="{{ route('admin.product-reports.index') }}"
-            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
+                    <i class="fa-solid fa-money-bill-trend-up mr-3 text-xs"></i>
+                    {{ __('Laporan Keuangan') }}
+                </a>
+                <a href="{{ route('admin.product-reports.index') }}"
+                    class="flex items-center pl-11 pr-4 py-2 text-sm rounded-lg transition-colors
             {{ request()->routeIs('admin.product-reports.*')
-                ? 'bg-gray-100 text-gray-900'
+                ? 'bg-gray-100 text-gray-900 font-medium'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-            <i class="fa-solid fa-chart-pie mr-3"></i>
-            {{ __('Laporan Penjualan') }}
-        </a>
+                    <i class="fa-solid fa-chart-pie mr-3 text-xs"></i>
+                    {{ __('Laporan Penjualan') }}
+                </a>
+                <a href="{{ route('admin.stock-reports.index') }}"
+                    class="flex items-center pl-11 pr-4 py-2 text-sm rounded-lg transition-colors
+            {{ request()->routeIs('admin.stock-reports.*')
+                ? 'bg-gray-100 text-gray-900 font-medium'
+                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    <i class="fa-solid fa-boxes-stacked mr-3 text-xs"></i>
+                    {{ __('Laporan Stok') }}
+                </a>
+            </div>
+        </div>
 
+        {{-- Pengaturan (Collapsible Group - Owner Only) --}}
         @if (Auth::user()->role_id == '0' || Auth::user()->role_id == '1')
-            <a href="{{ route('admin.admins.index') }}"
-                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
-            {{ request()->routeIs('admin.admins.*')
-                ? 'bg-gray-100 text-gray-900'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                <i class="fa-solid fa-users-cog mr-3"></i>
-                {{ __('Kelola Admin') }}
-            </a>
-            <a href="{{ route('admin.store-settings.edit') }}"
-                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
-            {{ request()->routeIs('admin.store-settings.*')
-                ? 'bg-gray-100 text-gray-900'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                <i class="fa-solid fa-cog mr-3"></i>
-                {{ __('Pengaturan Toko') }}
-            </a>
-            <a href="{{ route('admin.activity-logs.index') }}"
-                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors 
-            {{ request()->routeIs('admin.activity-logs.*')
-                ? 'bg-gray-100 text-gray-900'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                <i class="fa-solid fa-clock-rotate-left mr-3"></i>
-                {{ __('Riwayat Aktivitas') }}
-            </a>
+            <div>
+                <button @click="toggleMenu('pengaturan')" type="button"
+                    class="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium rounded-lg transition-colors
+            {{ request()->routeIs('admin.admins.*') ||
+            request()->routeIs('admin.store-settings.*') ||
+            request()->routeIs('admin.activity-logs.*')
+                ? 'text-gray-900 bg-gray-50'
+                : 'text-gray-700 hover:bg-gray-50' }}">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-gear mr-3"></i>
+                        <span>Pengaturan</span>
+                    </div>
+                    <i class="fa-solid transition-transform duration-200"
+                        :class="isOpen('pengaturan') ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                </button>
+
+                <div x-show="isOpen('pengaturan')" x-collapse class="mt-1 space-y-1">
+                    <a href="{{ route('admin.admins.index') }}"
+                        class="flex items-center pl-11 pr-4 py-2 text-sm rounded-lg transition-colors
+                {{ request()->routeIs('admin.admins.*')
+                    ? 'bg-gray-100 text-gray-900 font-medium'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                        <i class="fa-solid fa-users-cog mr-3 text-xs"></i>
+                        {{ __('Kelola Admin') }}
+                    </a>
+                    <a href="{{ route('admin.activity-logs.index') }}"
+                        class="flex items-center pl-11 pr-4 py-2 text-sm rounded-lg transition-colors
+                {{ request()->routeIs('admin.activity-logs.*')
+                    ? 'bg-gray-100 text-gray-900 font-medium'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                        <i class="fa-solid fa-history mr-3 text-xs"></i>
+                        {{ __('Activity Logs') }}
+                    </a>
+                    <a href="{{ route('admin.store-settings.edit') }}"
+                        class="flex items-center pl-11 pr-4 py-2 text-sm rounded-lg transition-colors
+                {{ request()->routeIs('admin.store-settings.*')
+                    ? 'bg-gray-100 text-gray-900 font-medium'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                        <i class="fa-solid fa-cog mr-3 text-xs"></i>
+                        {{ __('Pengaturan Toko') }}
+                    </a>
+                </div>
+            </div>
         @endif
-
-
-
     </nav>
 
     {{-- Theme Toggle (Dark/Light) --}}

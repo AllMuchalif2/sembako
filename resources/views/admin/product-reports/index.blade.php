@@ -66,7 +66,8 @@
 
                 {{-- Summary Statistics --}}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div class="p-4 bg-green-50 rounded-lg border border-green-100">
+                    <a href="{{ route('admin.transactions.index', array_filter(['start_date' => request('start_date'), 'end_date' => request('end_date')])) }}"
+                        class="block p-4 bg-green-50 rounded-lg border border-green-100 hover:bg-green-100 hover:shadow-md transition-all duration-200">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-green-600">Total Pendapatan</p>
@@ -76,9 +77,13 @@
                             </div>
                             <i class="fa-solid fa-sack-dollar text-3xl text-green-300"></i>
                         </div>
-                    </div>
+                        <p class="text-xs text-green-600 mt-2 flex items-center">
+                            <i class="fa-solid fa-arrow-right mr-1"></i> Lihat transaksi
+                        </p>
+                    </a>
 
-                    <div class="p-4 bg-purple-50 rounded-lg border border-purple-100">
+                    <a href="{{ route('admin.transactions.index', array_filter(['start_date' => request('start_date'), 'end_date' => request('end_date')])) }}"
+                        class="block p-4 bg-purple-50 rounded-lg border border-purple-100 hover:bg-purple-100 hover:shadow-md transition-all duration-200">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-purple-600">Total Keuntungan</p>
@@ -88,9 +93,13 @@
                             </div>
                             <i class="fa-solid fa-chart-line text-3xl text-purple-300"></i>
                         </div>
-                    </div>
+                        <p class="text-xs text-purple-600 mt-2 flex items-center">
+                            <i class="fa-solid fa-arrow-right mr-1"></i> Lihat transaksi
+                        </p>
+                    </a>
 
-                    <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                    <a href="{{ route('admin.transactions.index', array_filter(['start_date' => request('start_date'), 'end_date' => request('end_date')])) }}"
+                        class="block p-4 bg-blue-50 rounded-lg border border-blue-100 hover:bg-blue-100 hover:shadow-md transition-all duration-200">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-blue-600">Total Terjual</p>
@@ -100,7 +109,10 @@
                             </div>
                             <i class="fa-solid fa-shopping-cart text-3xl text-blue-300"></i>
                         </div>
-                    </div>
+                        <p class="text-xs text-blue-600 mt-2 flex items-center">
+                            <i class="fa-solid fa-arrow-right mr-1"></i> Lihat transaksi
+                        </p>
+                    </a>
                 </div>
 
 
