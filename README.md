@@ -28,15 +28,18 @@ MyMart adalah aplikasi e-commerce berbasis web yang dirancang khusus untuk toko 
 -   🏷️ **Manajemen Kategori** - Organisasi produk berdasarkan kategori
 -   🎫 **Manajemen Promo** - Buat dan kelola kode promo
 -   💰 **Manajemen Transaksi** - Update status, konfirmasi COD, cetak invoice
--   📈 **Laporan Pendapatan** - Filter laporan berdasarkan tanggal dengan analisis AI
--   📊 **Laporan Produk** - Laporan produk terlaris dengan filter tanggal
+-   📈 **Laporan Keuangan** - Filter laporan berdasarkan tanggal dengan analisis AI
+-   📊 **Laporan Penjualan** - Laporan produk terlaris dengan filter tanggal, clickable summary cards
+-   📦 **Laporan Stok** - Monitor stok produk dengan filter kategori dan status, clickable summary cards
 -   🖨️ **Cetak PDF** - Generate laporan dalam format PDF (hitam putih)
 
 ### 🔐 Untuk Owner (Super Admin)
 
--   ⚙️ **Pengaturan Toko** - Konfigurasi nama, lokasi, ongkir, radius gratis ongkir
+-   ⚙️ **Pengaturan Toko** - Konfigurasi nama, lokasi, ongkir, radius gratis ongkir, social media links
+-   📱 **Social Media Integration** - Instagram, TikTok, WhatsApp terintegrasi di footer dan AI chatbot
 -   👥 **Manajemen Admin** - CRUD admin, toggle status, reset password
 -   📜 **Activity Logs** - Audit trail semua aktivitas admin menggunakan Spatie Activity Log
+-   🎨 **Grouped Sidebar** - Menu admin terorganisir dengan collapsible groups
 
 ---
 
@@ -214,7 +217,7 @@ MyMart adalah aplikasi e-commerce berbasis web yang dirancang khusus untuk toko 
 | `transaction_items` | Detail item dalam transaksi                  |
 | `promos`            | Kode promo dan diskon                        |
 | `promo_usages`      | Riwayat penggunaan promo                     |
-| `store_settings`    | Konfigurasi toko (nama, lokasi, ongkir, dll) |
+| `store_settings`    | Konfigurasi toko (nama, lokasi, ongkir, social media) |
 | `activity_log`      | Log aktivitas admin/owner (Spatie)           |
 | `sessions`          | Session management                           |
 | `cache`             | Application cache                            |

@@ -294,8 +294,30 @@ Dokumentasi lengkap alur fungsional aplikasi MyMart, mencakup semua fitur dari a
 -   **Fitur**:
     -   Filter laporan berdasarkan tanggal mulai dan tanggal selesai
     -   Tampilkan produk yang terjual dengan total penjualan, pendapatan, dan keuntungan
+    -   Clickable summary cards yang mengarah ke halaman transaksi dengan filter tanggal
     -   Cetak laporan PDF (hitam putih, tanpa warna)
     -   Sorting berdasarkan total terjual (descending)
+
+### Admin: Laporan Stok
+
+-   **Rute**
+    -   GET /admin/stock-reports
+    -   GET /admin/stock-reports/print
+-   **Middleware**: auth, role:admin
+-   **Controller**: `Admin\StockReportController`
+-   **Model**: `Product`, `Category`
+-   **View**: `admin/stock-reports/index.blade.php`, `admin/stock-reports/print.blade.php`
+-   **Database**: products, categories (read)
+-   **Fitur**:
+    -   Filter berdasarkan kategori dan status stok (Semua, Rendah, Habis)
+    -   4 Summary Cards:
+        -   Total Produk (clickable → Kelola Produk)
+        -   Total Nilai Stok (clickable → Kelola Produk)
+        -   Stok Rendah (clickable → Filter stok rendah)
+        -   Stok Habis (clickable → Filter stok habis)
+    -   Tabel interaktif dengan DataTables (search, sort, pagination)
+    -   Cetak laporan PDF (hitam putih, tanpa warna)
+    -   Sorting default berdasarkan stok (ascending)
 
 ---
 
@@ -319,6 +341,12 @@ Dokumentasi lengkap alur fungsional aplikasi MyMart, mencakup semua fitur dari a
     -   Radius gratis ongkir
     -   Jarak maksimal pengiriman
     -   Biaya pengiriman per km
+    -   **Social Media Links**:
+        -   Instagram URL
+        -   TikTok URL
+        -   WhatsApp Number (format: 628xxx)
+    -   Integrasi social media di footer landing page (dinamis)
+    -   Social media info tersedia di AI chatbot
 
 ### Owner: CRUD Admin
 
@@ -348,6 +376,22 @@ Dokumentasi lengkap alur fungsional aplikasi MyMart, mencakup semua fitur dari a
 -   **Package**: Spatie Laravel Activity Log
 -   **Fitur**: Melihat riwayat aksi create, update, delete yang dilakukan admin/owner
 
+### Owner: Grouped Sidebar Menu
+
+-   **Lokasi**: `resources/views/layouts/admin.blade.php`
+-   **Teknologi**: Alpine.js untuk state management
+-   **Fitur**:
+    -   Menu terorganisir dalam grup yang bisa di-collapse/expand:
+        -   **Dashboard** (single item)
+        -   **Manajemen Produk** (Kategori, Produk, Promo)
+        -   **Riwayat Transaksi** (single item)
+        -   **Laporan** (Keuangan, Penjualan, Stok)
+        -   **Pengaturan** (Admin, Activity Logs, Store Settings - Owner only)
+    -   State persistence dengan localStorage
+    -   Smooth collapse/expand animation
+    -   Chevron icon rotation
+    -   Active state indication
+
 ---
 
 ## 7. Fitur AI & Chatbot
@@ -359,6 +403,11 @@ Dokumentasi lengkap alur fungsional aplikasi MyMart, mencakup semua fitur dari a
 -   **Teknologi**: Groq API (LLM)
 -   **Model**: Llama atau model lain yang tersedia di Groq
 -   **Fungsi**: Menjawab pertanyaan pelanggan secara otomatis terkait produk atau layanan
+-   **Context Data**:
+    -   Daftar produk (nama, harga, stok)
+    -   Daftar promo aktif
+    -   Social media links (Instagram, TikTok, WhatsApp)
+    -   Jam operasional toko
 
 ### Analisis Laporan AI
 
